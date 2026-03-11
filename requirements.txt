@@ -1,1 +1,5 @@
-pytest>=7.0
+fastapi
+uvicorn
+pydantic
+openai
+python-dotenv

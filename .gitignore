@@ -1,37 +1,38 @@
-# Byte-compiled / optimized / DLL files
+# Environment and secrets
+.env
+.env.local
+*.env
+
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
-
-# Distribution / packaging
-dist/
-build/
-*.egg-info/
-*.egg
-
-# Virtual environments
+*.so
+.Python
 .venv/
 venv/
 env/
 
-# IDE
+# IDE and tooling
 .vscode/
 .idea/
+.cursor/
+.codesight/
+.qodo/
 *.swp
 *.swo
 
-# Environment variables
-.env
+# Local data
+leads.jsonl
 
-# OS files
+# Cursor / snapshots
+.snapshots/
+
+# Common local/tooling artifacts
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# OS
 .DS_Store
 Thumbs.db
-
-# Testing / Coverage
-.pytest_cache/
-htmlcov/
-.coverage
-coverage.xml
-
-# Logs
-*.log
