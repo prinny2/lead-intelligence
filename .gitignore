@@ -1,0 +1,16 @@
+.env
+__pycache__/
+*.pyc
+leads.jsonl
+.vscode/
+.cursor/
+.codesight/
+.qodo/
+.snapshots/
+
+# Common local/tooling artifacts
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
