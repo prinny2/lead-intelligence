@@ -1,5 +1,7 @@
 """Tests for the analyzer module."""
 
+import pytest
+
 from lead_intelligence.analyzer import analyze_lead, _calculate_completeness
 
 
@@ -22,11 +24,8 @@ class TestAnalyzeLead:
         assert result["analysis"]["completeness"] == 0.0
 
     def test_invalid_input(self):
-        try:
+        with pytest.raises(TypeError):
             analyze_lead("not a dict")
-            assert False, "Should have raised TypeError"
-        except TypeError:
-            pass
 
 
 class TestCalculateCompleteness:

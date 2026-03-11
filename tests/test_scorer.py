@@ -1,5 +1,7 @@
 """Tests for the scorer module."""
 
+import pytest
+
 from lead_intelligence.scorer import score_lead
 
 
@@ -21,11 +23,8 @@ class TestScoreLead:
         assert score_lead({"email": "a@b.com"}) == 30
 
     def test_invalid_input(self):
-        try:
+        with pytest.raises(TypeError):
             score_lead("not a dict")
-            assert False, "Should have raised TypeError"
-        except TypeError:
-            pass
 
     def test_score_capped_at_100(self):
         lead = {
