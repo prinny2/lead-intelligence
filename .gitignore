@@ -1,16 +1,38 @@
+# Environment and secrets
 .env
+.env.local
+*.env
+
+# Python
 __pycache__/
-*.pyc
-leads.jsonl
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+
+# IDE and tooling
 .vscode/
+.idea/
 .cursor/
 .codesight/
 .qodo/
+*.swp
+*.swo
+
+# Local data
+leads.jsonl
+
+# Cursor / snapshots
 .snapshots/
 
 # Common local/tooling artifacts
-.venv/
-venv/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+
+# OS
+.DS_Store
+Thumbs.db
