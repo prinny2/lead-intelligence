@@ -121,6 +121,12 @@ pytest
 pytest tests/test_integration_lead_pipeline.py -v
 ```
 
+## API FastAPI na web
+
+- Variáveis: veja **`env.example`** e o guia **`DEPLOY.md`** (Render, Railway, Docker).
+- **`CORS_ORIGINS`**: defina no host (ex.: `https://meuapp.com` ou `*` só para testes).
+- **`LEADS_FILE`**: em produção, use disco persistente ou path absoluto para não perder `leads.jsonl` a cada deploy.
+
 ## Próximos passos (ideias)
 
 - Integração com CRM / fila de outreach.
