@@ -4,6 +4,7 @@
 *.env
 
 # Python
+*.egg-info/
 __pycache__/
 *.py[cod]
 *$py.class

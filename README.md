@@ -32,9 +32,37 @@ tests/
   test_qualifier.py
   test_solar.py
   test_message_analysis.py
+  test_integration_lead_pipeline.py  # fluxo ponta a ponta (sem API)
+pyproject.toml          # pacote instalável + extras [api] e [dev]
+requirements.txt        # dependências da API FastAPI
+requirements-dev.txt    # pytest + httpx + requirements.txt
+LICENSE                 # MIT
 ```
 
-## Instalação
+## Clonar o repositório e instalar
+
+```bash
+git clone https://github.com/SEU_USUARIO/lead-intelligence.git
+cd lead-intelligence
+python -m venv .venv
+.venv\Scripts\activate
+```
+
+**Só o toolkit (sem dependências externas):** o pacote `lead_intelligence` não exige pip extra para rodar `qualify_lead`.
+
+**API + testes (recomendado para desenvolvimento):**
+
+```bash
+pip install -e ".[dev]"
+```
+
+Ou, equivalente:
+
+```bash
+pip install -r requirements-dev.txt
+```
+
+## Instalação (API apenas)
 
 ```bash
 python -m venv .venv
@@ -89,6 +117,8 @@ Exemplo de saída (trecho):
 
 ```bash
 pytest
+# só integração do toolkit:
+pytest tests/test_integration_lead_pipeline.py -v
 ```
 
 ## Próximos passos (ideias)

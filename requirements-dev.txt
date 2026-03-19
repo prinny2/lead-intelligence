@@ -1,0 +1,4 @@
+# Desenvolvimento e testes (instalar após requirements.txt se usar a API)
+-r requirements.txt
+pytest>=7.0
+httpx>=0.24
