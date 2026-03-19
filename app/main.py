@@ -4,10 +4,12 @@ Solar lead qualification with hybrid AI + rules and local JSONL storage.
 """
 
 import logging
+import os
 import sys
 
-from fastapi import FastAPI
 from dotenv import load_dotenv
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.routes import api_router
 
@@ -26,6 +28,18 @@ app = FastAPI(
     description="Qualify solar energy leads via AI + rules. POST /lead, GET /stats.",
     version="0.1.0",
 )
+
+# CORS para frontends na web (configure CORS_ORIGINS no painel do host)
+_cors = os.getenv("CORS_ORIGINS", "").strip()
+if _cors:
+    _origins = ["*"] if _cors == "*" else [o.strip() for o in _cors.split(",") if o.strip()]
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=_origins,
+        allow_credentials=False,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
 app.include_router(api_router)
 
