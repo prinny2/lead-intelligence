@@ -18,6 +18,11 @@ class TestScoreLead:
 
     def test_empty_lead(self):
         assert score_lead({}) <= 25
+        assert score_lead({}) >= 0
+
+    def test_critically_incomplete_score_never_negative(self):
+        assert score_lead({}) >= 0
+        assert score_lead({"email": "not-an-email", "name": "X"}) >= 0
 
     def test_corporate_email_only_insufficient_identity(self):
         # Valid contact but no name/company → critical → capped

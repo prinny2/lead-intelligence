@@ -30,7 +30,7 @@ def score_lead(lead: dict) -> int:
         raise TypeError("lead must be a dictionary")
 
     if is_critically_incomplete(lead):
-        return min(25, _raw_quality_score(lead))
+        return max(0, min(25, _raw_quality_score(lead)))
 
     raw = _raw_quality_score(lead)
     return max(0, min(100, raw))
