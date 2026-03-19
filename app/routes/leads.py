@@ -23,7 +23,7 @@ async def health() -> dict[str, str]:
 
 
 @router.post("/lead", response_model=LeadResponse)
-async def analyze_lead(data: LeadRequest) -> LeadResponse:
+def analyze_lead(data: LeadRequest) -> LeadResponse:
     logger.info("lead name=%s city=%s", data.name, data.city)
 
     ai_output = get_ai_qualification(data)
