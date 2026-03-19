@@ -16,3 +16,14 @@ def test_quote_request():
 def test_empty():
     sig = analyze_interest_message("")
     assert not any(sig.values())
+
+
+def test_urgent_intent_accented_phrase_normalized():
+    """User types 'rápido'; haystack is accent-free — must match 'o mais rapido' keyword."""
+    sig = analyze_interest_message("Preciso o mais rápido possível")
+    assert sig["urgent_intent"] is True
+
+
+def test_urgent_intent_already_unaccented():
+    sig = analyze_interest_message("quero o mais rapido")
+    assert sig["urgent_intent"] is True

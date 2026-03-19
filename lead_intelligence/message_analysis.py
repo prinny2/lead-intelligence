@@ -19,7 +19,11 @@ def analyze_interest_message(text: str | None) -> dict[str, bool]:
         return {k: False for k in _SIGNAL_KEYS}
 
     return {
-        "urgent_intent": _any_phrase(normalized, ("urgente", "o mais rápido", "preciso logo", "essa semana")),
+        # Phrases must be accent-free: haystack is NFD-stripped (see _normalize_text).
+        "urgent_intent": _any_phrase(
+            normalized,
+            ("urgente", "o mais rapido", "preciso logo", "essa semana"),
+        ),
         "quote_request": _any_phrase(
             normalized,
             ("orçamento", "orcamento", "cotação", "cotacao", "proposta", "quanto custa", "valor"),
