@@ -56,10 +56,10 @@ async def get_stats() -> LeadStats:
             low_quality_leads=0,
         )
     total = len(leads)
-    scores = [l.score for l in leads]
+    scores = [lead.score for lead in leads]
     avg = sum(scores) / total
-    high = sum(1 for s in scores if s >= 7)
-    low = sum(1 for s in scores if s <= 3)
+    high = sum(1 for score in scores if score >= 7)
+    low = sum(1 for score in scores if score <= 3)
     return LeadStats(
         total_leads=total,
         average_score=round(avg, 2),
