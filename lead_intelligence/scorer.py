@@ -5,7 +5,7 @@ from __future__ import annotations
 from lead_intelligence.validator import (
     has_valid_contact_channel,
     is_critically_incomplete,
-    is_generic_email_domain,
+    is_generic_email_domain,                                                                                                            
     is_valid_email,
     is_valid_phone,
 )
