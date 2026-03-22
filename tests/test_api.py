@@ -12,7 +12,8 @@ class ApiTests(unittest.TestCase):
     def setUp(self) -> None:
         self.temp_dir = tempfile.TemporaryDirectory()
         self.leads_file = os.path.join(self.temp_dir.name, "leads.jsonl")
-        self.env_patcher = patch.dict(os.environ, {"LEADS_FILE": self.leads_file}, clear=False)
+        self.env_patcher = patch.dict(
+            os.environ, {"LEADS_FILE": self.leads_file}, clear=False)
         self.env_patcher.start()
         self.client = TestClient(app)
 
@@ -45,7 +46,7 @@ class ApiTests(unittest.TestCase):
             {
                 "score": 10,
                 "urgency": "alta",
-                "recommendation": "Lead promissor; vale contato comercial rápido.",
+                "recommendation": "Contato imediato.",
             },
         )
 

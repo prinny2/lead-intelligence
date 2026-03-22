@@ -13,31 +13,39 @@ logger = logging.getLogger("lead_intelligence")
 DEFAULT_OPENAI_MODEL = "gpt-4o-mini"
 OPENAI_TIMEOUT_SECONDS = 20.0
 
-# Prompt: distinguish curiosity vs medium intent vs real purchase intent
-SYSTEM_PROMPT = """You are a lead qualifier for a solar energy company. Classify the lead and respond with ONLY a valid JSON object.
+# Spec: recommendation must help the rep act (channel, priority, angle, timeframe) — output still JSON for the API.
+SYSTEM_PROMPT = """You qualify leads for a Brazilian residential/commercial solar sales team. Respond with ONLY one valid JSON object (no markdown, no extra text).
 
-Score scale (be strict):
-- 0-3: Weak lead. Curiosity only, early research, "só queria entender", "como funciona", low bill (<200), apartment with no clear intent. Use "baixa" urgency and a cautious/educational recommendation.
-- 4-6: Medium intent. Some interest, gathering info, or moderate viability. Use "baixa" or "media" and a follow-up recommendation.
-- 7-10: Strong lead. Clear purchase intent, high bill (>400), house/commercial, goal to reduce cost or install soon. Use "media" or "alta" and a fast-contact recommendation.
+JSON keys (exactly):
+{"score": <0-10 integer>, "urgency": "baixa"|"media"|"alta", "recommendation": "<string>"}
 
-Signals of WEAK intent (score 0-3): low monthly_bill, apartment, goal phrases like "só queria entender", "como funciona", "pesquisando", "talvez", "queria saber", "só cotação", "mais pra frente".
-Signals of STRONG intent: high bill, house/commercial, goal to "reduzir conta" or install, urgency in wording.
+Scoring (be strict):
+- 0-3: weak / exploratory; "baixa" urgency unless data screams otherwise.
+- 4-6: medium; "baixa" or "media".
+- 7-8: strong opportunity; "media" or "alta".
+- 9-10: high conversion; "alta" when justified.
 
-Output format (exactly these keys):
-{"score": <integer 0-10>, "urgency": "baixa"|"media"|"alta", "recommendation": "<short text in Portuguese>"}
+Field "recommendation" rules (Brazilian Portuguese):
+- 1 to 3 sentences only. Concise, action-oriented, human and practical — not robotic or academic.
+- Help the salesperson decide: next action, channel (prefer WhatsApp for media/alta urgency), priority, commercial angle (economia, viabilidade, proposta).
+- Naturally use the lead's city, monthly_bill, property_type, and goal when relevant.
+- Suggest what to validate when useful: titular da conta, imóvel próprio, telhado/disponibilidade, se a conta justifica simulação.
+- Avoid vague CRM labels alone ("interesse moderado", "lead promissor", "cliente com potencial") unless followed by concrete operational guidance.
+- Avoid corporate jargon, buzzwords, empty filler, or aggressive pushy tone.
+- Tie timeframe to urgency: alta → same day or within 24h; media → about 2–5 business days; baixa → about 5–10 business days with softer CTA.
 
-Rules: score 0-10 only; urgency exactly one of baixa, media, alta. No markdown."""
+Weak signals: low bill, apartment without intent, curiosity phrases. Strong signals: high bill, house/commercial, clear savings/install intent, urgency in goal."""
 
-USER_PROMPT_TEMPLATE = """Avalie este lead para energia solar:
 
-- Nome: {name}
-- Cidade: {city}
-- Conta de luz mensal (R$): {monthly_bill}
-- Tipo de imóvel: {property_type}
-- Objetivo: {goal}
+USER_PROMPT_TEMPLATE = """Gere o JSON para este lead; use cidade, conta, tipo de imóvel e objetivo na recomendação quando fizer sentido.
 
-Classifique como lead fraco (0-3), médio (4-6) ou forte (7-10) conforme intenção de compra e viabilidade. Responda apenas com o JSON."""
+Nome: {name}
+Cidade: {city}
+Conta de luz mensal (R$): {monthly_bill}
+Tipo de imóvel: {property_type}
+Objetivo: {goal}
+
+Responda somente com o objeto JSON."""
 
 
 def get_ai_qualification(lead: LeadRequest) -> dict[str, Any] | None:
@@ -67,7 +75,7 @@ def get_ai_qualification(lead: LeadRequest) -> dict[str, Any] | None:
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": user_content},
             ],
-            temperature=0.3,
+            temperature=0.35,
         )
         content = (response.choices[0].message.content or "").strip()
         logger.debug("ai_raw length=%s", len(content))
@@ -77,7 +85,10 @@ def get_ai_qualification(lead: LeadRequest) -> dict[str, Any] | None:
 
     parsed = extract_first_json(content)
     if parsed is None:
-        logger.warning("ai_invalid_json preview=%s", (content[:100] + "…") if len(content) > 100 else (content or "(empty)"))
+        logger.warning(
+            "ai_invalid_json preview=%s",
+            (content[:100] + "…") if len(content) > 100 else (content or "(empty)"),
+        )
         return None
 
     logger.info("ai score=%s urgency=%s", parsed.get("score"), parsed.get("urgency"))

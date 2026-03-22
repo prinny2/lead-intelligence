@@ -124,8 +124,11 @@ pytest tests/test_integration_lead_pipeline.py -v
 ## API FastAPI na web
 
 - Variáveis: veja **`env.example`** e o guia **`DEPLOY.md`** (Render, Railway, Docker).
+- **`OPENAI_API_KEY`**: chave da **OpenAI** ([API keys](https://platform.openai.com/api-keys)), prefixo típico `sk-proj-` ou `sk-`. **Não** use chaves da Stripe (`sk_live_` / `sk_test_`) nesta variável — são serviços diferentes.
 - **`CORS_ORIGINS`**: defina no host (ex.: `https://meuapp.com` ou `*` só para testes).
 - **`LEADS_FILE`**: em produção, use disco persistente ou path absoluto para não perder `leads.jsonl` a cada deploy.
+
+**Segurança:** não commite `.env` nem compartilhe chaves em chats. Se uma chave secreta vazar (OpenAI ou Stripe), revogue-a no painel correspondente e crie outra.
 
 ## Próximos passos (ideias)
 
