@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lead Intelligence — Test Console</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: system-ui, -apple-system, sans-serif; background: #f5f5f5; color: #333; padding: 2rem; }
+        h1 { text-align: center; margin-bottom: 1.5rem; color: #1a1a2e; }
+        .container { max-width: 640px; margin: 0 auto; }
+        .card { background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,.1); padding: 1.5rem; margin-bottom: 1.5rem; }
+        .card h2 { margin-bottom: 1rem; font-size: 1.1rem; color: #16213e; }
+        label { display: block; margin-bottom: .25rem; font-weight: 600; font-size: .9rem; }
+        input, select { width: 100%; padding: .5rem; margin-bottom: .75rem; border: 1px solid #ccc; border-radius: 4px; font-size: .95rem; }
+        button { padding: .6rem 1.2rem; border: none; border-radius: 4px; cursor: pointer; font-size: .95rem; font-weight: 600; }
+        .btn-primary { background: #0f3460; color: #fff; }
+        .btn-primary:hover { background: #16213e; }
+        .btn-secondary { background: #e2e8f0; color: #333; }
+        .btn-secondary:hover { background: #cbd5e1; }
+        .btn-row { display: flex; gap: .75rem; margin-top: .5rem; }
+        pre { background: #1a1a2e; color: #e0e0e0; padding: 1rem; border-radius: 6px; overflow-x: auto; white-space: pre-wrap; font-size: .85rem; min-height: 3rem; }
+        .score-badge { display: inline-block; padding: .25rem .75rem; border-radius: 12px; font-weight: 700; font-size: 1.1rem; }
+        .score-high { background: #d4edda; color: #155724; }
+        .score-mid  { background: #fff3cd; color: #856404; }
+        .score-low  { background: #f8d7da; color: #721c24; }
+        .result-header { display: flex; align-items: center; gap: 1rem; margin-bottom: .75rem; }
+        .hidden { display: none; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+        .stat-item { text-align: center; padding: .75rem; background: #f0f4f8; border-radius: 6px; }
+        .stat-value { font-size: 1.5rem; font-weight: 700; color: #0f3460; }
+        .stat-label { font-size: .8rem; color: #666; }
+        .error { color: #dc3545; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚡ Lead Intelligence</h1>
+
+        <!-- POST /lead form -->
+        <div class="card">
+            <h2>Qualificar Lead</h2>
+            <form id="leadForm">
+                <label for="name">Nome</label>
+                <input id="name" name="name" required placeholder="Maria Silva">
+
+                <label for="city">Cidade</label>
+                <input id="city" name="city" required placeholder="São Paulo">
+
+                <label for="monthly_bill">Conta de Luz (R$)</label>
+                <input id="monthly_bill" name="monthly_bill" type="number" min="0" step="0.01" required placeholder="350.00">
+
+                <label for="property_type">Tipo de Imóvel</label>
+                <select id="property_type" name="property_type">
+                    <option value="residencial">Residencial</option>
+                    <option value="comercial">Comercial</option>
+                    <option value="industrial">Industrial</option>
+                    <option value="rural">Rural</option>
+                </select>
+
+                <label for="goal">Objetivo</label>
+                <input id="goal" name="goal" required placeholder="Reduzir conta de energia">
+
+                <div class="btn-row">
+                    <button type="submit" class="btn-primary">Enviar Lead</button>
+                    <button type="reset" class="btn-secondary">Limpar</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Lead result -->
+        <div id="resultCard" class="card hidden">
+            <h2>Resultado</h2>
+            <div id="resultHeader" class="result-header"></div>
+            <pre id="resultJson"></pre>
+        </div>
+
+        <!-- GET /stats -->
+        <div class="card">
+            <h2>Estatísticas</h2>
+            <div class="btn-row" style="margin-bottom:1rem;">
+                <button id="loadStats" class="btn-secondary">Carregar /stats</button>
+            </div>
+            <div id="statsGrid" class="stats-grid hidden"></div>
+            <pre id="statsJson" class="hidden"></pre>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+
+        // --- POST /lead ---
+        document.getElementById("leadForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const payload = {
+                name: form.name.value.trim(),
+                city: form.city.value.trim(),
+                monthly_bill: parseFloat(form.monthly_bill.value),
+                property_type: form.property_type.value,
+                goal: form.goal.value.trim(),
+            };
+
+            const card = document.getElementById("resultCard");
+            const header = document.getElementById("resultHeader");
+            const json = document.getElementById("resultJson");
+
+            card.classList.remove("hidden");
+            header.innerHTML = "";
+            json.textContent = "Enviando…";
+
+            try {
+                const res = await fetch(API_BASE + "/lead", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    header.innerHTML = '<span class="error">Erro ' + res.status + "</span>";
+                    json.textContent = JSON.stringify(data, null, 2);
+                    return;
+                }
+                const cls = data.score >= 7 ? "score-high" : data.score >= 4 ? "score-mid" : "score-low";
+                header.innerHTML =
+                    '<span class="score-badge ' + cls + '">Score ' + data.score + "</span>" +
+                    "<span>Urgência: <strong>" + data.urgency + "</strong></span>";
+                json.textContent = JSON.stringify(data, null, 2);
+            } catch (err) {
+                header.innerHTML = '<span class="error">Falha na requisição</span>';
+                json.textContent = err.message;
+            }
+        });
+
+        // --- GET /stats ---
+        document.getElementById("loadStats").addEventListener("click", async () => {
+            const grid = document.getElementById("statsGrid");
+            const json = document.getElementById("statsJson");
+            grid.classList.add("hidden");
+            json.classList.remove("hidden");
+            json.textContent = "Carregando…";
+
+            try {
+                const res = await fetch(API_BASE + "/stats");
+                const data = await res.json();
+                if (!res.ok) {
+                    json.textContent = JSON.stringify(data, null, 2);
+                    return;
+                }
+                json.classList.add("hidden");
+                grid.classList.remove("hidden");
+                grid.innerHTML =
+                    '<div class="stat-item"><div class="stat-value">' + data.total_leads + '</div><div class="stat-label">Total Leads</div></div>' +
+                    '<div class="stat-item"><div class="stat-value">' + data.average_score + '</div><div class="stat-label">Score Médio</div></div>' +
+                    '<div class="stat-item"><div class="stat-value">' + data.high_quality_leads + '</div><div class="stat-label">Alta Qualidade (≥7)</div></div>' +
+                    '<div class="stat-item"><div class="stat-value">' + data.low_quality_leads + '</div><div class="stat-label">Baixa Qualidade (≤3)</div></div>';
+            } catch (err) {
+                json.textContent = err.message;
+            }
+        });
+    </script>
+</body>
+</html>

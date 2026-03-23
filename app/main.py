@@ -6,10 +6,13 @@ Solar lead qualification with hybrid AI + rules and local JSONL storage.
 import logging
 import os
 import sys
+from pathlib import Path
 
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.routes import api_router
 
@@ -42,6 +45,18 @@ if _cors:
     )
 
 app.include_router(api_router)
+
+# --- Static UI for testing ---
+_static_dir = Path(__file__).resolve().parent / "static"
+
+
+@app.get("/ui")
+async def ui_redirect() -> RedirectResponse:
+    """Redirect /ui to the static test page."""
+    return RedirectResponse(url="/static/index.html")
+
+
+app.mount("/static", StaticFiles(directory=str(_static_dir)), name="static")
 
 # Future: mount routers for WhatsApp, webhooks, admin, etc.
 # app.include_router(whatsapp_router, prefix="/webhooks", tags=["whatsapp"])
