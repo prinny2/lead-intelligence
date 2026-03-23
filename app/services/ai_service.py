@@ -67,6 +67,25 @@ def get_ai_qualification(lead: LeadRequest) -> dict[str, Any] | None:
         property_type=lead.property_type,
         goal=lead.goal,
     )
+    # Append optional enrichment fields when provided
+    optional_lines = []
+    if lead.email:
+        optional_lines.append(f"Email: {lead.email}")
+    if lead.phone:
+        optional_lines.append(f"Telefone: {lead.phone}")
+    if lead.company:
+        optional_lines.append(f"Empresa: {lead.company}")
+    if lead.state:
+        optional_lines.append(f"Estado: {lead.state}")
+    if lead.ownership_status:
+        optional_lines.append(f"Titularidade do imóvel: {lead.ownership_status}")
+    if lead.interest_message:
+        optional_lines.append(f"Mensagem de interesse: {lead.interest_message}")
+    if optional_lines:
+        user_content = user_content.replace(
+            "\n\nResponda somente com o objeto JSON.",
+            "\n" + "\n".join(optional_lines) + "\n\nResponda somente com o objeto JSON.",
+        )
 
     try:
         response = client.chat.completions.create(

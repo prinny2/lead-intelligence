@@ -6,6 +6,7 @@ from typing import Any
 
 from app.models import DEFAULT_URGENCY, LeadRequest, LeadResponse, SCORE_MAX, SCORE_MIN, VALID_URGENCIES
 from app.services.recommendation_builder import build_sales_recommendation
+from lead_intelligence.qualifier import qualify_lead as _qualify_lead
 
 logger = logging.getLogger("lead_intelligence")
 
@@ -155,9 +156,25 @@ def hybrid_score(lead: LeadRequest, ai_output: dict[str, Any] | None) -> HybridR
         property_normalized,
     )
 
+    # Run toolkit qualifier as an additional signal (never breaks the response)
+    qualifier_decision = None
+    qualifier_reasons = None
+    try:
+        lead_dict = lead.model_dump(exclude_none=True)
+        qual_out = _qualify_lead(lead_dict)
+        qualifier_decision = qual_out.get("decision")
+        qualifier_reasons = qual_out.get("reasons")
+    except Exception as e:
+        logger.warning("qualifier_failed error=%s", str(e))
+
     return HybridResult(
-        response=LeadResponse(score=score, urgency=urgency,
-                              recommendation=recommendation),
+        response=LeadResponse(
+            score=score,
+            urgency=urgency,
+            recommendation=recommendation,
+            decision=qualifier_decision,
+            qualifier_reasons=qualifier_reasons,
+        ),
         ai_raw_score=ai_raw,
         rule_delta=delta,
     )
