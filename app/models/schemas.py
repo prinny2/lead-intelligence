@@ -62,6 +62,7 @@ class LeadResponse(BaseModel):
     score: int = Field(..., ge=0, le=10)
     urgency: str = Field(..., pattern="^(baixa|media|alta)$")
     recommendation: str
+    whatsapp_message: str | None = None
     decision: DecisionType | None = None
     qualifier_reasons: list[str] | None = None
 
@@ -89,6 +90,7 @@ class StoredLead(BaseModel):
     score: int = Field(..., ge=0, le=10)
     urgency: str = Field(..., pattern="^(baixa|media|alta)$")
     recommendation: str
+    whatsapp_message: str | None = None
     decision: DecisionType | None = None
     qualifier_reasons: list[str] | None = None
     ai_raw_score: int | None = None
@@ -119,6 +121,7 @@ class StoredLead(BaseModel):
             score=response.score,
             urgency=response.urgency,
             recommendation=response.recommendation,
+            whatsapp_message=response.whatsapp_message,
             decision=response.decision,
             qualifier_reasons=response.qualifier_reasons,
             ai_raw_score=ai_raw_score,
