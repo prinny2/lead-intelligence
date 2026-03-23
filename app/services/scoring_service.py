@@ -6,6 +6,7 @@ from typing import Any
 
 from app.models import DEFAULT_URGENCY, LeadRequest, LeadResponse, SCORE_MAX, SCORE_MIN, VALID_URGENCIES
 from app.services.recommendation_builder import build_sales_recommendation
+from app.services.whatsapp_builder import build_whatsapp_message
 from lead_intelligence.qualifier import qualify_lead as _qualify_lead
 
 logger = logging.getLogger("lead_intelligence")
@@ -167,11 +168,14 @@ def hybrid_score(lead: LeadRequest, ai_output: dict[str, Any] | None) -> HybridR
     except Exception as e:
         logger.warning("qualifier_failed error=%s", str(e))
 
+    whatsapp_message = build_whatsapp_message(lead, score, urgency)
+
     return HybridResult(
         response=LeadResponse(
             score=score,
             urgency=urgency,
             recommendation=recommendation,
+            whatsapp_message=whatsapp_message,
             decision=qualifier_decision,
             qualifier_reasons=qualifier_reasons,
         ),
