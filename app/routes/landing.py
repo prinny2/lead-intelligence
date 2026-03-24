@@ -107,9 +107,20 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(8,14,26,.9);
 .testi blockquote{font-size:.9rem;line-height:1.7;color:var(--text);margin-bottom:1.25rem;font-style:italic}
 .testi blockquote strong{color:var(--sun);font-style:normal}
 .testi-who{display:flex;align-items:center;gap:.75rem}
-.testi-av{width:2.4rem;height:2.4rem;border-radius:50%;background:linear-gradient(135deg,var(--sun),var(--sky));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.82rem;color:#000;flex-shrink:0}
-.testi-name{font-weight:700;font-size:.82rem}
+.testi-av{width:3rem;height:3rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1rem;flex-shrink:0;color:#fff;border:2px solid rgba(255,255,255,.15)}
+.testi-name{font-weight:700;font-size:.85rem}
 .testi-role{font-size:.72rem;color:var(--muted)}
+.testi-result{display:inline-block;margin-top:.75rem;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);color:var(--green);font-size:.72rem;font-weight:700;padding:.25rem .65rem;border-radius:999px}
+
+/* FAQ */
+.faq-list{margin-top:2.5rem;display:flex;flex-direction:column;gap:.75rem;max-width:720px;margin-left:auto;margin-right:auto}
+.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:.85rem;overflow:hidden}
+.faq-q{width:100%;background:none;border:none;color:var(--text);text-align:left;padding:1.1rem 1.4rem;font-size:.92rem;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:1rem;font-family:inherit}
+.faq-q:hover{color:var(--sun)}
+.faq-icon{color:var(--sun);font-size:1.1rem;flex-shrink:0;transition:transform .2s}
+.faq-a{font-size:.85rem;color:var(--muted);line-height:1.7;padding:0 1.4rem 1.1rem;display:none}
+.faq-item.open .faq-a{display:block}
+.faq-item.open .faq-icon{transform:rotate(45deg)}
 
 /* PRICING */
 .price-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem;margin-top:3rem;align-items:start}
@@ -347,25 +358,89 @@ footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--sun
         <div class="stars">★★★★★</div>
         <blockquote>"Antes meu vendedor ligava pra 50 leads e fechava 2. Hoje ele liga pra <strong>20 leads qualificados e fecha 5</strong>. O sistema pagou em menos de um mês."</blockquote>
         <div class="testi-who">
-          <div class="testi-av">RM</div>
-          <div><div class="testi-name">Ricardo M.</div><div class="testi-role">Sócio — instaladora em Recife, PE</div></div>
+          <div class="testi-av" style="background:linear-gradient(135deg,#b45309,#92400e)">RM</div>
+          <div>
+            <div class="testi-name">Ricardo M.</div>
+            <div class="testi-role">Sócio — instaladora em Recife, PE</div>
+            <span class="testi-result">↑ 150% em fechamentos</span>
+          </div>
         </div>
       </div>
       <div class="testi">
         <div class="stars">★★★★★</div>
-        <blockquote>"A mensagem do WhatsApp foi o que me convenceu. O cliente recebe <strong>com o nome dele, a cidade e o valor da conta</strong> — parece que foi escrita à mão. A taxa de resposta triplicou."</blockquote>
+        <blockquote>"A mensagem do WhatsApp foi o que me convenceu. O cliente recebe <strong>com o nome, cidade e conta dele</strong> — parece que foi escrita à mão. Taxa de resposta triplicou."</blockquote>
         <div class="testi-who">
-          <div class="testi-av">CF</div>
-          <div><div class="testi-name">Camila F.</div><div class="testi-role">Gestora comercial — Campinas, SP</div></div>
+          <div class="testi-av" style="background:linear-gradient(135deg,#0369a1,#075985)">CF</div>
+          <div>
+            <div class="testi-name">Camila F.</div>
+            <div class="testi-role">Gestora comercial — Campinas, SP</div>
+            <span class="testi-result">↑ 3x taxa de resposta WA</span>
+          </div>
         </div>
       </div>
       <div class="testi">
         <div class="stars">★★★★★</div>
-        <blockquote>"Conectei com meu Google Forms em 20 minutos. Agora <strong>cada lead que entra já chega com nota e mensagem pronta</strong>. Economizei umas 3 horas por dia só em triagem."</blockquote>
+        <blockquote>"Conectei com meu Google Forms em 20 minutos. Agora <strong>cada lead chega com nota e mensagem pronta</strong>. Economizo 3 horas por dia só em triagem."</blockquote>
         <div class="testi-who">
-          <div class="testi-av">PL</div>
-          <div><div class="testi-name">Paulo L.</div><div class="testi-role">Diretor — SolarSul, Porto Alegre</div></div>
+          <div class="testi-av" style="background:linear-gradient(135deg,#065f46,#064e3b)">PL</div>
+          <div>
+            <div class="testi-name">Paulo L.</div>
+            <div class="testi-role">Diretor — SolarSul, Porto Alegre</div>
+            <span class="testi-result">−3h/dia em triagem</span>
+          </div>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="container">
+    <div class="section-tag center">Dúvidas frequentes</div>
+    <h2 class="section-title center">Antes de falar com a gente</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Funciona com o Google Forms que eu já uso?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">Sim. Você conecta seu formulário existente via Zapier ou Make em menos de 20 minutos — sem mudar nada no seu processo atual. Todo lead novo que chegar já aparece qualificado no painel.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Preciso de equipe técnica pra configurar?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">Não. A gente configura tudo pra você em até 1 hora por chamada. Você não precisa saber programar nada — só nos dar acesso ao seu formulário e definir qual número de WhatsApp recebe as notificações.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Meus dados de leads ficam onde?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">Nos servidores da sua conta — isolados dos outros clientes. Você pode exportar tudo em CSV quando quiser. Não compartilhamos dados com nenhum terceiro.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          E se eu já usar um CRM como RD Station ou HubSpot?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">O LeadSolar funciona antes do CRM — ele qualifica e prioriza os leads, e você continua mandando os bons pro seu CRM normalmente. Tem integração via Zapier com os principais CRMs do mercado.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          O sistema funciona pra leads que vêm do Instagram e Meta Ads?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">Sim. Meta Leads Ads conecta direto via webhook. Quando alguém preenche o formulário do seu anúncio, o lead já cai qualificado no painel em segundos — sem copiar e colar nada no WhatsApp.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Posso cancelar quando quiser?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">Sim, sem multa e sem burocracia. Você cancela pelo painel ou nos chama no WhatsApp. Os 30 dias grátis não pedem cartão de crédito — você só paga se decidir continuar.</div>
       </div>
     </div>
   </div>
@@ -451,7 +526,7 @@ footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--sun
       <span>✓ Setup em 1 hora</span>
       <span>✓ Cancele quando quiser</span>
     </div>
-    <div id="toast" style="position:static;display:none;margin-top:1.25rem;text-align:center;font-size:.875rem;color:var(--green);font-weight:700"></div>
+    <div id="form-feedback" style="display:none;margin-top:1.25rem;text-align:center;font-size:.875rem;font-weight:700"></div>
   </div>
 </section>
 
@@ -464,16 +539,45 @@ footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--sun
 </footer>
 
 <script>
-function submitForm(e) {
+async function submitForm(e) {
   e.preventDefault();
+  const btn = e.submitter || e.target.querySelector('button[type=submit]');
   const val = document.getElementById('contact-input').value.trim();
-  const saved = JSON.parse(localStorage.getItem('ls_contacts') || '[]');
-  saved.push({v: val, t: new Date().toISOString()});
-  localStorage.setItem('ls_contacts', JSON.stringify(saved));
-  const msg = document.getElementById('toast');
-  msg.style.display = 'block';
-  msg.textContent = '✓ Recebido! Vamos te chamar no WhatsApp em breve.';
-  document.getElementById('contact-input').value = '';
+  if (!val) return;
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
+  const msg = document.getElementById('form-feedback');
+  try {
+    const r = await fetch('/contact', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({contact: val, source: 'landing'})
+    });
+    const data = await r.json();
+    msg.style.display = 'block';
+    if (data.ok) {
+      msg.style.color = '#22c55e';
+      msg.textContent = '✓ Recebido! Vamos te chamar no WhatsApp em breve.';
+      document.getElementById('contact-input').value = '';
+    } else {
+      msg.style.color = '#ef4444';
+      msg.textContent = 'Algo deu errado. Tente novamente.';
+    }
+  } catch(err) {
+    msg.style.display = 'block';
+    msg.style.color = '#ef4444';
+    msg.textContent = 'Erro de conexão. Tente novamente.';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Quero testar grátis →';
+  }
+}
+
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
 }
 </script>
 </body>
