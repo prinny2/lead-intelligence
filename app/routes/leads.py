@@ -2,10 +2,10 @@
 
 import logging
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, HTTPException, Query
 
-from app.models import LeadRequest, LeadResponse, LeadStats, StoredLead
-from app.services import get_ai_qualification, hybrid_score, load_leads, save_lead
+from app.models import LeadRequest, LeadResponse, LeadStats, OutcomeUpdate, StoredLead
+from app.services import get_ai_qualification, hybrid_score, load_leads, save_lead, update_lead_outcome
 
 logger = logging.getLogger("lead_intelligence")
 
@@ -73,6 +73,24 @@ async def list_leads(
     return leads[:limit]
 
 
+@router.get("/leads/{lead_id}", response_model=StoredLead)
+async def get_lead(lead_id: str) -> StoredLead:
+    leads = load_leads()
+    for lead in leads:
+        if lead.id == lead_id:
+            return lead
+    raise HTTPException(status_code=404, detail="lead not found")
+
+
+@router.patch("/leads/{lead_id}/outcome", response_model=StoredLead)
+async def update_outcome(lead_id: str, body: OutcomeUpdate) -> StoredLead:
+    updated = update_lead_outcome(lead_id, body.outcome, body.notes)
+    if updated is None:
+        raise HTTPException(status_code=404, detail="lead not found")
+    logger.info("outcome_updated lead_id=%s outcome=%s", lead_id, body.outcome)
+    return updated
+
+
 @router.get("/stats", response_model=LeadStats)
 async def get_stats() -> LeadStats:
     leads = load_leads()
@@ -84,6 +102,8 @@ async def get_stats() -> LeadStats:
             low_quality_leads=0,
             breakdown_by_urgency={},
             breakdown_by_property_type={},
+            breakdown_by_outcome={},
+            conversion_rate=0.0,
         )
     total = len(leads)
     scores = [lead.score for lead in leads]
@@ -101,6 +121,14 @@ async def get_stats() -> LeadStats:
         key = (lead.property_type or "desconhecido").strip().lower()
         property_breakdown[key] = property_breakdown.get(key, 0) + 1
 
+    outcome_breakdown: dict[str, int] = {}
+    for lead in leads:
+        key = lead.outcome or "sem_retorno"
+        outcome_breakdown[key] = outcome_breakdown.get(key, 0) + 1
+
+    closed = sum(1 for lead in leads if lead.outcome == "closed")
+    conversion_rate = round(closed / total * 100, 1)
+
     return LeadStats(
         total_leads=total,
         average_score=round(avg, 2),
@@ -108,4 +136,6 @@ async def get_stats() -> LeadStats:
         low_quality_leads=low,
         breakdown_by_urgency=urgency_breakdown,
         breakdown_by_property_type=property_breakdown,
+        breakdown_by_outcome=outcome_breakdown,
+        conversion_rate=conversion_rate,
     )

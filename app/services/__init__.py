@@ -8,7 +8,7 @@ from app.services.recommendation_builder import (
     render_recommendation_from_plan,
 )
 from app.services.scoring_service import hybrid_score
-from app.services.storage_service import load_leads, save_lead
+from app.services.storage_service import load_leads, save_lead, update_lead_outcome
 
 __all__ = [
     "SalesActionPlan",
@@ -19,4 +19,5 @@ __all__ = [
     "hybrid_score",
     "load_leads",
     "save_lead",
+    "update_lead_outcome",
 ]

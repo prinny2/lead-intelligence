@@ -10,6 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 UrgencyType = Literal["baixa", "media", "alta"]
 DecisionType = Literal["accept", "review", "reject"]
+OutcomeType = Literal["closed", "ghosted", "not_viable", "scheduled_visit", "nurturing"]
 
 VALID_URGENCIES: frozenset[str] = frozenset({"baixa", "media", "alta"})
 DEFAULT_URGENCY: UrgencyType = "baixa"
@@ -95,6 +96,8 @@ class StoredLead(BaseModel):
     qualifier_reasons: list[str] | None = None
     ai_raw_score: int | None = None
     rule_delta: int = 0
+    outcome: OutcomeType | None = None
+    outcome_notes: str | None = None
 
     @classmethod
     def from_qualification(
@@ -141,3 +144,12 @@ class LeadStats(BaseModel):
     low_quality_leads: int   # score <= 3
     breakdown_by_urgency: dict[str, int]
     breakdown_by_property_type: dict[str, int]
+    breakdown_by_outcome: dict[str, int]
+    conversion_rate: float  # % of leads with outcome == "closed"
+
+
+class OutcomeUpdate(BaseModel):
+    """Body for PATCH /leads/{id}/outcome."""
+
+    outcome: OutcomeType
+    notes: str | None = None
