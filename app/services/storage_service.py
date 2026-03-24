@@ -33,6 +33,29 @@ def save_lead(record: StoredLead) -> None:
         logger.warning("storage_failed path=%s error=%s", path, str(e))
 
 
+def update_lead_outcome(lead_id: str, outcome: str, notes: str | None = None) -> StoredLead | None:
+    """Find lead by id, update outcome/notes, rewrite the file. Returns updated record or None."""
+    path = _get_leads_file()
+    leads = load_leads()
+    updated: StoredLead | None = None
+    for i, lead in enumerate(leads):
+        if lead.id == lead_id:
+            leads[i] = lead.model_copy(update={"outcome": outcome, "outcome_notes": notes})
+            updated = leads[i]
+            break
+    if updated is None:
+        return None
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with open(path, "w", encoding="utf-8") as f:
+            for lead in leads:
+                f.write(lead.model_dump_json() + "\n")
+        logger.debug("updated outcome lead_id=%s outcome=%s", lead_id, outcome)
+    except Exception as e:
+        logger.warning("update_lead_failed path=%s error=%s", path, str(e))
+    return updated
+
+
 def load_leads() -> list[StoredLead]:
     """Read all leads from leads.jsonl. Returns [] if file missing or invalid."""
     path = _get_leads_file()
