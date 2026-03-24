@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__Claude_Preview__preview_start",
+      "Bash(where python:*)",
+      "Bash(where py:*)",
+      "Bash(where python3:*)",
+      "Bash(echo \"py exit: $?\")",
+      "Bash(gh pr:*)",
+      "Bash(python -m pytest tests/ -x -q)",
+      "Bash(python -m pytest tests/ -v)",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(python -m pytest tests/test_api.py tests/test_scoring_service.py -v --tb=short)",
+      "Bash(python -m pytest tests/test_api.py tests/test_scoring_service.py --tb=short -q)",
+      "Bash(python -c \"import subprocess; r = subprocess.run\\([''python'', ''-m'', ''pytest'', ''tests/test_api.py'', ''tests/test_scoring_service.py'', ''--tb=short'', ''-v''], capture_output=True, text=True\\); print\\(r.stdout[-3000:]\\); print\\(r.stderr[-1000:]\\); print\\(''RC:'', r.returncode\\)\")",
+      "Bash(python -m pytest tests/test_api.py -v)",
+      "Bash(python -c \"print\\(''hello''\\)\")",
+      "Bash(cmd /c \"cd /d \"\"C:\\\\Users\\\\vpaes\\\\OneDrive\\\\Área de Trabalho\\\\lead-intelligence\\\\.claude\\\\worktrees\\\\practical-buck\"\" && python -m pytest tests/test_api.py tests/test_scoring_service.py -q 2>&1\")",
+      "Bash(cmd /c \"C:\\\\Python314\\\\python.exe -c \"\"import sys; sys.path.insert\\(0, ''.''\\); from app.models.schemas import LeadRequest, LeadResponse, StoredLead, LeadStats, DecisionType; print\\(''schemas OK''\\)\"\"\")"
+    ]
+  }
+}
