@@ -1,5 +1,12 @@
 # Blueprint Render.com: New + Blueprint → colar este repo
 # https://render.com/docs/blueprint-spec
+#
+# Deploy rápido:
+#   1. render.com → New → Blueprint → conectar repo
+#   2. Setar no painel (Environment → Secret Files):
+#      OPENAI_API_KEY = sk-...
+#      API_KEY        = qualquer string secreta
+#   3. (Opcional) adicionar disco persistente em /data e setar LEADS_FILE=/data/leads.jsonl
 
 services:
   - type: web
@@ -14,6 +21,8 @@ services:
         value: "3.11.9"
       - key: CORS_ORIGINS
         value: "*"
-      # Defina no painel (secret) ou após o deploy:
-      # OPENAI_API_KEY
-      # LEADS_FILE=/data/leads.jsonl  (se adicionar disco persistente)
+      # Setar como secrets no painel — nunca commitar valores reais:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: API_KEY
+        sync: false
