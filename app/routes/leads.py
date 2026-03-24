@@ -10,6 +10,7 @@ from fastapi.responses import StreamingResponse
 
 from app.models import LeadRequest, LeadResponse, LeadStats, OutcomeUpdate, StoredLead
 from app.services import get_ai_qualification, hybrid_score, load_leads, save_lead, update_lead_outcome
+from app.services.sheets_service import push_lead_result_to_sheet
 
 logger = logging.getLogger("lead_intelligence")
 
@@ -52,6 +53,15 @@ def _score_and_store(data: LeadRequest) -> LeadResponse:
         save_lead(stored)
     except Exception as e:
         logger.warning("storage_skipped error=%s", str(e))
+    push_lead_result_to_sheet(
+        name=data.name,
+        city=data.city,
+        state=data.state,
+        score=result.response.score,
+        decision=result.response.decision,
+        urgency=result.response.urgency,
+        whatsapp_message=result.response.whatsapp_message,
+    )
     return result.response
 
 
