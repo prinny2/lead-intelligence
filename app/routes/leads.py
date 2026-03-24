@@ -16,11 +16,6 @@ logger = logging.getLogger("lead_intelligence")
 router = APIRouter()
 
 
-@router.get("/")
-async def root() -> dict[str, str]:
-    return {"status": "ok"}
-
-
 @router.get("/health")
 async def health() -> dict[str, str]:
     return {"status": "ok"}

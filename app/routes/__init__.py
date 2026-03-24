@@ -3,10 +3,11 @@
 from fastapi import APIRouter, Depends
 
 from app.auth import require_api_key
-from app.routes import dashboard, leads, roi, webhook
+from app.routes import dashboard, landing, leads, roi, webhook
 
 api_router = APIRouter()
-# Dashboard is public (no auth needed — read-only HTML)
+# Public pages (no auth)
+api_router.include_router(landing.router, tags=["landing"])
 api_router.include_router(dashboard.router, tags=["dashboard"])
 # All other routes require API key
 _secured = APIRouter(dependencies=[Depends(require_api_key)])
