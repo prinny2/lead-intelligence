@@ -1,8 +1,12 @@
 """Lead qualification and stats endpoints."""
 
+import csv
+import io
 import logging
+from datetime import UTC, datetime, timedelta
 
 from fastapi import APIRouter, HTTPException, Query
+from fastapi.responses import StreamingResponse
 
 from app.models import LeadRequest, LeadResponse, LeadStats, OutcomeUpdate, StoredLead
 from app.services import get_ai_qualification, hybrid_score, load_leads, save_lead, update_lead_outcome
@@ -22,27 +26,57 @@ async def health() -> dict[str, str]:
     return {"status": "ok"}
 
 
-@router.post("/lead", response_model=LeadResponse)
-def analyze_lead(data: LeadRequest) -> LeadResponse:
-    logger.info("lead name=%s city=%s", data.name, data.city)
+def _find_duplicate(data: LeadRequest, leads: list[StoredLead]) -> StoredLead | None:
+    """Return existing lead if same phone or email seen in last 30 days."""
+    if not data.phone and not data.email:
+        return None
+    cutoff = datetime.now(UTC) - timedelta(days=30)
+    for lead in reversed(leads):
+        try:
+            ts = datetime.fromisoformat(lead.timestamp.replace("Z", "+00:00"))
+        except Exception:
+            continue
+        if ts < cutoff:
+            continue
+        if data.phone and lead.phone and lead.phone == data.phone:
+            return lead
+        if data.email and lead.email and lead.email == data.email:
+            return lead
+    return None
 
+
+def _score_and_store(data: LeadRequest) -> LeadResponse:
     ai_output = get_ai_qualification(data)
     result = hybrid_score(data, ai_output)
-
-    logger.info("lead score=%s urgency=%s", result.response.score, result.response.urgency)
-
     try:
         stored = StoredLead.from_qualification(
-            data,
-            result.response,
+            data, result.response,
             ai_raw_score=result.ai_raw_score,
             rule_delta=result.rule_delta,
         )
         save_lead(stored)
     except Exception as e:
         logger.warning("storage_skipped error=%s", str(e))
-
     return result.response
+
+
+@router.post("/lead", response_model=LeadResponse)
+def analyze_lead(data: LeadRequest) -> LeadResponse:
+    logger.info("lead name=%s city=%s", data.name, data.city)
+    existing = _find_duplicate(data, load_leads())
+    if existing:
+        logger.info("duplicate_lead id=%s", existing.id)
+        return LeadResponse(
+            score=existing.score,
+            urgency=existing.urgency,
+            recommendation=existing.recommendation,
+            whatsapp_message=existing.whatsapp_message,
+            decision=existing.decision,
+            qualifier_reasons=existing.qualifier_reasons,
+        )
+    response = _score_and_store(data)
+    logger.info("lead score=%s urgency=%s", response.score, response.urgency)
+    return response
 
 
 @router.get("/leads", response_model=list[StoredLead])
@@ -138,4 +172,49 @@ async def get_stats() -> LeadStats:
         breakdown_by_property_type=property_breakdown,
         breakdown_by_outcome=outcome_breakdown,
         conversion_rate=conversion_rate,
+    )
+
+
+@router.post("/leads/bulk", response_model=list[LeadResponse])
+def bulk_ingest(leads_in: list[LeadRequest]) -> list[LeadResponse]:
+    """Score up to 50 leads at once. Useful for CSV batch uploads."""
+    if len(leads_in) > 50:
+        raise HTTPException(status_code=422, detail="max 50 leads per request")
+    existing = load_leads()
+    results: list[LeadResponse] = []
+    for data in leads_in:
+        dup = _find_duplicate(data, existing)
+        if dup:
+            results.append(LeadResponse(
+                score=dup.score, urgency=dup.urgency,
+                recommendation=dup.recommendation,
+                whatsapp_message=dup.whatsapp_message,
+                decision=dup.decision,
+                qualifier_reasons=dup.qualifier_reasons,
+            ))
+        else:
+            results.append(_score_and_store(data))
+    return results
+
+
+@router.get("/leads/export")
+async def export_leads_csv() -> StreamingResponse:
+    """Download all leads as CSV."""
+    leads = load_leads()
+    fields = [
+        "id", "timestamp", "name", "city", "state", "monthly_bill",
+        "property_type", "goal", "email", "phone", "company",
+        "ownership_status", "score", "urgency", "decision",
+        "outcome", "outcome_notes", "ai_raw_score", "rule_delta",
+    ]
+    buf = io.StringIO()
+    writer = csv.DictWriter(buf, fieldnames=fields, extrasaction="ignore")
+    writer.writeheader()
+    for lead in leads:
+        writer.writerow({f: getattr(lead, f, "") for f in fields})
+    buf.seek(0)
+    return StreamingResponse(
+        iter([buf.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=leads.csv"},
     )
