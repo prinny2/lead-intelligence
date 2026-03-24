@@ -112,6 +112,43 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(8,14,26,.9);
 .testi-role{font-size:.72rem;color:var(--muted)}
 .testi-result{display:inline-block;margin-top:.75rem;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);color:var(--green);font-size:.72rem;font-weight:700;padding:.25rem .65rem;border-radius:999px}
 
+/* DEMO AO VIVO */
+.demo-wrap{display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;margin-top:3rem;align-items:start}
+.demo-form-box{background:var(--surface);border:1px solid var(--border);border-radius:1.25rem;padding:2rem}
+.demo-form-box h3{font-size:1.05rem;font-weight:700;margin-bottom:1.5rem}
+.demo-field{display:flex;flex-direction:column;gap:.35rem;margin-bottom:1rem}
+.demo-field label{font-size:.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.demo-field input,.demo-field select{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:.65rem .9rem;border-radius:.55rem;font-size:.9rem;outline:none;font-family:inherit;transition:border-color .2s}
+.demo-field input:focus,.demo-field select:focus{border-color:var(--sun)}
+.demo-field select option{background:var(--surface2)}
+.demo-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.demo-submit{width:100%;background:var(--sun);color:#000;font-weight:700;padding:.9rem;border-radius:.6rem;border:none;font-size:.95rem;cursor:pointer;margin-top:.5rem;transition:all .15s;font-family:inherit}
+.demo-submit:hover{background:var(--sun-dark)}
+.demo-submit:disabled{opacity:.6;cursor:not-allowed}
+.demo-result-box{background:var(--surface);border:1px solid var(--border);border-radius:1.25rem;padding:2rem;min-height:300px;display:flex;flex-direction:column;justify-content:center}
+.demo-placeholder{text-align:center;color:var(--muted)}
+.demo-placeholder .arrow{font-size:2rem;margin-bottom:.75rem;opacity:.4}
+.demo-placeholder p{font-size:.875rem;line-height:1.6}
+.demo-result{display:none;flex-direction:column;gap:1.25rem}
+.demo-score-row{display:flex;align-items:center;gap:1.25rem}
+.demo-score-circle{width:5rem;height:5rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:800;flex-shrink:0;border:3px solid}
+.demo-score-high{background:rgba(34,197,94,.12);border-color:var(--green);color:var(--green)}
+.demo-score-mid{background:rgba(245,158,11,.12);border-color:var(--sun);color:var(--sun)}
+.demo-score-low{background:rgba(239,68,68,.1);border-color:var(--red);color:var(--red)}
+.demo-score-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:.35rem}
+.demo-score-dec{font-size:1rem;font-weight:700}
+.demo-score-urg{font-size:.8rem;color:var(--muted);margin-top:.15rem}
+.demo-rec{background:var(--surface2);border:1px solid var(--border);border-radius:.75rem;padding:1rem}
+.demo-rec-label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--sky);margin-bottom:.5rem}
+.demo-rec-text{font-size:.82rem;color:var(--text);line-height:1.65}
+.demo-wa{background:#0d2218;border:1px solid #16a34a33;border-radius:.75rem;padding:1rem}
+.demo-wa-label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--green);margin-bottom:.5rem;display:flex;justify-content:space-between;align-items:center}
+.demo-wa-copy{background:none;border:1px solid rgba(34,197,94,.3);color:var(--green);padding:.15rem .55rem;border-radius:.35rem;font-size:.65rem;cursor:pointer;font-family:inherit}
+.demo-wa-copy:hover{background:rgba(34,197,94,.1)}
+.demo-wa-text{font-size:.8rem;color:#bbf7d0;line-height:1.65}
+.demo-error{color:var(--red);font-size:.82rem;text-align:center;padding:.75rem;background:rgba(239,68,68,.08);border-radius:.5rem;border:1px solid rgba(239,68,68,.2)}
+@media(max-width:768px){.demo-wrap{grid-template-columns:1fr}.demo-row{grid-template-columns:1fr}}
+
 /* FAQ */
 .faq-list{margin-top:2.5rem;display:flex;flex-direction:column;gap:.75rem;max-width:720px;margin-left:auto;margin-right:auto}
 .faq-item{background:var(--surface);border:1px solid var(--border);border-radius:.85rem;overflow:hidden}
@@ -394,6 +431,85 @@ footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--sun
   </div>
 </section>
 
+<!-- DEMO AO VIVO -->
+<section class="section" id="demo">
+  <div class="container">
+    <div class="section-tag center">Demo ao vivo</div>
+    <h2 class="section-title center">Teste agora com um lead real</h2>
+    <p class="section-sub center">Preencha os dados de qualquer lead e veja o score, a decisão e a mensagem WhatsApp pronta — em segundos.</p>
+    <div class="demo-wrap">
+      <div class="demo-form-box">
+        <h3>Dados do lead</h3>
+        <form id="demo-form" onsubmit="runDemo(event)">
+          <div class="demo-field">
+            <label>Nome</label>
+            <input id="d-name" placeholder="Ex: João Silva" required maxlength="80"/>
+          </div>
+          <div class="demo-row">
+            <div class="demo-field">
+              <label>Cidade</label>
+              <input id="d-city" placeholder="Ex: Curitiba" required maxlength="80"/>
+            </div>
+            <div class="demo-field">
+              <label>Conta de luz (R$)</label>
+              <input id="d-bill" type="number" placeholder="450" min="50" max="5000" required/>
+            </div>
+          </div>
+          <div class="demo-row">
+            <div class="demo-field">
+              <label>Tipo de imóvel</label>
+              <select id="d-type" required>
+                <option value="">Selecione...</option>
+                <option value="casa">Casa própria</option>
+                <option value="apartamento">Apartamento</option>
+                <option value="comercial">Comercial</option>
+              </select>
+            </div>
+            <div class="demo-field">
+              <label>Objetivo</label>
+              <select id="d-goal">
+                <option value="reduzir conta de luz">Reduzir conta de luz</option>
+                <option value="instalar energia solar">Instalar energia solar</option>
+                <option value="só pesquisando">Só pesquisando</option>
+                <option value="investimento">Investimento</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="demo-submit" id="demo-btn">Ver score e mensagem →</button>
+        </form>
+      </div>
+      <div class="demo-result-box" id="demo-result-box">
+        <div class="demo-placeholder" id="demo-placeholder">
+          <div class="arrow">←</div>
+          <p>Preencha os dados ao lado e clique em <strong>"Ver score e mensagem"</strong> para ver o resultado.</p>
+        </div>
+        <div class="demo-result" id="demo-result">
+          <div class="demo-score-row">
+            <div class="demo-score-circle" id="demo-score-circle">—</div>
+            <div>
+              <div class="demo-score-label">Pontuação do lead</div>
+              <div class="demo-score-dec" id="demo-decision">—</div>
+              <div class="demo-score-urg" id="demo-urgency">—</div>
+            </div>
+          </div>
+          <div class="demo-rec">
+            <div class="demo-rec-label">Recomendação para o vendedor</div>
+            <div class="demo-rec-text" id="demo-rec-text">—</div>
+          </div>
+          <div class="demo-wa">
+            <div class="demo-wa-label">
+              Mensagem WhatsApp pronta
+              <button class="demo-wa-copy" onclick="copyDemoWA()">Copiar</button>
+            </div>
+            <div class="demo-wa-text" id="demo-wa-text">—</div>
+          </div>
+        </div>
+        <div class="demo-error" id="demo-error" style="display:none"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- FAQ -->
 <section class="section" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
   <div class="container">
@@ -539,6 +655,73 @@ footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--sun
 </footer>
 
 <script>
+async function runDemo(e) {
+  e.preventDefault();
+  const btn = document.getElementById('demo-btn');
+  btn.disabled = true;
+  btn.textContent = 'Calculando...';
+  document.getElementById('demo-error').style.display = 'none';
+  document.getElementById('demo-placeholder').style.display = 'none';
+  document.getElementById('demo-result').style.display = 'none';
+
+  const body = {
+    name: document.getElementById('d-name').value.trim(),
+    city: document.getElementById('d-city').value.trim(),
+    monthly_bill: parseFloat(document.getElementById('d-bill').value),
+    property_type: document.getElementById('d-type').value,
+    goal: document.getElementById('d-goal').value,
+  };
+
+  try {
+    const r = await fetch('/demo', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(body),
+    });
+    if (!r.ok) {
+      const err = await r.json().catch(() => ({detail: 'Erro desconhecido'}));
+      throw new Error(err.detail || 'Erro ao calcular score');
+    }
+    const d = await r.json();
+
+    // Score circle
+    const circle = document.getElementById('demo-score-circle');
+    circle.textContent = d.score;
+    circle.className = 'demo-score-circle';
+    if (d.score >= 7) circle.classList.add('demo-score-high');
+    else if (d.score >= 4) circle.classList.add('demo-score-mid');
+    else circle.classList.add('demo-score-low');
+
+    // Decision
+    const decMap = {accept: '✓ Ligar hoje', review: '~ Qualificar primeiro', reject: '✗ Baixa prioridade'};
+    document.getElementById('demo-decision').textContent = decMap[d.decision] || d.decision || '—';
+    const urgMap = {alta: 'Urgência alta', media: 'Urgência média', baixa: 'Urgência baixa'};
+    document.getElementById('demo-urgency').textContent = urgMap[d.urgency] || d.urgency;
+
+    document.getElementById('demo-rec-text').textContent = d.recommendation;
+    document.getElementById('demo-wa-text').textContent = d.whatsapp_message;
+    document.getElementById('demo-result').style.display = 'flex';
+  } catch(err) {
+    const errEl = document.getElementById('demo-error');
+    errEl.textContent = err.message || 'Erro ao conectar. Tente novamente.';
+    errEl.style.display = 'block';
+    document.getElementById('demo-placeholder').style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Ver score e mensagem →';
+  }
+}
+
+function copyDemoWA() {
+  const txt = document.getElementById('demo-wa-text').textContent;
+  if (!txt || txt === '—') return;
+  navigator.clipboard.writeText(txt).then(() => {
+    const btn = document.querySelector('.demo-wa-copy');
+    btn.textContent = 'Copiado!';
+    setTimeout(() => btn.textContent = 'Copiar', 2000);
+  });
+}
+
 async function submitForm(e) {
   e.preventDefault();
   const btn = e.submitter || e.target.querySelector('button[type=submit]');
