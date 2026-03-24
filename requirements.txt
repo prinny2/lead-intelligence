@@ -1,5 +1,5 @@
 fastapi
 uvicorn
 pydantic
-anthropic
+anthropic>=0.40.0
 python-dotenv
