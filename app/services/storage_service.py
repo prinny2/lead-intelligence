@@ -1,4 +1,8 @@
-"""Simple JSONL persistence for leads. Failures do not break the API."""
+"""
+Storage backend — auto-selects based on environment:
+  - GOOGLE_CLOUD_PROJECT set → Firestore (persistent, scalable)
+  - otherwise → JSONL file (local dev / simple deploys)
+"""
 
 import json
 import logging
@@ -9,7 +13,8 @@ from app.models import StoredLead
 
 logger = logging.getLogger("lead_intelligence")
 
-# Store in project root so GET /stats can read without path tricks
+# ── JSONL backend ─────────────────────────────────────────────────────────────
+
 DEFAULT_LEADS_FILE = Path(__file__).resolve().parent.parent.parent / "leads.jsonl"
 
 
@@ -20,23 +25,41 @@ def _get_leads_file() -> Path:
     return DEFAULT_LEADS_FILE
 
 
-def save_lead(record: StoredLead) -> None:
-    """Append one lead to leads.jsonl. Logs and ignores errors."""
+def _save_jsonl(record: StoredLead) -> None:
     path = _get_leads_file()
     try:
         path.parent.mkdir(parents=True, exist_ok=True)
-        line = record.model_dump_json() + "\n"
         with open(path, "a", encoding="utf-8") as f:
-            f.write(line)
+            f.write(record.model_dump_json() + "\n")
         logger.debug("stored name=%s", record.name)
     except Exception as e:
         logger.warning("storage_failed path=%s error=%s", path, str(e))
 
 
-def update_lead_outcome(lead_id: str, outcome: str, notes: str | None = None) -> StoredLead | None:
-    """Find lead by id, update outcome/notes, rewrite the file. Returns updated record or None."""
+def _load_jsonl() -> list[StoredLead]:
     path = _get_leads_file()
-    leads = load_leads()
+    if not path.exists():
+        return []
+    leads: list[StoredLead] = []
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    leads.append(StoredLead.model_validate(json.loads(line)))
+                except Exception as e:
+                    logger.debug("skip_invalid_line error=%s", str(e))
+        return leads
+    except Exception as e:
+        logger.warning("load_leads_failed path=%s error=%s", path, str(e))
+        return []
+
+
+def _update_jsonl(lead_id: str, outcome: str, notes: str | None) -> StoredLead | None:
+    path = _get_leads_file()
+    leads = _load_jsonl()
     updated: StoredLead | None = None
     for i, lead in enumerate(leads):
         if lead.id == lead_id:
@@ -50,31 +73,106 @@ def update_lead_outcome(lead_id: str, outcome: str, notes: str | None = None) ->
         with open(path, "w", encoding="utf-8") as f:
             for lead in leads:
                 f.write(lead.model_dump_json() + "\n")
-        logger.debug("updated outcome lead_id=%s outcome=%s", lead_id, outcome)
     except Exception as e:
         logger.warning("update_lead_failed path=%s error=%s", path, str(e))
     return updated
 
 
-def load_leads() -> list[StoredLead]:
-    """Read all leads from leads.jsonl. Returns [] if file missing or invalid."""
-    path = _get_leads_file()
-    if not path.exists():
-        return []
-    leads: list[StoredLead] = []
+# ── Firestore backend ──────────────────────────────────────────────────────────
+
+def _firestore_client():
+    """Lazy-load Firestore client. Returns None if firebase-admin not installed."""
     try:
-        with open(path, "r", encoding="utf-8") as f:
-            for line in f:
-                line = line.strip()
-                if not line:
-                    continue
-                try:
-                    data = json.loads(line)
-                    leads.append(StoredLead.model_validate(data))
-                except (json.JSONDecodeError, Exception) as e:
-                    logger.debug("skip_invalid_line error=%s", str(e))
-                    continue
+        import firebase_admin
+        from firebase_admin import credentials, firestore
+
+        if not firebase_admin._apps:
+            # On Cloud Run, Application Default Credentials are auto-detected
+            cred = credentials.ApplicationDefault()
+            firebase_admin.initialize_app(cred, {
+                "projectId": os.environ["GOOGLE_CLOUD_PROJECT"],
+            })
+        return firestore.client()
+    except Exception as e:
+        logger.warning("firestore_init_failed error=%s", str(e))
+        return None
+
+
+_COLLECTION = "leads"
+
+
+def _save_firestore(record: StoredLead) -> None:
+    db = _firestore_client()
+    if db is None:
+        return _save_jsonl(record)
+    try:
+        db.collection(_COLLECTION).document(record.id).set(record.model_dump())
+        logger.debug("firestore stored id=%s", record.id)
+    except Exception as e:
+        logger.warning("firestore_save_failed error=%s", str(e))
+        _save_jsonl(record)  # fallback
+
+
+def _load_firestore() -> list[StoredLead]:
+    db = _firestore_client()
+    if db is None:
+        return _load_jsonl()
+    try:
+        docs = db.collection(_COLLECTION).order_by(
+            "timestamp", direction="DESCENDING"
+        ).limit(1000).stream()
+        leads = []
+        for doc in docs:
+            try:
+                leads.append(StoredLead.model_validate(doc.to_dict()))
+            except Exception:
+                pass
         return leads
     except Exception as e:
-        logger.warning("load_leads_failed path=%s error=%s", path, str(e))
-        return []
+        logger.warning("firestore_load_failed error=%s", str(e))
+        return _load_jsonl()
+
+
+def _update_firestore(lead_id: str, outcome: str, notes: str | None) -> StoredLead | None:
+    db = _firestore_client()
+    if db is None:
+        return _update_jsonl(lead_id, outcome, notes)
+    try:
+        ref = db.collection(_COLLECTION).document(lead_id)
+        doc = ref.get()
+        if not doc.exists:
+            return None
+        update = {"outcome": outcome}
+        if notes is not None:
+            update["outcome_notes"] = notes
+        ref.update(update)
+        updated_doc = ref.get()
+        return StoredLead.model_validate(updated_doc.to_dict())
+    except Exception as e:
+        logger.warning("firestore_update_failed error=%s", str(e))
+        return _update_jsonl(lead_id, outcome, notes)
+
+
+# ── Public API ─────────────────────────────────────────────────────────────────
+
+def _use_firestore() -> bool:
+    return bool(os.getenv("GOOGLE_CLOUD_PROJECT", "").strip())
+
+
+def save_lead(record: StoredLead) -> None:
+    if _use_firestore():
+        _save_firestore(record)
+    else:
+        _save_jsonl(record)
+
+
+def load_leads() -> list[StoredLead]:
+    if _use_firestore():
+        return _load_firestore()
+    return _load_jsonl()
+
+
+def update_lead_outcome(lead_id: str, outcome: str, notes: str | None = None) -> StoredLead | None:
+    if _use_firestore():
+        return _update_firestore(lead_id, outcome, notes)
+    return _update_jsonl(lead_id, outcome, notes)
