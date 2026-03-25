@@ -87,11 +87,15 @@ def _firestore_client():
         from firebase_admin import credentials, firestore
 
         if not firebase_admin._apps:
-            # On Cloud Run, Application Default Credentials are auto-detected
-            cred = credentials.ApplicationDefault()
-            firebase_admin.initialize_app(cred, {
-                "projectId": os.environ["GOOGLE_CLOUD_PROJECT"],
-            })
+            project_id = os.environ["GOOGLE_CLOUD_PROJECT"]
+            cred_json = os.getenv("GOOGLE_APPLICATION_CREDENTIALS_JSON", "").strip()
+            if cred_json:
+                # Railway / any PaaS: credentials stored as env var JSON string
+                cred = credentials.Certificate(json.loads(cred_json))
+            else:
+                # Cloud Run: Application Default Credentials auto-detected
+                cred = credentials.ApplicationDefault()
+            firebase_admin.initialize_app(cred, {"projectId": project_id})
         return firestore.client()
     except Exception as e:
         logger.warning("firestore_init_failed error=%s", str(e))
