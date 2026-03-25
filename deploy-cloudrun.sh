@@ -4,10 +4,10 @@
 
 set -e
 
-PROJECT_ID="${1:-leadsolar}"
+PROJECT_ID="${1:-lead-solar-12345}"
 ANTHROPIC_KEY="${2:-}"
 API_KEY="${3:-minha-chave-secreta}"
-REGION="us-central1"
+REGION="southamerica-east1"
 SERVICE="leadsolar"
 
 echo "=== LeadSolar → Cloud Run ==="
@@ -27,7 +27,7 @@ gcloud services enable run.googleapis.com \
 
 # Create Firestore database (native mode) if not exists
 echo "Setting up Firestore..."
-gcloud firestore databases create --location=us-central --project "$PROJECT_ID" 2>/dev/null || true
+gcloud firestore databases create --location=southamerica-east1 --project "$PROJECT_ID" 2>/dev/null || true
 
 # Deploy to Cloud Run (builds from Dockerfile automatically)
 echo "Deploying to Cloud Run..."
