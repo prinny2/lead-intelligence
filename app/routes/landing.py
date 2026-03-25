@@ -12,6 +12,17 @@ _HTML = """<!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>LeadSolar — Seu vendedor liga pro lead certo, na hora certa</title>
 <meta name="description" content="Chega de ligar pra quem mora em apartamento alugado com conta de R$90. Nossa ferramenta mostra quem tem conta alta, imóvel próprio e quer comprar — antes do seu vendedor pegar o telefone."/>
+<meta property="og:title" content="LeadSolar — Seu vendedor liga pro lead certo, na hora certa"/>
+<meta property="og:description" content="Score automático 0–10 por conta de luz, imóvel e urgência. WhatsApp personalizado pronto. Fila de prioridade diária. 30 dias grátis."/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://lead-intelligence-production.up.railway.app/"/>
+<meta property="og:image" content="https://lead-intelligence-production.up.railway.app/og-image.png"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="LeadSolar — Score automático de leads solares"/>
+<meta name="twitter:description" content="Seu vendedor já sabe quem ligar primeiro amanhã de manhã. 30 dias grátis, sem cartão."/>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-XXXXXXXXXX');</script>
 <style>
 :root{
   --bg:#080e1a;--surface:#0f1929;--surface2:#162338;--border:#1a3050;
@@ -196,16 +207,77 @@ footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--sun
 
 #toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--green);color:#000;font-weight:700;padding:.75rem 1.25rem;border-radius:.5rem;font-size:.85rem;display:none;z-index:999}
 
+/* ANNOUNCEMENT BAR */
+.ann-bar{background:linear-gradient(90deg,#92400e,#b45309,#d97706);color:#fff;text-align:center;padding:.55rem 1rem;font-size:.82rem;font-weight:600;position:relative;z-index:101}
+.ann-bar span{color:#fde68a}
+.ann-bar a{color:#fde68a;text-decoration:underline;margin-left:.5rem}
+
+/* INTEGRATION LOGOS */
+.logos-section{padding:2.5rem 2rem;border-bottom:1px solid var(--border)}
+.logos-inner{max-width:1100px;margin:0 auto;text-align:center}
+.logos-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:1.5rem}
+.logos-row{display:flex;gap:2rem;justify-content:center;flex-wrap:wrap;align-items:center}
+.logo-chip{background:var(--surface);border:1px solid var(--border);border-radius:.6rem;padding:.55rem 1.1rem;font-size:.82rem;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:.5rem;transition:border-color .2s}
+.logo-chip:hover{border-color:rgba(245,158,11,.4);color:var(--text)}
+
+/* BEFORE / AFTER */
+.ba-table{margin-top:2.5rem;display:grid;grid-template-columns:1fr 1fr;border-radius:1rem;overflow:hidden;border:1px solid var(--border)}
+.ba-col{display:flex;flex-direction:column}
+.ba-header{padding:1rem 1.5rem;font-weight:700;font-size:.88rem;text-align:center}
+.ba-header.bad{background:rgba(239,68,68,.12);color:#fca5a5;border-bottom:1px solid rgba(239,68,68,.15)}
+.ba-header.good{background:rgba(34,197,94,.1);color:var(--green);border-bottom:1px solid rgba(34,197,94,.15)}
+.ba-row{display:flex;align-items:center;gap:.65rem;padding:.9rem 1.5rem;font-size:.84rem;border-top:1px solid var(--border)}
+.ba-col.bad-col .ba-row{color:#fca5a5}
+.ba-col.bad-col .ba-row::before{content:"✗";color:var(--red);font-weight:700;flex-shrink:0}
+.ba-col.good-col .ba-row{color:#bbf7d0}
+.ba-col.good-col .ba-row::before{content:"✓";color:var(--green);font-weight:700;flex-shrink:0}
+
+/* COUNTER */
+.counter-live{display:inline-flex;align-items:center;gap:.5rem;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:999px;padding:.3rem .9rem;font-size:.75rem;color:var(--green);font-weight:700;margin-top:1.25rem}
+.counter-dot{width:.5rem;height:.5rem;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+
+/* FLOATING WA */
+.wa-float{position:fixed;bottom:1.75rem;right:1.75rem;z-index:500;display:flex;align-items:center;gap:.65rem;background:#25d366;color:#fff;font-weight:700;font-size:.85rem;padding:.75rem 1.25rem;border-radius:3rem;box-shadow:0 4px 20px rgba(37,211,102,.35);text-decoration:none;transition:transform .2s,box-shadow .2s}
+.wa-float:hover{transform:translateY(-2px);box-shadow:0 6px 28px rgba(37,211,102,.45)}
+.wa-float svg{width:1.25rem;height:1.25rem;flex-shrink:0}
+
+/* HAMBURGER */
+.nav-ham{display:none;background:none;border:none;cursor:pointer;padding:.25rem;color:var(--text);font-size:1.4rem}
+.mobile-menu{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:200;flex-direction:column;align-items:center;justify-content:center;gap:2rem}
+.mobile-menu.open{display:flex}
+.mobile-menu a{color:var(--text);text-decoration:none;font-size:1.25rem;font-weight:600}
+.mobile-menu-close{position:absolute;top:1.5rem;right:1.5rem;background:none;border:none;cursor:pointer;color:var(--muted);font-size:1.5rem}
+
 @media(max-width:768px){
   .hero-inner{grid-template-columns:1fr}
   .hero-card{display:none}
   nav .nav-links{display:none}
+  .nav-ham{display:block}
   .hero{padding:6rem 1.25rem 3rem}
   .section{padding:3.5rem 1.25rem}
+  .ba-table{grid-template-columns:1fr}
+  .ba-col.bad-col{border-bottom:1px solid var(--border)}
+  .wa-float span{display:none}
 }
 </style>
 </head>
 <body>
+
+<!-- ANNOUNCEMENT BAR -->
+<div class="ann-bar">
+  🚀 Lançamento: <span>primeiros 50 clientes ganham 40% OFF no primeiro mês</span> — vagas limitadas
+  <a href="#contato">Garantir agora →</a>
+</div>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobile-menu">
+  <button class="mobile-menu-close" onclick="closeMobileMenu()">✕</button>
+  <a href="#problema" onclick="closeMobileMenu()">O problema</a>
+  <a href="#como-funciona" onclick="closeMobileMenu()">Como funciona</a>
+  <a href="#precos" onclick="closeMobileMenu()">Preços</a>
+  <a href="#contato" onclick="closeMobileMenu()" style="color:var(--sun)">Testar grátis →</a>
+</div>
 
 <nav>
   <div class="logo">Lead<span>Solar</span></div>
@@ -214,7 +286,10 @@ footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--sun
     <a href="#como-funciona">Como funciona</a>
     <a href="#precos">Preços</a>
   </div>
-  <a href="#contato" class="nav-cta">Testar 30 dias grátis</a>
+  <div style="display:flex;align-items:center;gap:.75rem">
+    <a href="#contato" class="nav-cta">Testar 30 dias grátis</a>
+    <button class="nav-ham" onclick="document.getElementById('mobile-menu').classList.add('open')" aria-label="Menu">☰</button>
+  </div>
 </nav>
 
 <!-- HERO -->
@@ -236,6 +311,10 @@ footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--sun
         <div class="proof-item"><strong>+3x</strong><span>fechamentos por mês</span></div>
         <div class="proof-item"><strong>-70%</strong><span>tempo em triagem</span></div>
         <div class="proof-item"><strong>30 dias</strong><span>grátis pra testar</span></div>
+      </div>
+      <div class="counter-live">
+        <span class="counter-dot"></span>
+        <span id="leads-counter">2.847</span> leads qualificados hoje
       </div>
     </div>
     <div class="hero-card">
@@ -261,6 +340,22 @@ footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--sun
     </div>
   </div>
 </section>
+
+<!-- INTEGRATIONS -->
+<div class="logos-section">
+  <div class="logos-inner">
+    <div class="logos-label">Conecta com o que você já usa</div>
+    <div class="logos-row">
+      <div class="logo-chip">📋 Google Forms</div>
+      <div class="logo-chip">📣 Meta Leads Ads</div>
+      <div class="logo-chip">⚡ Zapier</div>
+      <div class="logo-chip">🔄 Make (Integromat)</div>
+      <div class="logo-chip">📊 RD Station</div>
+      <div class="logo-chip">💬 WhatsApp</div>
+      <div class="logo-chip">📁 Google Sheets</div>
+    </div>
+  </div>
+</div>
 
 <!-- PROBLEMA -->
 <section class="section" id="problema">
