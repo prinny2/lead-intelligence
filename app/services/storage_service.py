@@ -91,7 +91,11 @@ def _firestore_client():
             cred_json = os.getenv("GOOGLE_APPLICATION_CREDENTIALS_JSON", "").strip()
             if cred_json:
                 # Railway / any PaaS: credentials stored as env var JSON string
-                cred = credentials.Certificate(json.loads(cred_json))
+                cred_dict = json.loads(cred_json)
+                # Fix private key: Railway may store \n as literal \\n
+                if "private_key" in cred_dict:
+                    cred_dict["private_key"] = cred_dict["private_key"].replace("\\n", "\n")
+                cred = credentials.Certificate(cred_dict)
             else:
                 # Cloud Run: Application Default Credentials auto-detected
                 cred = credentials.ApplicationDefault()
