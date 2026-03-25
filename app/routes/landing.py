@@ -21,8 +21,8 @@ _HTML = """<!DOCTYPE html>
 <meta name="twitter:title" content="LeadSolar — Score automático de leads solares"/>
 <meta name="twitter:description" content="Seu vendedor já sabe quem ligar primeiro amanhã de manhã. 30 dias grátis, sem cartão."/>
 <!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-XXXXXXXXXX');</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-MEHL0VK5XD"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-MEHL0VK5XD');</script>
 <style>
 :root{
   --bg:#080e1a;--surface:#0f1929;--surface2:#162338;--border:#1a3050;
