@@ -13,22 +13,19 @@ logger = logging.getLogger("lead_intelligence.stripe")
 PLANS = {
     "starter": {
         "name": "LeadSolar Starter",
-        "price_brl": 29700,  # R$297 in centavos
-        "interval": "month",
+        "price_id": "price_1TFFdtPvTQyWBe6uIdY737DH",
         "rate_limit": 500,
-        "tier": "free",
+        "tier": "starter",
     },
     "pro": {
         "name": "LeadSolar Pro",
-        "price_brl": 49700,  # R$497 in centavos
-        "interval": "month",
+        "price_id": "price_1TFFdvPvTQyWBe6uMMD919W8",
         "rate_limit": 2000,
         "tier": "pro",
     },
     "enterprise": {
         "name": "LeadSolar Empresarial",
-        "price_brl": 99700,  # R$997 in centavos
-        "interval": "month",
+        "price_id": "price_1TFFdwPvTQyWBe6ucsHOsNWC",
         "rate_limit": 100000,
         "tier": "enterprise",
     },
@@ -54,15 +51,7 @@ def create_checkout_session(plan: str, customer_email: str | None = None) -> str
     session = stripe.checkout.Session.create(
         payment_method_types=["card"],
         mode="subscription",
-        line_items=[{
-            "price_data": {
-                "currency": "brl",
-                "unit_amount": p["price_brl"],
-                "recurring": {"interval": p["interval"]},
-                "product_data": {"name": p["name"]},
-            },
-            "quantity": 1,
-        }],
+        line_items=[{"price": p["price_id"], "quantity": 1}],
         subscription_data={"trial_period_days": 30},
         customer_email=customer_email,
         success_url=f"{BASE_URL}/checkout/success?session_id={{CHECKOUT_SESSION_ID}}",
