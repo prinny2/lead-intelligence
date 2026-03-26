@@ -104,6 +104,29 @@ async def list_leads(
     return leads[:limit]
 
 
+@router.get("/leads/export")
+async def export_leads_csv() -> StreamingResponse:
+    """Download all leads as CSV."""
+    leads = load_leads()
+    fields = [
+        "id", "timestamp", "name", "city", "state", "monthly_bill",
+        "property_type", "goal", "email", "phone", "company",
+        "ownership_status", "score", "urgency", "decision",
+        "outcome", "outcome_notes", "ai_raw_score", "rule_delta",
+    ]
+    buf = io.StringIO()
+    writer = csv.DictWriter(buf, fieldnames=fields, extrasaction="ignore")
+    writer.writeheader()
+    for lead in leads:
+        writer.writerow({f: getattr(lead, f, "") for f in fields})
+    buf.seek(0)
+    return StreamingResponse(
+        iter([buf.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=leads.csv"},
+    )
+
+
 @router.get("/leads/{lead_id}", response_model=StoredLead)
 async def get_lead(lead_id: str) -> StoredLead:
     leads = load_leads()
@@ -192,26 +215,3 @@ def bulk_ingest(leads_in: list[LeadRequest]) -> list[LeadResponse]:
         else:
             results.append(_score_and_store(data))
     return results
-
-
-@router.get("/leads/export")
-async def export_leads_csv() -> StreamingResponse:
-    """Download all leads as CSV."""
-    leads = load_leads()
-    fields = [
-        "id", "timestamp", "name", "city", "state", "monthly_bill",
-        "property_type", "goal", "email", "phone", "company",
-        "ownership_status", "score", "urgency", "decision",
-        "outcome", "outcome_notes", "ai_raw_score", "rule_delta",
-    ]
-    buf = io.StringIO()
-    writer = csv.DictWriter(buf, fieldnames=fields, extrasaction="ignore")
-    writer.writeheader()
-    for lead in leads:
-        writer.writerow({f: getattr(lead, f, "") for f in fields})
-    buf.seek(0)
-    return StreamingResponse(
-        iter([buf.getvalue()]),
-        media_type="text/csv",
-        headers={"Content-Disposition": "attachment; filename=leads.csv"},
-    )
