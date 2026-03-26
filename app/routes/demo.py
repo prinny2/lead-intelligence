@@ -1,22 +1,17 @@
 """Public demo endpoint — rule-based only, no AI, no auth. Used by landing page live demo."""
 
 import logging
-import time
-from collections import defaultdict
 
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, Field
 
+from app.services.audit_service import log_event
+from app.services.rate_limit_service import is_allowed
 from app.services.scoring_service import hybrid_score
 from app.services.whatsapp_builder import build_whatsapp_message
 
 router = APIRouter()
 logger = logging.getLogger("lead_intelligence")
-
-# Simple in-memory rate limit: max 5 requests per IP per 60 seconds
-_RATE: dict[str, list[float]] = defaultdict(list)
-_WINDOW = 60.0
-_LIMIT = 5
 
 
 class DemoRequest(BaseModel):
@@ -38,13 +33,16 @@ class DemoResponse(BaseModel):
 @router.post("/demo", response_model=DemoResponse)
 async def demo_score(body: DemoRequest, request: Request) -> DemoResponse:
     """Score a lead using rule-based logic only. Public, rate-limited to 5 req/min per IP."""
-    ip = request.client.host if request.client else "unknown"
-    now = time.monotonic()
-    hits = _RATE[ip]
-    _RATE[ip] = [t for t in hits if now - t < _WINDOW]
-    if len(_RATE[ip]) >= _LIMIT:
-        raise HTTPException(status_code=429, detail="Limite de demonstrações atingido. Tente em 1 minuto.")
-    _RATE[ip].append(now)
+    ip = request.headers.get("x-forwarded-for", "").split(",")[0].strip() or (
+        request.client.host if request.client else "unknown"
+    )
+
+    if not is_allowed(f"demo:{ip}", tier="demo"):
+        log_event("rate_limited", ip=ip, endpoint="/demo", method="POST", status_code=429)
+        raise HTTPException(
+            status_code=429,
+            detail="Limite de demonstrações atingido. Tente em 1 minuto.",
+        )
 
     from app.models import LeadRequest
     lead = LeadRequest(
@@ -57,6 +55,17 @@ async def demo_score(body: DemoRequest, request: Request) -> DemoResponse:
 
     result = hybrid_score(lead, ai_output=None)
     r = result.response
+
+    log_event(
+        "demo_used",
+        ip=ip,
+        endpoint="/demo",
+        method="POST",
+        status_code=200,
+        score=r.score,
+        extra={"city": body.city, "monthly_bill": body.monthly_bill},
+    )
+
     return DemoResponse(
         score=r.score,
         urgency=r.urgency,

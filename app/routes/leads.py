@@ -10,6 +10,7 @@ from fastapi.responses import StreamingResponse
 
 from app.models import LeadRequest, LeadResponse, LeadStats, OutcomeUpdate, StoredLead
 from app.services import get_ai_qualification, hybrid_score, load_leads, save_lead, update_lead_outcome
+from app.services.audit_service import log_event
 
 logger = logging.getLogger("lead_intelligence")
 
@@ -71,6 +72,7 @@ def analyze_lead(data: LeadRequest) -> LeadResponse:
         )
     response = _score_and_store(data)
     logger.info("lead score=%s urgency=%s", response.score, response.urgency)
+    log_event("lead_qualified", endpoint="/lead", method="POST", status_code=200, score=response.score)
     return response
 
 

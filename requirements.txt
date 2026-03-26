@@ -4,3 +4,4 @@ pydantic
 anthropic>=0.40.0
 python-dotenv
 firebase-admin
+sentry-sdk[fastapi]>=2.0.0
