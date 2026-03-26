@@ -19,7 +19,7 @@ router = APIRouter()
 
 @router.get("/health")
 async def health() -> dict[str, str]:
-    return {"status": "ok"}
+    return {"status": "ok", "version": "0.2.0", "stripe": "enabled"}
 
 
 def _find_duplicate(data: LeadRequest, leads: list[StoredLead]) -> StoredLead | None:
