@@ -23,7 +23,13 @@ class ScoringServiceTests(unittest.TestCase):
         self.assertEqual(result.response.urgency, "baixa")
         self.assertEqual(
             result.response.recommendation,
-            "Lead em fase de pesquisa; enviar material educativo e acompanhar depois.",
+            (
+                "Lead em Fortaleza, Conta de luz em torno de R$ 150/mês; o que veio na mensagem: "
+                "«so queria entender como funciona». Pelo WhatsApp, manda um resumo de economia/payback e confirma "
+                "se é titular da conta e tipo de imóvel e se faz sentido continuar o papo. "
+                "Explicar payback e rotina sem cobrar decisão na primeira mensagem; disparar material curto e só retomar "
+                "se ela responder, em até 5 a 10 dias úteis — se não responder, deixa quieto e não gasta pipeline."
+            ),
         )
 
     def test_invalid_ai_output_falls_back_safely(self) -> None:
@@ -45,7 +51,13 @@ class ScoringServiceTests(unittest.TestCase):
         self.assertEqual(result.response.urgency, "baixa")
         self.assertEqual(
             result.response.recommendation,
-            "Interesse moderado; fazer follow-up em 1–2 semanas.",
+            (
+                "Lead em Natal (casa), Conta de luz em torno de R$ 450/mês. Antes de prometer prazo, fecha telhado e "
+                "incidência para dimensionar o sistema, titularidade da conta e se o valor da conta justifica abrir "
+                "simulação. Puxar pelo que a conta já gasta hoje e traduzir em economia mensal estimada; o que a pessoa "
+                "escreveu pede resposta rápida. Usa WhatsApp em até 5 a 10 dias úteis para depois de validar, mandar "
+                "simulação com os dados dela."
+            ),
         )
 
 

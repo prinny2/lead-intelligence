@@ -2,9 +2,11 @@
 
 from app.models.schemas import (
     DEFAULT_URGENCY,
+    DecisionType,
     LeadRequest,
     LeadResponse,
     LeadStats,
+    OutcomeUpdate,
     SCORE_MAX,
     SCORE_MIN,
     StoredLead,
@@ -13,9 +15,11 @@ from app.models.schemas import (
 
 __all__ = [
     "DEFAULT_URGENCY",
+    "DecisionType",
     "LeadRequest",
     "LeadResponse",
     "LeadStats",
+    "OutcomeUpdate",
     "SCORE_MAX",
     "SCORE_MIN",
     "StoredLead",

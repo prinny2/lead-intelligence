@@ -12,7 +12,8 @@ class ApiTests(unittest.TestCase):
     def setUp(self) -> None:
         self.temp_dir = tempfile.TemporaryDirectory()
         self.leads_file = os.path.join(self.temp_dir.name, "leads.jsonl")
-        self.env_patcher = patch.dict(os.environ, {"LEADS_FILE": self.leads_file}, clear=False)
+        self.env_patcher = patch.dict(
+            os.environ, {"LEADS_FILE": self.leads_file}, clear=False)
         self.env_patcher.start()
         self.client = TestClient(app)
 
@@ -40,14 +41,12 @@ class ApiTests(unittest.TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(
-            response.json(),
-            {
-                "score": 10,
-                "urgency": "alta",
-                "recommendation": "Lead promissor; vale contato comercial rápido.",
-            },
-        )
+        data = response.json()
+        self.assertEqual(data["score"], 10)
+        self.assertEqual(data["urgency"], "alta")
+        self.assertEqual(data["recommendation"], "Contato imediato.")
+        self.assertIn("decision", data)
+        self.assertIn("qualifier_reasons", data)
 
     def test_post_lead_rejects_blank_fields(self) -> None:
         response = self.client.post(

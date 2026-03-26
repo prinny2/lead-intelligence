@@ -1,8 +1,6 @@
 fastapi
 uvicorn
 pydantic
-openai
-anthropic
+anthropic>=0.40.0
 python-dotenv
 firebase-admin
-google-cloud-firestore

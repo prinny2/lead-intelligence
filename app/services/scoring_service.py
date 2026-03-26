@@ -5,6 +5,9 @@ from dataclasses import dataclass
 from typing import Any
 
 from app.models import DEFAULT_URGENCY, LeadRequest, LeadResponse, SCORE_MAX, SCORE_MIN, VALID_URGENCIES
+from app.services.recommendation_builder import build_sales_recommendation
+from app.services.whatsapp_builder import build_whatsapp_message
+from lead_intelligence.qualifier import qualify_lead as _qualify_lead
 
 logger = logging.getLogger("lead_intelligence")
 
@@ -22,7 +25,14 @@ PROPERTY_TYPE_MAP = {
     "empresa": "comercial",
     "industria": "comercial",
 }
-URGENCY_GOAL_WORDS = ("reduzir conta", "urgente", "quero agora", "o mais rápido", "reduzir custo")
+URGENCY_GOAL_WORDS = (
+    "reduzir conta",
+    "urgente",
+    "quero agora",
+    "o mais rápido",
+    "o mais rapido",
+    "reduzir custo",
+)
 # Curiosity / early research → negative adjustment so weak leads score 1–3
 LOW_INTENT_GOAL_WORDS = (
     "só quero saber", "apenas curiosidade", "talvez", "não sei", "só pesquisando", "só olhando",
@@ -63,23 +73,38 @@ def _normalize_urgency(raw: str | None) -> str:
     return u if u in VALID_URGENCIES else DEFAULT_URGENCY
 
 
-# Recommendation by score band so output matches strength
-RECOMMENDATION_BY_SCORE = {
-    "low": "Lead em fase de pesquisa; enviar material educativo e acompanhar depois.",
-    "mid": "Interesse moderado; fazer follow-up em 1–2 semanas.",
-    "high": "Lead promissor; vale contato comercial rápido.",
-}
+def _ai_recommendation_snippet(raw: str, *, max_len: int = 520) -> str | None:
+    """Texto da IA utilizável; None se vazio, curto demais ou igual ao fallback de erro."""
+    t = (raw or "").strip()
+    if not t or t == DEFAULT_RECOMMENDATION:
+        return None
+    if len(t) < 10:
+        return None
+    if len(t) > max_len:
+        cut = t[:max_len].rsplit(" ", 1)[0]
+        t = cut + "…" if cut else t[:max_len] + "…"
+    return t
 
 
-def _recommendation_for_score(score: int, ai_recommendation: str) -> str:
-    """Pick recommendation consistent with final score band (0–3 / 4–6 / 7–10)."""
+def _recommendation_for_score(
+    score: int,
+    ai_recommendation: str,
+    urgency: str,
+    lead: LeadRequest,
+    property_normalized: str,
+) -> str:
+    """
+    Faixa baixa: só fallback (a IA pode sugerir ação agressiva incompatível com o score final).
+    Faixa média/alta: usa só a recomendação da IA quando houver texto útil; senão fallback comercial.
+    """
     if score <= 3:
-        return RECOMMENDATION_BY_SCORE["low"]
-    if score <= 6:
-        return RECOMMENDATION_BY_SCORE["mid"]
-    if score >= 7:
-        return RECOMMENDATION_BY_SCORE["high"]
-    return ai_recommendation or DEFAULT_RECOMMENDATION
+        return build_sales_recommendation(lead, score, urgency, property_normalized)
+
+    snippet = _ai_recommendation_snippet(ai_recommendation)
+    if snippet:
+        return snippet
+
+    return build_sales_recommendation(lead, score, urgency, property_normalized)
 
 
 @dataclass
@@ -102,7 +127,8 @@ def hybrid_score(lead: LeadRequest, ai_output: dict[str, Any] | None) -> HybridR
         except (TypeError, ValueError):
             base = DEFAULT_SCORE
             ai_raw = None
-        recommendation = (ai_output.get("recommendation") or "").strip() or DEFAULT_RECOMMENDATION
+        recommendation = (ai_output.get("recommendation")
+                          or "").strip() or DEFAULT_RECOMMENDATION
         urgency_raw = ai_output.get("urgency")
     else:
         base = DEFAULT_SCORE
@@ -116,13 +142,43 @@ def hybrid_score(lead: LeadRequest, ai_output: dict[str, Any] | None) -> HybridR
     urgency = _normalize_urgency(urgency_raw)
     if score <= 3:
         urgency = "baixa"
+    elif score >= 9 and urgency == "baixa":
+        # Score forte com urgência inconsistente da IA → pelo menos média
+        urgency = "media"
     if urgency_raw and urgency_raw.strip().lower() not in VALID_URGENCIES:
-        logger.warning("invalid_urgency value=%s fallback=%s", urgency_raw, urgency)
+        logger.warning("invalid_urgency value=%s fallback=%s",
+                       urgency_raw, urgency)
 
-    recommendation = _recommendation_for_score(score, recommendation)
+    recommendation = _recommendation_for_score(
+        score,
+        recommendation,
+        urgency,
+        lead,
+        property_normalized,
+    )
+
+    # Run toolkit qualifier as an additional signal (never breaks the response)
+    qualifier_decision = None
+    qualifier_reasons = None
+    try:
+        lead_dict = lead.model_dump(exclude_none=True)
+        qual_out = _qualify_lead(lead_dict)
+        qualifier_decision = qual_out.get("decision")
+        qualifier_reasons = qual_out.get("reasons")
+    except Exception as e:
+        logger.warning("qualifier_failed error=%s", str(e))
+
+    whatsapp_message = build_whatsapp_message(lead, score, urgency)
 
     return HybridResult(
-        response=LeadResponse(score=score, urgency=urgency, recommendation=recommendation),
+        response=LeadResponse(
+            score=score,
+            urgency=urgency,
+            recommendation=recommendation,
+            whatsapp_message=whatsapp_message,
+            decision=qualifier_decision,
+            qualifier_reasons=qualifier_reasons,
+        ),
         ai_raw_score=ai_raw,
         rule_delta=delta,
     )
