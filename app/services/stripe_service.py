@@ -11,18 +11,25 @@ from typing import Any
 logger = logging.getLogger("lead_intelligence.stripe")
 
 PLANS = {
+    "starter": {
+        "name": "LeadSolar Starter",
+        "price_brl": 29700,  # R$297 in centavos
+        "interval": "month",
+        "rate_limit": 500,
+        "tier": "free",
+    },
     "pro": {
         "name": "LeadSolar Pro",
-        "price_brl": 19700,  # R$197 in centavos
+        "price_brl": 49700,  # R$497 in centavos
         "interval": "month",
-        "rate_limit": 100,
+        "rate_limit": 2000,
         "tier": "pro",
     },
     "enterprise": {
-        "name": "LeadSolar Enterprise",
-        "price_brl": 49700,  # R$497 in centavos
+        "name": "LeadSolar Empresarial",
+        "price_brl": 99700,  # R$997 in centavos
         "interval": "month",
-        "rate_limit": 1000,
+        "rate_limit": 100000,
         "tier": "enterprise",
     },
 }
@@ -56,10 +63,12 @@ def create_checkout_session(plan: str, customer_email: str | None = None) -> str
             },
             "quantity": 1,
         }],
+        subscription_data={"trial_period_days": 30},
         customer_email=customer_email,
         success_url=f"{BASE_URL}/checkout/success?session_id={{CHECKOUT_SESSION_ID}}",
         cancel_url=f"{BASE_URL}/#precos",
         metadata={"plan": plan},
+        locale="pt-BR",
     )
     return session.url
 

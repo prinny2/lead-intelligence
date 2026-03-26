@@ -25,7 +25,7 @@ class CheckoutRequest(BaseModel):
 @router.post("/checkout/create")
 async def create_checkout(body: CheckoutRequest, request: Request):
     """Create a Stripe Checkout session and redirect."""
-    if body.plan not in ("pro", "enterprise"):
+    if body.plan not in ("starter", "pro", "enterprise"):
         raise HTTPException(status_code=400, detail="Plano inválido. Use 'pro' ou 'enterprise'.")
     try:
         url = create_checkout_session(body.plan, body.email)

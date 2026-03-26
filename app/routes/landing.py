@@ -678,7 +678,7 @@ footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--sun
           <li class="no">Simulação ROI por estado</li>
           <li class="no">Suporte prioritário</li>
         </ul>
-        <a href="#contato" class="plan-btn plan-btn-out">Começar grátis por 30 dias</a>
+        <button onclick="startCheckout('starter')" class="plan-btn plan-btn-out">Começar grátis por 30 dias</button>
       </div>
 
       <div class="plan pop">
@@ -696,7 +696,7 @@ footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--sun
           <li>Funil de conversão completo</li>
           <li>Suporte por WhatsApp</li>
         </ul>
-        <a href="#contato" class="plan-btn plan-btn-sun">Começar grátis por 30 dias</a>
+        <button onclick="startCheckout('pro')" class="plan-btn plan-btn-sun">Começar grátis por 30 dias</button>
       </div>
 
       <div class="plan">
@@ -848,6 +848,24 @@ async function submitForm(e) {
   } finally {
     btn.disabled = false;
     btn.textContent = 'Quero testar grátis →';
+  }
+}
+
+async function startCheckout(plan) {
+  const btns = document.querySelectorAll('.plan-btn');
+  btns.forEach(b => { b.disabled = true; });
+  try {
+    const r = await fetch('/checkout/create', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({plan})
+    });
+    if (!r.ok) throw new Error('Erro ao iniciar pagamento');
+    const data = await r.json();
+    window.location.href = data.checkout_url;
+  } catch(err) {
+    alert('Erro ao iniciar checkout. Tente novamente ou entre em contato pelo WhatsApp.');
+    btns.forEach(b => { b.disabled = false; });
   }
 }
 
