@@ -5,3 +5,4 @@ anthropic>=0.40.0
 python-dotenv
 firebase-admin
 sentry-sdk[fastapi]>=2.0.0
+stripe>=8.0.0
