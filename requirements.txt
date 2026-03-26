@@ -2,4 +2,7 @@ fastapi
 uvicorn
 pydantic
 openai
+anthropic
 python-dotenv
+firebase-admin
+google-cloud-firestore
