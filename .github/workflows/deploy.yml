@@ -1,0 +1,17 @@
+name: Deploy to Railway
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+      - name: Deploy
+        run: railway up --service lead-intelligence
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
