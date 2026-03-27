@@ -43,6 +43,26 @@ def _get_stripe():
     return stripe
 
 
+def _get_db():
+    try:
+        import firebase_admin
+        from firebase_admin import firestore
+        if not firebase_admin._apps:
+            return None
+        return firestore.client()
+    except Exception:
+        return None
+
+
+def generate_api_key() -> str:
+    """Generate a secure API key for a new customer."""
+    return "sk-ls-" + secrets.token_urlsafe(32)
+
+
+# ──────────────────────────────────────────────
+# Checkout
+# ──────────────────────────────────────────────
+
 def create_checkout_session(
     plan: str,
     customer_email: str | None = None,
@@ -54,7 +74,6 @@ def create_checkout_session(
 
     stripe = _get_stripe()
     p = PLANS[plan]
-
     price_id = p["price_id_annual"] if billing == "annual" else p["price_id"]
 
     session = stripe.checkout.Session.create(
@@ -73,70 +92,104 @@ def create_checkout_session(
     return session.url
 
 
-def get_session(session_id: str) -> dict[str, Any]:
-    """Retrieve a checkout session."""
+# ──────────────────────────────────────────────
+# Customer Portal (manage subscription)
+# ──────────────────────────────────────────────
+
+def create_portal_session(stripe_customer_id: str) -> str:
+    """Create a Stripe Customer Portal session URL."""
     stripe = _get_stripe()
-    return stripe.checkout.Session.retrieve(session_id)
+    session = stripe.billing_portal.Session.create(
+        customer=stripe_customer_id,
+        return_url=f"{BASE_URL}/#precos",
+    )
+    return session.url
 
 
-def generate_api_key() -> str:
-    """Generate a secure API key for a new customer."""
-    return "sk-ls-" + secrets.token_urlsafe(32)
-
-
-def _get_db():
-    try:
-        import firebase_admin
-        from firebase_admin import firestore
-        if not firebase_admin._apps:
-            return None
-        return firestore.client()
-    except Exception:
+def get_customer_by_email(email: str) -> dict[str, Any] | None:
+    """Look up a customer in Firestore by email."""
+    db = _get_db()
+    if not db:
         return None
+    docs = db.collection("customers").where("email", "==", email).limit(1).get()
+    for doc in docs:
+        return doc.to_dict()
+    return None
 
+
+# ──────────────────────────────────────────────
+# Provisioning
+# ──────────────────────────────────────────────
 
 def provision_customer(session_id: str) -> dict[str, Any]:
     """
     After successful payment, create API key and store customer in Firestore.
-    Returns customer info including the API key (shown once).
+    Idempotent — safe to call multiple times for same session.
+    Returns customer info including the API key (shown once on first call).
     """
     stripe = _get_stripe()
-    session = stripe.checkout.Session.retrieve(session_id, expand=["customer"])
+    session = stripe.checkout.Session.retrieve(
+        session_id,
+        expand=["customer", "subscription"],
+    )
 
     customer_email = session.get("customer_details", {}).get("email", "")
     plan = session.get("metadata", {}).get("plan", "pro")
+    billing = session.get("metadata", {}).get("billing", "monthly")
     subscription_id = session.get("subscription", "")
+    if hasattr(subscription_id, "id"):
+        subscription_id = subscription_id.id
 
-    # Check if already provisioned
+    stripe_customer_id = session.get("customer", "")
+    if hasattr(stripe_customer_id, "id"):
+        stripe_customer_id = stripe_customer_id.id
+
+    # Idempotency — return existing if already provisioned
     db = _get_db()
     if db:
-        existing = db.collection("customers").where("session_id", "==", session_id).limit(1).get()
-        if list(existing):
-            doc = list(existing)[0]
-            data = doc.to_dict()
-            return {"already_provisioned": True, "email": data.get("email", ""), "plan": plan}
+        existing = (
+            db.collection("customers")
+            .where("session_id", "==", session_id)
+            .limit(1)
+            .get()
+        )
+        docs = list(existing)
+        if docs:
+            data = docs[0].to_dict()
+            return {**data, "already_provisioned": True}
 
     api_key = generate_api_key()
+    plan_info = PLANS.get(plan, PLANS["pro"])
+
     customer_data = {
         "email": customer_email,
         "plan": plan,
-        "tier": PLANS[plan]["tier"],
+        "billing": billing,
+        "tier": plan_info["tier"],
         "api_key": api_key,
         "session_id": session_id,
         "subscription_id": subscription_id,
+        "stripe_customer_id": stripe_customer_id,
         "status": "active",
         "created_at": datetime.now(UTC).isoformat(),
     }
 
     if db:
         db.collection("customers").add(customer_data)
-        logger.info("customer_provisioned email=%s plan=%s", customer_email, plan)
+        logger.info(
+            "customer_provisioned email=%s plan=%s billing=%s",
+            customer_email, plan, billing,
+        )
 
     return {**customer_data, "already_provisioned": False}
 
 
+# ──────────────────────────────────────────────
+# Webhook
+# ──────────────────────────────────────────────
+
 def handle_webhook(payload: bytes, sig_header: str) -> str:
-    """Process a Stripe webhook event. Returns event type."""
+    """Process a Stripe webhook event. Returns event type string."""
     stripe = _get_stripe()
     webhook_secret = os.getenv("STRIPE_WEBHOOK_SECRET", "")
 
@@ -150,22 +203,71 @@ def handle_webhook(payload: bytes, sig_header: str) -> str:
     logger.info("stripe_webhook event=%s", event_type)
 
     db = _get_db()
-    if not db:
-        return event_type
 
-    if event_type == "customer.subscription.deleted":
+    # ── Checkout completed → provision if not yet done (backup path) ──
+    if event_type == "checkout.session.completed":
+        obj = event["data"]["object"]
+        session_id = obj.get("id", "")
+        if session_id and db:
+            existing = (
+                db.collection("customers")
+                .where("session_id", "==", session_id)
+                .limit(1)
+                .get()
+            )
+            if not list(existing):
+                try:
+                    provision_customer(session_id)
+                    logger.info("webhook_provisioned session_id=%s", session_id)
+                except Exception as exc:
+                    logger.error("webhook_provision_failed session_id=%s error=%s", session_id, exc)
+
+    # ── Subscription cancelled ──
+    elif event_type == "customer.subscription.deleted":
+        if not db:
+            return event_type
         sub_id = event["data"]["object"]["id"]
-        docs = db.collection("customers").where("subscription_id", "==", sub_id).limit(1).get()
+        docs = (
+            db.collection("customers")
+            .where("subscription_id", "==", sub_id)
+            .limit(1)
+            .get()
+        )
         for doc in docs:
             doc.reference.update({"status": "cancelled"})
             logger.info("subscription_cancelled sub_id=%s", sub_id)
 
+    # ── Payment failed ──
     elif event_type == "invoice.payment_failed":
+        if not db:
+            return event_type
         sub_id = event["data"]["object"].get("subscription", "")
         if sub_id:
-            docs = db.collection("customers").where("subscription_id", "==", sub_id).limit(1).get()
+            docs = (
+                db.collection("customers")
+                .where("subscription_id", "==", sub_id)
+                .limit(1)
+                .get()
+            )
             for doc in docs:
                 doc.reference.update({"status": "past_due"})
                 logger.info("payment_failed sub_id=%s", sub_id)
+
+    # ── Subscription reactivated after past_due ──
+    elif event_type == "invoice.paid":
+        if not db:
+            return event_type
+        sub_id = event["data"]["object"].get("subscription", "")
+        if sub_id:
+            docs = (
+                db.collection("customers")
+                .where("subscription_id", "==", sub_id)
+                .limit(1)
+                .get()
+            )
+            for doc in docs:
+                if doc.to_dict().get("status") == "past_due":
+                    doc.reference.update({"status": "active"})
+                    logger.info("subscription_reactivated sub_id=%s", sub_id)
 
     return event_type

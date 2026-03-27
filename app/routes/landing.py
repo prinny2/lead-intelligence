@@ -835,7 +835,7 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
           <li>Gerente de conta dedicado</li>
           <li>NF e contrato formal</li>
         </ul>
-        <button onclick="startCheckout('enterprise')" class="plan-btn plan-btn-out">Falar com o time</button>
+        <a href="#contato" class="plan-btn plan-btn-out">Falar com o time →</a>
       </div>
 
     </div>
