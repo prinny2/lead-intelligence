@@ -76,6 +76,13 @@ def create_checkout_session(
     p = PLANS[plan]
     price_id = p["price_id_annual"] if billing == "annual" else p["price_id"]
 
+    plan_name = p["name"]
+    custom_submit = (
+        f"Assinar {plan_name} — 30 dias grátis"
+        if billing == "monthly"
+        else f"Assinar {plan_name} anual — 30 dias grátis"
+    )
+
     session = stripe.checkout.Session.create(
         payment_method_types=["card"],
         mode="subscription",
@@ -83,11 +90,19 @@ def create_checkout_session(
         subscription_data={"trial_period_days": 30},
         allow_promotion_codes=True,
         billing_address_collection="auto",
+        phone_number_collection={"enabled": True},
         customer_email=customer_email,
         success_url=f"{BASE_URL}/checkout/success?session_id={{CHECKOUT_SESSION_ID}}",
         cancel_url=f"{BASE_URL}/#precos",
         metadata={"plan": plan, "billing": billing},
         locale="pt-BR",
+        custom_text={
+            "submit": {"message": custom_submit},
+            "after_submit": {
+                "message": "Você receberá sua chave de API por aqui após confirmar. Suporte no WhatsApp: +55 91 99287-5776"
+            },
+        },
+        consent_collection={"terms_of_service": "required"},
     )
     return session.url
 
