@@ -75,11 +75,47 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(6,12,24,.92)
 
 /* SECTION BASE */
 .section{padding:5rem 2rem}
-.container{max-width:1100px;margin:0 auto}
-.section-tag{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--sun);margin-bottom:.85rem}
-.section-title{font-size:clamp(1.75rem,3.5vw,2.4rem);font-weight:800;letter-spacing:-.025em;line-height:1.15;margin-bottom:.75rem}
-.section-sub{color:var(--muted);font-size:1rem;max-width:540px;line-height:1.7}
+.container{max-width:1140px;margin:0 auto}
+.section-tag{display:inline-block;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--sun);margin-bottom:1rem;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.18);padding:.28rem .85rem;border-radius:999px}
+.section-title{font-size:clamp(1.85rem,3.8vw,2.6rem);font-weight:900;letter-spacing:-.03em;line-height:1.1;margin-bottom:.85rem}
+.section-sub{color:var(--muted);font-size:1rem;max-width:560px;line-height:1.75}
 .center{text-align:center}.center .section-sub{margin:0 auto}
+
+/* HERO GRID TEXTURE */
+.hero{position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle at 1px 1px,rgba(245,158,11,.05) 1px,transparent 0);background-size:36px 36px;pointer-events:none;z-index:0}
+.hero-inner{position:relative;z-index:1}
+
+/* STEP NUMBERS — upgraded */
+.step-num{width:3rem;height:3rem;border-radius:50%;background:linear-gradient(135deg,rgba(245,158,11,.15),rgba(245,158,11,.05));border:2px solid rgba(245,158,11,.4);color:var(--sun);font-weight:900;display:flex;align-items:center;justify-content:center;margin:0 auto 1.1rem;font-size:1.1rem;box-shadow:0 0 16px rgba(245,158,11,.12)}
+
+/* PROOF ITEMS — number counter */
+.proof-item strong{display:block;font-size:2rem;font-weight:900;color:var(--sun);line-height:1;background:linear-gradient(135deg,var(--sun-light),var(--sun));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.proof-item span{font-size:.78rem;color:var(--muted);margin-top:.25rem;display:block}
+
+/* FEATURE CARD — upgraded */
+.feat{background:var(--surface);border:1px solid var(--border);border-radius:1.1rem;padding:1.75rem;transition:border-color .25s,transform .25s,box-shadow .25s}
+.feat:hover{border-color:rgba(245,158,11,.35);transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.25)}
+.feat-icon{font-size:1.8rem;margin-bottom:1rem;display:block}
+
+/* PAIN CARD — upgraded */
+.pain{background:var(--surface);border:1px solid var(--border);border-radius:1.1rem;padding:1.6rem;transition:border-color .2s}
+.pain:hover{border-color:rgba(239,68,68,.25)}
+
+/* GUARANTEE — fix layout */
+.guarantee-wrap{background:linear-gradient(135deg,rgba(34,197,94,.07),rgba(14,165,233,.03));border:1px solid rgba(34,197,94,.25);border-radius:1.5rem;padding:2.5rem 2.5rem;margin-top:2.5rem;display:flex;gap:2rem;align-items:flex-start}
+.guarantee-icon{font-size:2.5rem;flex-shrink:0;width:3.5rem;height:3.5rem;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;line-height:1}
+.guarantee-title{font-size:1.15rem;font-weight:800;color:var(--green);margin-bottom:.5rem}
+.guarantee-text{color:var(--muted);font-size:.88rem;line-height:1.75}
+@media(max-width:768px){.guarantee-wrap{flex-direction:column;align-items:center;text-align:center;padding:1.75rem}}
+
+/* CTA BUTTON — pulse glow */
+@keyframes glow{0%,100%{box-shadow:0 4px 20px rgba(245,158,11,.3)}50%{box-shadow:0 4px 32px rgba(245,158,11,.6)}}
+.btn-sun-pulse{animation:glow 2.5s ease-in-out infinite}
+
+/* SECTION ACCENT LINE */
+.section-accent{width:3rem;height:.2rem;background:linear-gradient(90deg,var(--sun),transparent);border-radius:999px;margin:.75rem auto 0}
+.center .section-accent{margin-left:auto;margin-right:auto}
 
 /* PROBLEMA */
 .pain-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.25rem;margin-top:3rem}
@@ -210,12 +246,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(6,12,24,.92)
 .plan-btn-out:hover{border-color:var(--sun);color:var(--sun)}
 .price-note{text-align:center;margin-top:1.5rem;font-size:.78rem;color:var(--muted)}
 
-/* GUARANTEE */
-.guarantee-wrap{background:linear-gradient(135deg,rgba(34,197,94,.06),rgba(34,197,94,.02));border:1px solid rgba(34,197,94,.2);border-radius:1.5rem;padding:2.5rem;margin-top:2.5rem;display:flex;gap:2rem;align-items:center}
-.guarantee-icon{font-size:3.5rem;flex-shrink:0}
-.guarantee-title{font-size:1.25rem;font-weight:800;color:var(--green);margin-bottom:.5rem}
-.guarantee-text{color:var(--muted);font-size:.9rem;line-height:1.7}
-@media(max-width:768px){.guarantee-wrap{flex-direction:column;text-align:center;padding:1.75rem}}
 
 /* CTA */
 .cta-wrap{background:linear-gradient(135deg,rgba(245,158,11,.1),rgba(14,165,233,.06));border-top:1px solid var(--border);border-bottom:1px solid var(--border);text-align:center}
@@ -264,11 +294,13 @@ footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--sun
 .counter-dot{width:.5rem;height:.5rem;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
 
-/* SCROLL ANIMATIONS */
-.reveal{opacity:0;transform:translateY(28px);transition:opacity .55s ease,transform .55s ease}
-.reveal.visible{opacity:1;transform:none}
-.reveal-left{opacity:0;transform:translateX(-28px);transition:opacity .55s ease,transform .55s ease}
-.reveal-left.visible{opacity:1;transform:none}
+/* SCROLL ANIMATIONS — only animate if JS enabled */
+body.js-ready .anim{opacity:0;transform:translateY(24px);transition:opacity .5s ease,transform .5s ease}
+body.js-ready .anim.visible{opacity:1;transform:none}
+body.js-ready .anim-left{opacity:0;transform:translateX(-24px);transition:opacity .5s ease,transform .5s ease}
+body.js-ready .anim-left.visible{opacity:1;transform:none}
+/* delay helpers */
+.d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.24s}.d4{transition-delay:.32s}
 
 /* STICKY MOBILE CTA */
 .sticky-cta{display:none;position:fixed;bottom:0;left:0;right:0;z-index:400;background:var(--bg);border-top:1px solid var(--border);padding:.75rem 1.25rem;gap:.75rem;align-items:center;justify-content:space-between}
@@ -353,7 +385,7 @@ footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--sun
         <a href="#demo" class="btn-outline">Ver demo ao vivo</a>
       </div>
       <div class="hero-no-risk"><span>✓</span> Sem cartão de crédito &nbsp;·&nbsp; <span>✓</span> Cancele quando quiser &nbsp;·&nbsp; <span>✓</span> Setup em 1 hora</div>
-      <div class="hero-proof reveal">
+      <div class="hero-proof anim">
         <div class="proof-item"><strong>+3x</strong><span>fechamentos por mês</span></div>
         <div class="proof-item"><strong>-70%</strong><span>tempo em triagem</span></div>
         <div class="proof-item"><strong>30 dias</strong><span>grátis pra testar</span></div>
@@ -513,9 +545,9 @@ footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--sun
 <!-- ANTES / DEPOIS -->
 <section class="section" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
   <div class="container">
-    <div class="section-tag center reveal">Antes vs depois</div>
-    <h2 class="section-title center reveal">A diferença de ter o sistema</h2>
-    <div class="ba-table reveal">
+    <div class="section-tag center anim">Antes vs depois</div>
+    <h2 class="section-title center anim">A diferença de ter o sistema</h2>
+    <div class="ba-table anim">
       <div class="ba-col bad-col">
         <div class="ba-header bad">❌ Sem o LeadSolar</div>
         <div class="ba-row">Planilha sem ordem nenhuma</div>
@@ -734,12 +766,12 @@ footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--sun
 <!-- PREÇOS -->
 <section class="section" id="precos" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
   <div class="container">
-    <div class="section-tag center reveal">Planos</div>
-    <h2 class="section-title center reveal">Menos que um vendedor, resultado de 10</h2>
-    <p class="section-sub center reveal" style="margin-bottom:2rem">30 dias grátis em todos os planos. Cancele quando quiser, sem burocracia.</p>
+    <div class="section-tag center anim">Planos</div>
+    <h2 class="section-title center anim">Menos que um vendedor, resultado de 10</h2>
+    <p class="section-sub center anim" style="margin-bottom:2rem">30 dias grátis em todos os planos. Cancele quando quiser, sem burocracia.</p>
 
     <!-- BILLING TOGGLE -->
-    <div class="billing-toggle reveal">
+    <div class="billing-toggle anim">
       <span class="toggle-label active" id="label-monthly">Mensal</span>
       <label class="toggle-wrap">
         <input type="checkbox" id="billing-switch" onchange="toggleBilling(this.checked)"/>
@@ -751,7 +783,7 @@ footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--sun
 
     <div class="price-grid">
 
-      <div class="plan reveal">
+      <div class="plan anim">
         <div class="plan-tier">Starter</div>
         <div class="plan-price" id="price-starter"><sup>R$</sup>297<sub>/mês</sub></div>
         <div class="plan-annual-note" id="note-starter">R$ 2.856 cobrado anualmente — economia de R$ 708</div>
@@ -769,7 +801,7 @@ footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--sun
         <button onclick="startCheckout('starter')" class="plan-btn plan-btn-out">Começar grátis por 30 dias</button>
       </div>
 
-      <div class="plan pop reveal">
+      <div class="plan pop anim">
         <div class="pop-badge">⭐ Mais escolhido</div>
         <div class="plan-tier">Pro</div>
         <div class="plan-price" id="price-pro"><sup>R$</sup>497<sub>/mês</sub></div>
@@ -788,7 +820,7 @@ footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--sun
         <button onclick="startCheckout('pro')" class="plan-btn plan-btn-sun">Começar grátis por 30 dias</button>
       </div>
 
-      <div class="plan reveal">
+      <div class="plan anim">
         <div class="plan-tier">Empresarial</div>
         <div class="plan-price" id="price-enterprise"><sup>R$</sup>997<sub>/mês</sub></div>
         <div class="plan-annual-note" id="note-enterprise">R$ 9.576 cobrado anualmente — economia de R$ 2.388</div>
@@ -810,7 +842,7 @@ footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--sun
     <p class="price-note">30 dias grátis em todos os planos · Sem cartão · Cancele quando quiser</p>
 
     <!-- GARANTIA -->
-    <div class="guarantee-wrap reveal">
+    <div class="guarantee-wrap anim">
       <div class="guarantee-icon">🛡️</div>
       <div>
         <div class="guarantee-title">Garantia de 30 dias — ou devolvemos tudo</div>
@@ -1029,31 +1061,59 @@ function closeMobileMenu() {
   }, 8000);
 })();
 
-// Scroll reveal
+// Scroll reveal — safe: only animate elements NOT already visible
 (function() {
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach((e, i) => {
-      if (e.isIntersecting) {
-        setTimeout(() => e.target.classList.add('visible'), i * 80);
-        io.unobserve(e.target);
-      }
+  document.body.classList.add('js-ready');
+
+  // Auto-add anim class to card-type elements
+  document.querySelectorAll('.pain, .feat, .step, .testi, .mcard, .faq-item, .plan, .ba-row, .logo-chip').forEach(el => {
+    if (!el.classList.contains('anim') && !el.classList.contains('anim-left')) {
+      el.classList.add('anim');
+    }
+  });
+
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
     });
-  }, {threshold: 0.1});
-  document.querySelectorAll('.reveal, .reveal-left, .pain, .feat, .step, .testi, .mcard, .faq-item, .plan').forEach(el => {
-    el.classList.add('reveal');
+  }, {threshold: 0.06, rootMargin: '0px 0px -20px 0px'});
+
+  document.querySelectorAll('.anim, .anim-left').forEach((el, idx) => {
+    // Stagger siblings in same grid/flex parent
+    const sibs = el.parentElement ? [...el.parentElement.children].filter(c => c.classList.contains('anim') || c.classList.contains('anim-left')) : [];
+    const pos = sibs.indexOf(el);
+    if (pos > 0) el.style.transitionDelay = (pos * 0.1) + 's';
     io.observe(el);
   });
 })();
 
-// Hide WA float near bottom CTA to avoid overlap
+// Animate hero proof numbers on first view
+(function() {
+  const proof = document.querySelector('.hero-proof');
+  if (!proof) return;
+  const io = new IntersectionObserver(([e]) => {
+    if (!e.isIntersecting) return;
+    io.disconnect();
+    proof.querySelectorAll('strong').forEach((el, i) => {
+      el.style.cssText += 'opacity:0;transition:opacity .5s ease ' + (i * 0.15) + 's';
+      requestAnimationFrame(() => requestAnimationFrame(() => el.style.opacity = '1'));
+    });
+  }, {threshold: 0.5});
+  io.observe(proof);
+})();
+
+// Pulse glow on first CTA button only
+const firstCTA = document.querySelector('.hero-btns .btn-sun');
+if (firstCTA) firstCTA.classList.add('btn-sun-pulse');
+
+// Hide WA float when CTA section is visible (avoid overlap)
 (function() {
   const waBtn = document.querySelector('.wa-float');
   const ctaEl = document.getElementById('contato');
   if (!waBtn || !ctaEl) return;
-  const obs = new IntersectionObserver(entries => {
-    waBtn.style.display = entries[0].isIntersecting ? 'none' : '';
-  }, {threshold: 0.1});
-  obs.observe(ctaEl);
+  new IntersectionObserver(([e]) => {
+    waBtn.style.display = e.isIntersecting ? 'none' : '';
+  }, {threshold: 0.1}).observe(ctaEl);
 })();
 </script>
 </body>
