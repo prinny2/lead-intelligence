@@ -878,10 +878,12 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
 </section>
 
 <footer>
-  <p>© 2025 LeadSolar · Qualificação de leads para instaladoras de energia solar</p>
+  <p>© 2026 LeadSolar · Qualificação de leads para instaladoras de energia solar</p>
   <div class="footer-links">
     <a href="/dashboard">Dashboard</a>
     <a href="/docs">API</a>
+    <a href="/privacidade">Privacidade</a>
+    <a href="/termos">Termos</a>
   </div>
 </footer>
 
@@ -1123,3 +1125,140 @@ if (firstCTA) firstCTA.classList.add('btn-sun-pulse');
 @router.get("/", response_class=HTMLResponse, include_in_schema=False)
 async def landing() -> HTMLResponse:
     return HTMLResponse(content=_HTML)
+
+
+_LEGAL_STYLE = """
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#060c18;color:#cbd5e1;line-height:1.7;padding:2rem 1rem}
+.wrap{max-width:760px;margin:0 auto}
+a.back{display:inline-block;color:#f59e0b;text-decoration:none;font-size:.9rem;margin-bottom:2rem}
+a.back:hover{text-decoration:underline}
+h1{font-size:1.8rem;font-weight:900;color:#f1f5f9;margin-bottom:.5rem}
+.date{font-size:.8rem;color:#6b85a0;margin-bottom:2rem}
+h2{font-size:1.1rem;font-weight:700;color:#f1f5f9;margin:2rem 0 .5rem}
+p,li{font-size:.9rem;color:#94a3b8;margin-bottom:.75rem}
+ul{padding-left:1.5rem}
+a{color:#f59e0b}
+</style>
+"""
+
+
+@router.get("/privacidade", response_class=HTMLResponse, include_in_schema=False)
+async def privacy_policy() -> HTMLResponse:
+    html = f"""<!DOCTYPE html>
+<html lang="pt-BR">
+<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Política de Privacidade — LeadSolar</title>
+{_LEGAL_STYLE}
+</head>
+<body><div class="wrap">
+<a class="back" href="/">← Voltar</a>
+<h1>Política de Privacidade</h1>
+<p class="date">Última atualização: março de 2026</p>
+
+<h2>1. Quem somos</h2>
+<p>LeadSolar é uma plataforma de qualificação de leads para instaladoras de energia solar, operada por pessoa jurídica brasileira. Nosso produto analisa dados de leads fornecidos por você (o cliente) para gerar scores, priorização e mensagens de abordagem.</p>
+
+<h2>2. Dados que coletamos</h2>
+<ul>
+  <li><strong>Dados do cliente (você):</strong> nome da empresa, e-mail, número de WhatsApp fornecidos ao contratar o serviço.</li>
+  <li><strong>Dados dos seus leads:</strong> nome, cidade, valor de conta de luz, tipo de imóvel e objetivo — enviados por você via API ou integração.</li>
+  <li><strong>Dados de uso:</strong> logs de requisições, IP de acesso e métricas de desempenho.</li>
+  <li><strong>Dados de pagamento:</strong> processados integralmente pelo Stripe. Não armazenamos dados de cartão.</li>
+</ul>
+
+<h2>3. Como usamos os dados</h2>
+<ul>
+  <li>Qualificar e pontuar os leads enviados por você.</li>
+  <li>Gerar relatórios e dashboards de uso.</li>
+  <li>Processar pagamentos e emitir cobranças via Stripe.</li>
+  <li>Melhorar o produto com base em padrões agregados e anonimizados.</li>
+</ul>
+
+<h2>4. Compartilhamento de dados</h2>
+<p>Não vendemos nem compartilhamos seus dados com terceiros, exceto:</p>
+<ul>
+  <li><strong>Stripe:</strong> para processamento de pagamentos.</li>
+  <li><strong>Firebase/Google Cloud:</strong> para armazenamento seguro dos dados.</li>
+  <li><strong>Obrigação legal:</strong> quando exigido por lei ou autoridade competente.</li>
+</ul>
+
+<h2>5. Seus direitos (LGPD)</h2>
+<p>Conforme a Lei Geral de Proteção de Dados (Lei nº 13.709/2018), você tem direito a:</p>
+<ul>
+  <li>Confirmar a existência de tratamento de dados.</li>
+  <li>Acessar, corrigir ou excluir seus dados pessoais.</li>
+  <li>Revogar o consentimento a qualquer momento.</li>
+  <li>Portabilidade dos dados mediante solicitação.</li>
+</ul>
+<p>Para exercer seus direitos, entre em contato via WhatsApp: <a href="https://wa.me/5591992875776">+55 91 99287-5776</a></p>
+
+<h2>6. Retenção de dados</h2>
+<p>Mantemos seus dados enquanto o contrato estiver ativo. Após cancelamento, excluímos os dados em até 90 dias, salvo obrigação legal.</p>
+
+<h2>7. Segurança</h2>
+<p>Utilizamos criptografia em trânsito (HTTPS/TLS), controles de acesso por chave de API e auditoria de logs para proteger seus dados.</p>
+
+<h2>8. Alterações</h2>
+<p>Podemos atualizar esta política periodicamente. Notificaremos clientes ativos sobre mudanças relevantes.</p>
+
+<h2>9. Contato</h2>
+<p>Dúvidas sobre privacidade? Fale conosco: <a href="https://wa.me/5591992875776">WhatsApp</a></p>
+</div></body></html>"""
+    return HTMLResponse(content=html)
+
+
+@router.get("/termos", response_class=HTMLResponse, include_in_schema=False)
+async def terms_of_service() -> HTMLResponse:
+    html = f"""<!DOCTYPE html>
+<html lang="pt-BR">
+<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Termos de Uso — LeadSolar</title>
+{_LEGAL_STYLE}
+</head>
+<body><div class="wrap">
+<a class="back" href="/">← Voltar</a>
+<h1>Termos de Uso</h1>
+<p class="date">Última atualização: março de 2026</p>
+
+<h2>1. Aceitação</h2>
+<p>Ao contratar ou usar o LeadSolar, você concorda com estes Termos. Se não concordar, não utilize o serviço.</p>
+
+<h2>2. O serviço</h2>
+<p>O LeadSolar fornece uma API e painel para qualificação automatizada de leads de energia solar. O serviço é prestado no modelo SaaS com cobrança mensal ou anual via Stripe.</p>
+
+<h2>3. Uso permitido</h2>
+<ul>
+  <li>O serviço destina-se exclusivamente a empresas e profissionais do setor de energia solar.</li>
+  <li>Você é responsável pelos dados de leads que envia à plataforma.</li>
+  <li>É proibido usar o serviço para fins ilegais, envio de spam ou abordagens não autorizadas.</li>
+</ul>
+
+<h2>4. Chave de API</h2>
+<p>Sua chave de API é pessoal e intransferível. Não a compartilhe. Você é responsável por todo uso feito com sua chave.</p>
+
+<h2>5. Pagamento e cancelamento</h2>
+<ul>
+  <li><strong>Trial:</strong> 30 dias grátis sem cartão de crédito.</li>
+  <li><strong>Cobrança:</strong> Mensal ou anual, processada pelo Stripe.</li>
+  <li><strong>Cancelamento:</strong> A qualquer momento pelo portal do cliente. Sem multa.</li>
+  <li><strong>Garantia:</strong> Se em 30 dias você não ver resultado, devolvemos 100% do valor pago.</li>
+</ul>
+
+<h2>6. Limitação de responsabilidade</h2>
+<p>O LeadSolar fornece scores e recomendações baseados em dados e regras. As decisões de negócio são sempre sua responsabilidade. Não garantimos conversão ou resultado específico de vendas.</p>
+
+<h2>7. Disponibilidade</h2>
+<p>Buscamos 99,9% de uptime, mas não garantimos disponibilidade ininterrupta. Manutenções programadas serão comunicadas com antecedência.</p>
+
+<h2>8. Rescisão</h2>
+<p>Podemos encerrar contas que violem estes termos, com aviso prévio quando possível.</p>
+
+<h2>9. Foro</h2>
+<p>Fica eleito o foro da comarca de Belém/PA para dirimir quaisquer controvérsias.</p>
+
+<h2>10. Contato</h2>
+<p>Dúvidas? <a href="https://wa.me/5591992875776">WhatsApp</a></p>
+</div></body></html>"""
+    return HTMLResponse(content=html)
