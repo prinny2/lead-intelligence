@@ -355,18 +355,18 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
   <a href="#problema" onclick="closeMobileMenu()">O problema</a>
   <a href="#como-funciona" onclick="closeMobileMenu()">Como funciona</a>
   <a href="#precos" onclick="closeMobileMenu()">Preços</a>
-  <a href="#contato" onclick="closeMobileMenu()" style="color:var(--sun)">Testar grátis →</a>
+  <button onclick="closeMobileMenu();startCheckout('pro')" style="color:var(--sun);background:none;border:none;cursor:pointer;font-family:inherit;font-size:1rem;text-align:left;padding:0">Testar grátis →</button>
 </div>
 
 <nav>
-  <a href="/" class="logo" style="display:flex;align-items:center;gap:.55rem;text-decoration:none"><img src="/static/logo.png" alt="LeadSolar" style="width:2rem;height:2rem;border-radius:.4rem"/>Lead<span>Solar</span></a>
+  <a href="/" class="logo" style="display:flex;align-items:center;gap:.5rem;text-decoration:none"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0"><circle cx="14" cy="14" r="14" fill="#1a2e48"/><circle cx="14" cy="14" r="7" fill="#f59e0b"/><line x1="14" y1="2" x2="14" y2="5" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"/><line x1="14" y1="23" x2="14" y2="26" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"/><line x1="2" y1="14" x2="5" y2="14" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"/><line x1="23" y1="14" x2="26" y2="14" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"/><line x1="5.5" y1="5.5" x2="7.5" y2="7.5" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"/><line x1="20.5" y1="20.5" x2="22.5" y2="22.5" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"/><line x1="22.5" y1="5.5" x2="20.5" y2="7.5" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"/><line x1="7.5" y1="20.5" x2="5.5" y2="22.5" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"/></svg>Lead<span>Solar</span></a>
   <div class="nav-links">
     <a href="#problema">O problema</a>
     <a href="#como-funciona">Como funciona</a>
     <a href="#precos">Preços</a>
   </div>
   <div style="display:flex;align-items:center;gap:.75rem">
-    <a href="#contato" class="nav-cta">Testar 30 dias grátis</a>
+    <button onclick="startCheckout('pro')" class="nav-cta" style="border:none;cursor:pointer;font-family:inherit">Testar grátis →</button>
     <button class="nav-ham" onclick="document.getElementById('mobile-menu').classList.add('open')" aria-label="Menu">☰</button>
   </div>
 </nav>
@@ -383,8 +383,8 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
         Apartamento alugado com conta de R$90? Nem perde tempo.
       </p>
       <div class="hero-btns">
-        <a href="#precos" class="btn-sun">Começar grátis por 30 dias →</a>
-        <a href="#demo" class="btn-outline">Ver demo ao vivo</a>
+        <button onclick="startCheckout('pro')" class="btn-sun" style="border:none;cursor:pointer;font-family:inherit">Começar grátis por 30 dias →</button>
+        <a href="#precos" class="btn-outline">Ver planos</a>
       </div>
       <div class="hero-no-risk"><span>✓</span> Sem cartão de crédito &nbsp;·&nbsp; <span>✓</span> Cancele quando quiser &nbsp;·&nbsp; <span>✓</span> Setup em 1 hora</div>
       <div class="hero-proof anim">
