@@ -218,7 +218,7 @@ h1{{font-size:1.6rem;font-weight:900;color:#22c55e;text-align:center;margin-bott
 
   <div class="actions">
     <a href="/docs" class="btn-primary">Ver documentação da API →</a>
-    <a href="https://wa.me/55" class="btn-secondary">📱 Suporte no WhatsApp</a>
+    <a href="https://wa.me/5591992875776" class="btn-secondary" target="_blank" rel="noopener">📱 Suporte no WhatsApp</a>
   </div>
 
   <div class="manage-link">
