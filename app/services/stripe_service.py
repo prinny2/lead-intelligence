@@ -98,11 +98,7 @@ def create_checkout_session(
         locale="pt-BR",
         custom_text={
             "submit": {"message": custom_submit},
-            "after_submit": {
-                "message": "Você receberá sua chave de API por aqui após confirmar. Suporte no WhatsApp: +55 91 99287-5776"
-            },
         },
-        consent_collection={"terms_of_service": "required"},
     )
     return session.url
 

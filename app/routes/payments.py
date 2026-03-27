@@ -54,7 +54,7 @@ async def create_checkout(body: CheckoutRequest, request: Request):
         return {"checkout_url": url}
     except Exception as e:
         logger.error("checkout_error: %s", e)
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Erro ao criar sessão de pagamento.")
 
 
 # ──────────────────────────────────────────────
