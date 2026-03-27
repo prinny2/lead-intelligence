@@ -14,18 +14,21 @@ PLANS = {
     "starter": {
         "name": "LeadSolar Starter",
         "price_id": "price_1TFFdtPvTQyWBe6uIdY737DH",
+        "price_id_annual": "price_1TFcdaPvTQyWBe6uIQN7Bp9u",
         "rate_limit": 500,
         "tier": "starter",
     },
     "pro": {
         "name": "LeadSolar Pro",
         "price_id": "price_1TFFdvPvTQyWBe6uMMD919W8",
+        "price_id_annual": "price_1TFcdfPvTQyWBe6u0ycyMkYA",
         "rate_limit": 2000,
         "tier": "pro",
     },
     "enterprise": {
         "name": "LeadSolar Empresarial",
         "price_id": "price_1TFFdwPvTQyWBe6ucsHOsNWC",
+        "price_id_annual": "price_1TFcdkPvTQyWBe6ulp0WJHqR",
         "rate_limit": 100000,
         "tier": "enterprise",
     },
@@ -40,7 +43,11 @@ def _get_stripe():
     return stripe
 
 
-def create_checkout_session(plan: str, customer_email: str | None = None) -> str:
+def create_checkout_session(
+    plan: str,
+    customer_email: str | None = None,
+    billing: str = "monthly",
+) -> str:
     """Create a Stripe Checkout session and return the URL."""
     if plan not in PLANS:
         raise ValueError(f"Unknown plan: {plan}")
@@ -48,15 +55,19 @@ def create_checkout_session(plan: str, customer_email: str | None = None) -> str
     stripe = _get_stripe()
     p = PLANS[plan]
 
+    price_id = p["price_id_annual"] if billing == "annual" else p["price_id"]
+
     session = stripe.checkout.Session.create(
         payment_method_types=["card"],
         mode="subscription",
-        line_items=[{"price": p["price_id"], "quantity": 1}],
+        line_items=[{"price": price_id, "quantity": 1}],
         subscription_data={"trial_period_days": 30},
+        allow_promotion_codes=True,
+        billing_address_collection="auto",
         customer_email=customer_email,
         success_url=f"{BASE_URL}/checkout/success?session_id={{CHECKOUT_SESSION_ID}}",
         cancel_url=f"{BASE_URL}/#precos",
-        metadata={"plan": plan},
+        metadata={"plan": plan, "billing": billing},
         locale="pt-BR",
     )
     return session.url

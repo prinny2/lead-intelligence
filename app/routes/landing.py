@@ -25,36 +25,39 @@ _HTML = """<!DOCTYPE html>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-MEHL0VK5XD');</script>
 <style>
 :root{
-  --bg:#080e1a;--surface:#0f1929;--surface2:#162338;--border:#1a3050;
-  --sun:#f59e0b;--sun-dark:#d97706;--sky:#0ea5e9;
-  --text:#f1f5f9;--muted:#7c94b0;--green:#22c55e;--red:#ef4444;
+  --bg:#060c18;--surface:#0d1825;--surface2:#132030;--border:#1a2e48;
+  --sun:#f59e0b;--sun-dark:#d97706;--sun-light:#fbbf24;--sky:#0ea5e9;
+  --text:#f1f5f9;--muted:#6b85a0;--green:#22c55e;--red:#ef4444;
+  --glow:rgba(245,158,11,.18);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.65}
 
-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(8,14,26,.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:.85rem 2rem;display:flex;justify-content:space-between;align-items:center}
-.logo{font-size:1.15rem;font-weight:800;color:var(--sun)}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(6,12,24,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:.85rem 2rem;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:1.2rem;font-weight:900;color:var(--sun);letter-spacing:-.02em}
 .logo span{color:var(--text);font-weight:400}
 .nav-links{display:flex;gap:1.75rem;align-items:center}
 .nav-links a{color:var(--muted);text-decoration:none;font-size:.875rem;transition:color .2s}
 .nav-links a:hover{color:var(--text)}
-.nav-cta{background:var(--sun);color:#000;font-weight:700;padding:.5rem 1.25rem;border-radius:.5rem;text-decoration:none;font-size:.875rem;transition:background .2s}
-.nav-cta:hover{background:var(--sun-dark)}
+.nav-cta{background:var(--sun);color:#000;font-weight:700;padding:.5rem 1.25rem;border-radius:.5rem;text-decoration:none;font-size:.875rem;transition:all .2s;box-shadow:0 0 16px var(--glow)}
+.nav-cta:hover{background:var(--sun-dark);box-shadow:0 0 24px var(--glow)}
 
 /* HERO */
-.hero{min-height:100vh;display:flex;align-items:center;padding:7rem 2rem 4rem;background:radial-gradient(ellipse 90% 60% at 60% -5%,rgba(245,158,11,.1),transparent),radial-gradient(ellipse 60% 40% at 10% 80%,rgba(14,165,233,.06),transparent)}
-.hero-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
-.hero-eyebrow{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--sun);margin-bottom:1.25rem}
-.hero h1{font-size:clamp(2rem,4.5vw,3.25rem);font-weight:800;line-height:1.08;letter-spacing:-.03em;margin-bottom:1.25rem}
-.hero h1 em{color:var(--sun);font-style:normal}
-.hero-sub{font-size:1.05rem;color:var(--muted);margin-bottom:2rem;line-height:1.7}
+.hero{min-height:100vh;display:flex;align-items:center;padding:7rem 2rem 4rem;background:radial-gradient(ellipse 80% 55% at 65% -10%,rgba(245,158,11,.12),transparent),radial-gradient(ellipse 55% 45% at 5% 85%,rgba(14,165,233,.07),transparent),radial-gradient(ellipse 40% 35% at 95% 95%,rgba(245,158,11,.05),transparent)}
+.hero-inner{max-width:1140px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:4.5rem;align-items:center}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:.5rem;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--sun);margin-bottom:1.5rem;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);padding:.3rem .85rem;border-radius:999px}
+.hero h1{font-size:clamp(2.2rem,4.8vw,3.5rem);font-weight:900;line-height:1.05;letter-spacing:-.035em;margin-bottom:1.35rem}
+.hero h1 em{color:var(--sun);font-style:normal;position:relative}
+.hero-sub{font-size:1.05rem;color:var(--muted);margin-bottom:2.25rem;line-height:1.75}
 .hero-sub strong{color:var(--text)}
-.hero-btns{display:flex;gap:.85rem;flex-wrap:wrap}
-.btn-sun{background:var(--sun);color:#000;font-weight:700;padding:.85rem 1.75rem;border-radius:.6rem;text-decoration:none;font-size:.95rem;transition:all .15s;white-space:nowrap}
-.btn-sun:hover{background:var(--sun-dark);transform:translateY(-1px)}
-.btn-outline{border:1px solid var(--border);color:var(--muted);padding:.85rem 1.75rem;border-radius:.6rem;text-decoration:none;font-size:.95rem;transition:all .15s;white-space:nowrap}
+.hero-btns{display:flex;gap:.85rem;flex-wrap:wrap;align-items:center}
+.btn-sun{background:linear-gradient(135deg,var(--sun),var(--sun-dark));color:#000;font-weight:800;padding:.9rem 2rem;border-radius:.65rem;text-decoration:none;font-size:.95rem;transition:all .2s;white-space:nowrap;box-shadow:0 4px 20px rgba(245,158,11,.3)}
+.btn-sun:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(245,158,11,.4)}
+.btn-outline{border:1px solid var(--border);color:var(--muted);padding:.85rem 1.75rem;border-radius:.6rem;text-decoration:none;font-size:.95rem;transition:all .2s;white-space:nowrap}
 .btn-outline:hover{border-color:var(--sun);color:var(--sun)}
+.hero-no-risk{font-size:.78rem;color:var(--muted);display:flex;align-items:center;gap:.35rem;margin-top:.75rem}
+.hero-no-risk span{color:var(--green)}
 .hero-proof{margin-top:2.5rem;padding-top:2rem;border-top:1px solid var(--border);display:flex;gap:2rem;flex-wrap:wrap}
 .proof-item strong{display:block;font-size:1.6rem;font-weight:800;color:var(--sun);line-height:1}
 .proof-item span{font-size:.78rem;color:var(--muted);margin-top:.2rem;display:block}
@@ -170,25 +173,49 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(8,14,26,.9);
 .faq-item.open .faq-a{display:block}
 .faq-item.open .faq-icon{transform:rotate(45deg)}
 
+/* BILLING TOGGLE */
+.billing-toggle{display:flex;align-items:center;justify-content:center;gap:1rem;margin-bottom:2.5rem}
+.toggle-label{font-size:.9rem;font-weight:600;color:var(--muted);transition:color .2s}
+.toggle-label.active{color:var(--text)}
+.toggle-wrap{position:relative;width:3rem;height:1.6rem;cursor:pointer}
+.toggle-wrap input{opacity:0;width:0;height:0;position:absolute}
+.toggle-slider{position:absolute;inset:0;background:var(--border);border-radius:999px;transition:.3s}
+.toggle-slider:before{content:"";position:absolute;width:1.2rem;height:1.2rem;left:.2rem;bottom:.2rem;background:#fff;border-radius:50%;transition:.3s}
+.toggle-wrap input:checked+.toggle-slider{background:var(--sun)}
+.toggle-wrap input:checked+.toggle-slider:before{transform:translateX(1.4rem)}
+.save-badge{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25);color:var(--green);font-size:.7rem;font-weight:700;padding:.2rem .65rem;border-radius:999px;white-space:nowrap}
+
 /* PRICING */
-.price-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem;margin-top:3rem;align-items:start}
-.plan{background:var(--surface);border:1px solid var(--border);border-radius:1.25rem;padding:2rem;position:relative}
-.plan.pop{border-color:rgba(245,158,11,.5);background:linear-gradient(160deg,rgba(245,158,11,.06),var(--surface))}
-.pop-badge{position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:var(--sun);color:#000;font-size:.65rem;font-weight:800;padding:.25rem .9rem;border-radius:0 0 .5rem .5rem;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
-.plan-tier{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:.5rem}
-.plan-price{font-size:2.75rem;font-weight:800;letter-spacing:-.04em;line-height:1}
-.plan-price sup{font-size:.95rem;font-weight:500;color:var(--muted);vertical-align:top;margin-top:.4rem}
+.price-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-top:1.5rem;align-items:start}
+.plan{background:var(--surface);border:1px solid var(--border);border-radius:1.5rem;padding:2rem;position:relative;transition:border-color .25s,box-shadow .25s}
+.plan:hover{border-color:rgba(245,158,11,.25);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.plan.pop{border-color:rgba(245,158,11,.45);background:linear-gradient(160deg,rgba(245,158,11,.07),var(--surface));box-shadow:0 0 32px rgba(245,158,11,.08)}
+.plan.pop:hover{border-color:rgba(245,158,11,.7);box-shadow:0 0 40px rgba(245,158,11,.15)}
+.pop-badge{position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,var(--sun),var(--sun-dark));color:#000;font-size:.65rem;font-weight:800;padding:.28rem 1rem;border-radius:0 0 .6rem .6rem;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
+.plan-tier{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:.5rem}
+.plan-price{font-size:2.9rem;font-weight:900;letter-spacing:-.04em;line-height:1;transition:all .25s}
+.plan-price sup{font-size:.95rem;font-weight:500;color:var(--muted);vertical-align:top;margin-top:.45rem}
 .plan-price sub{font-size:.85rem;font-weight:400;color:var(--muted)}
-.plan-pitch{font-size:.82rem;color:var(--muted);margin:.6rem 0 1.5rem;line-height:1.5}
-.plan-list{list-style:none;display:flex;flex-direction:column;gap:.55rem;margin-bottom:2rem}
-.plan-list li{font-size:.82rem;display:flex;gap:.5rem;line-height:1.4}
+.plan-annual-note{font-size:.72rem;color:var(--green);font-weight:600;margin-top:.3rem;display:none}
+.plan-pitch{font-size:.82rem;color:var(--muted);margin:.65rem 0 1.5rem;line-height:1.55}
+.plan-list{list-style:none;display:flex;flex-direction:column;gap:.6rem;margin-bottom:2rem}
+.plan-list li{font-size:.83rem;display:flex;gap:.5rem;line-height:1.45}
 .plan-list li::before{content:"✓";color:var(--green);font-weight:700;flex-shrink:0;margin-top:.05rem}
 .plan-list li.no::before{content:"—";color:var(--muted)}
 .plan-list li.no{color:var(--muted)}
-.plan-btn{display:block;text-align:center;padding:.8rem;border-radius:.6rem;font-weight:700;text-decoration:none;font-size:.9rem;transition:all .15s}
-.plan-btn-sun{background:var(--sun);color:#000}.plan-btn-sun:hover{background:var(--sun-dark)}
-.plan-btn-out{border:1px solid var(--border);color:var(--text)}.plan-btn-out:hover{border-color:var(--sun);color:var(--sun)}
+.plan-btn{display:block;text-align:center;padding:.85rem;border-radius:.65rem;font-weight:700;text-decoration:none;font-size:.9rem;transition:all .2s;cursor:pointer;border:none;font-family:inherit;width:100%}
+.plan-btn-sun{background:linear-gradient(135deg,var(--sun),var(--sun-dark));color:#000;box-shadow:0 4px 16px rgba(245,158,11,.25)}
+.plan-btn-sun:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(245,158,11,.4)}
+.plan-btn-out{border:1px solid var(--border);color:var(--text);background:transparent}
+.plan-btn-out:hover{border-color:var(--sun);color:var(--sun)}
 .price-note{text-align:center;margin-top:1.5rem;font-size:.78rem;color:var(--muted)}
+
+/* GUARANTEE */
+.guarantee-wrap{background:linear-gradient(135deg,rgba(34,197,94,.06),rgba(34,197,94,.02));border:1px solid rgba(34,197,94,.2);border-radius:1.5rem;padding:2.5rem;margin-top:2.5rem;display:flex;gap:2rem;align-items:center}
+.guarantee-icon{font-size:3.5rem;flex-shrink:0}
+.guarantee-title{font-size:1.25rem;font-weight:800;color:var(--green);margin-bottom:.5rem}
+.guarantee-text{color:var(--muted);font-size:.9rem;line-height:1.7}
+@media(max-width:768px){.guarantee-wrap{flex-direction:column;text-align:center;padding:1.75rem}}
 
 /* CTA */
 .cta-wrap{background:linear-gradient(135deg,rgba(245,158,11,.1),rgba(14,165,233,.06));border-top:1px solid var(--border);border-bottom:1px solid var(--border);text-align:center}
@@ -284,8 +311,8 @@ footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--sun
 
 <!-- ANNOUNCEMENT BAR -->
 <div class="ann-bar">
-  🚀 Lançamento: <span>primeiros 50 clientes ganham 40% OFF no primeiro mês</span> — vagas limitadas
-  <a href="#contato">Garantir agora →</a>
+  🚀 Lançamento: <span>plano anual com 20% de desconto + 30 dias grátis sem cartão</span>
+  <a href="#precos">Ver planos →</a>
 </div>
 
 <!-- MOBILE MENU -->
@@ -314,7 +341,7 @@ footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--sun
 <section class="hero">
   <div class="hero-inner">
     <div>
-      <div class="hero-eyebrow">Para instaladoras de energia solar</div>
+      <div class="hero-eyebrow">⚡ Para instaladoras de energia solar</div>
       <h1>Seu vendedor já sabe <em>quem ligar primeiro</em> amanhã de manhã</h1>
       <p class="hero-sub">
         Cada lead recebe uma nota de 0 a 10 com base na conta de luz, tipo de imóvel e urgência.
@@ -322,9 +349,10 @@ footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--sun
         Apartamento alugado com conta de R$90? Nem perde tempo.
       </p>
       <div class="hero-btns">
-        <a href="#contato" class="btn-sun">Quero ver meus leads organizados →</a>
-        <a href="#como-funciona" class="btn-outline">Como funciona</a>
+        <a href="#precos" class="btn-sun">Começar grátis por 30 dias →</a>
+        <a href="#demo" class="btn-outline">Ver demo ao vivo</a>
       </div>
+      <div class="hero-no-risk"><span>✓</span> Sem cartão de crédito &nbsp;·&nbsp; <span>✓</span> Cancele quando quiser &nbsp;·&nbsp; <span>✓</span> Setup em 1 hora</div>
       <div class="hero-proof reveal">
         <div class="proof-item"><strong>+3x</strong><span>fechamentos por mês</span></div>
         <div class="proof-item"><strong>-70%</strong><span>tempo em triagem</span></div>
@@ -706,18 +734,32 @@ footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--sun
 <!-- PREÇOS -->
 <section class="section" id="precos" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
   <div class="container">
-    <div class="section-tag center">Planos</div>
-    <h2 class="section-title center">Menos que um café por dia pra triplicar suas conversões</h2>
+    <div class="section-tag center reveal">Planos</div>
+    <h2 class="section-title center reveal">Menos que um vendedor, resultado de 10</h2>
+    <p class="section-sub center reveal" style="margin-bottom:2rem">30 dias grátis em todos os planos. Cancele quando quiser, sem burocracia.</p>
+
+    <!-- BILLING TOGGLE -->
+    <div class="billing-toggle reveal">
+      <span class="toggle-label active" id="label-monthly">Mensal</span>
+      <label class="toggle-wrap">
+        <input type="checkbox" id="billing-switch" onchange="toggleBilling(this.checked)"/>
+        <span class="toggle-slider"></span>
+      </label>
+      <span class="toggle-label" id="label-annual">Anual</span>
+      <span class="save-badge">Economize 20%</span>
+    </div>
+
     <div class="price-grid">
 
-      <div class="plan">
+      <div class="plan reveal">
         <div class="plan-tier">Starter</div>
-        <div class="plan-price"><sup>R$</sup>297<sub>/mês</sub></div>
+        <div class="plan-price" id="price-starter"><sup>R$</sup>297<sub>/mês</sub></div>
+        <div class="plan-annual-note" id="note-starter">R$ 2.856 cobrado anualmente — economia de R$ 708</div>
         <div class="plan-pitch">Para instaladoras com até 2 vendedores começando a escalar</div>
         <ul class="plan-list">
           <li>Até 500 leads/mês</li>
           <li>Score e priorização automática</li>
-          <li>WhatsApp personalizado</li>
+          <li>WhatsApp personalizado por lead</li>
           <li>Dashboard com fila do dia</li>
           <li>1 integração (Google Forms)</li>
           <li>Export CSV</li>
@@ -727,10 +769,11 @@ footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--sun
         <button onclick="startCheckout('starter')" class="plan-btn plan-btn-out">Começar grátis por 30 dias</button>
       </div>
 
-      <div class="plan pop">
-        <div class="pop-badge">Mais contratado</div>
+      <div class="plan pop reveal">
+        <div class="pop-badge">⭐ Mais escolhido</div>
         <div class="plan-tier">Pro</div>
-        <div class="plan-price"><sup>R$</sup>497<sub>/mês</sub></div>
+        <div class="plan-price" id="price-pro"><sup>R$</sup>497<sub>/mês</sub></div>
+        <div class="plan-annual-note" id="note-pro">R$ 4.776 cobrado anualmente — economia de R$ 1.188</div>
         <div class="plan-pitch">Para instaladoras em crescimento com volume alto de leads</div>
         <ul class="plan-list">
           <li>Até 2.000 leads/mês</li>
@@ -745,9 +788,10 @@ footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--sun
         <button onclick="startCheckout('pro')" class="plan-btn plan-btn-sun">Começar grátis por 30 dias</button>
       </div>
 
-      <div class="plan">
+      <div class="plan reveal">
         <div class="plan-tier">Empresarial</div>
-        <div class="plan-price"><sup>R$</sup>997<sub>/mês</sub></div>
+        <div class="plan-price" id="price-enterprise"><sup>R$</sup>997<sub>/mês</sub></div>
+        <div class="plan-annual-note" id="note-enterprise">R$ 9.576 cobrado anualmente — economia de R$ 2.388</div>
         <div class="plan-pitch">Para distribuidoras e redes com múltiplos times de venda</div>
         <ul class="plan-list">
           <li>Leads ilimitados</li>
@@ -759,11 +803,20 @@ footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--sun
           <li>Gerente de conta dedicado</li>
           <li>NF e contrato formal</li>
         </ul>
-        <a href="#contato" class="plan-btn plan-btn-out">Falar com o time</a>
+        <button onclick="startCheckout('enterprise')" class="plan-btn plan-btn-out">Falar com o time</button>
       </div>
 
     </div>
-    <p class="price-note">30 dias grátis em todos os planos · Sem cartão de crédito · Cancele quando quiser</p>
+    <p class="price-note">30 dias grátis em todos os planos · Sem cartão · Cancele quando quiser</p>
+
+    <!-- GARANTIA -->
+    <div class="guarantee-wrap reveal">
+      <div class="guarantee-icon">🛡️</div>
+      <div>
+        <div class="guarantee-title">Garantia de 30 dias — ou devolvemos tudo</div>
+        <div class="guarantee-text">Teste sem risco. Se em 30 dias você não ver resultado, devolvemos 100% do valor pago. Sem perguntas, sem burocracia. Você não perde nada — só ganha tempo.</div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -916,6 +969,25 @@ async function submitForm(e) {
   }
 }
 
+let _currentBilling = 'monthly';
+
+function toggleBilling(isAnnual) {
+  _currentBilling = isAnnual ? 'annual' : 'monthly';
+  const prices = {
+    starter: isAnnual ? '<sup>R$</sup>238<sub>/mês</sub>' : '<sup>R$</sup>297<sub>/mês</sub>',
+    pro:     isAnnual ? '<sup>R$</sup>398<sub>/mês</sub>' : '<sup>R$</sup>497<sub>/mês</sub>',
+    enterprise: isAnnual ? '<sup>R$</sup>798<sub>/mês</sub>' : '<sup>R$</sup>997<sub>/mês</sub>',
+  };
+  Object.keys(prices).forEach(plan => {
+    const el = document.getElementById('price-' + plan);
+    const note = document.getElementById('note-' + plan);
+    if (el) el.innerHTML = prices[plan];
+    if (note) note.style.display = isAnnual ? 'block' : 'none';
+  });
+  document.getElementById('label-monthly').classList.toggle('active', !isAnnual);
+  document.getElementById('label-annual').classList.toggle('active', isAnnual);
+}
+
 async function startCheckout(plan) {
   const btns = document.querySelectorAll('.plan-btn');
   btns.forEach(b => { b.disabled = true; });
@@ -923,7 +995,7 @@ async function startCheckout(plan) {
     const r = await fetch('/checkout/create', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({plan})
+      body: JSON.stringify({plan, billing: _currentBilling})
     });
     if (!r.ok) throw new Error('Erro ao iniciar pagamento');
     const data = await r.json();

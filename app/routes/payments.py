@@ -20,20 +20,23 @@ logger = logging.getLogger("lead_intelligence.payments")
 class CheckoutRequest(BaseModel):
     plan: str
     email: str | None = None
+    billing: str = "monthly"  # "monthly" | "annual"
 
 
 @router.post("/checkout/create")
 async def create_checkout(body: CheckoutRequest, request: Request):
     """Create a Stripe Checkout session and redirect."""
     if body.plan not in ("starter", "pro", "enterprise"):
-        raise HTTPException(status_code=400, detail="Plano inválido. Use 'pro' ou 'enterprise'.")
+        raise HTTPException(status_code=400, detail="Plano inválido.")
+    if body.billing not in ("monthly", "annual"):
+        raise HTTPException(status_code=400, detail="Billing inválido. Use 'monthly' ou 'annual'.")
     try:
-        url = create_checkout_session(body.plan, body.email)
+        url = create_checkout_session(body.plan, body.email, body.billing)
         ip = request.headers.get("x-forwarded-for", "").split(",")[0].strip() or (
             request.client.host if request.client else "unknown"
         )
         log_event("checkout_started", ip=ip, endpoint="/checkout/create", method="POST",
-                  status_code=200, extra={"plan": body.plan})
+                  status_code=200, extra={"plan": body.plan, "billing": body.billing})
         return {"checkout_url": url}
     except Exception as e:
         logger.error("checkout_error: %s", e)
