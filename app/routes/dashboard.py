@@ -46,6 +46,7 @@ def _dashboard_html() -> str:
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>LeadSolar — Dashboard</title>
+<link rel="icon" type="image/png" href="/static/favicon.png"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -130,7 +131,7 @@ tr:hover td{background:#0f1929}
 
 <div id="app-screen">
 <header>
-  <h1>Lead<span>Solar</span> <span style="font-size:.75rem;color:#64748b;font-weight:400;margin-left:.5rem">Dashboard</span></h1>
+  <h1 style="display:flex;align-items:center;gap:.55rem"><img src="/static/logo.png" alt="LeadSolar" style="width:2rem;height:2rem;border-radius:.4rem"/>Lead<span>Solar</span> <span style="font-size:.75rem;color:#64748b;font-weight:400;margin-left:.5rem">Dashboard</span></h1>
   <div class="header-right">
     <div class="user-chip">
       <img id="user-photo" src="" alt="" style="display:none"/>

@@ -20,6 +20,8 @@ _HTML = """<!DOCTYPE html>
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:title" content="LeadSolar — Score automático de leads solares"/>
 <meta name="twitter:description" content="Seu vendedor já sabe quem ligar primeiro amanhã de manhã. 30 dias grátis, sem cartão."/>
+<link rel="icon" type="image/png" href="/static/favicon.png"/>
+<link rel="apple-touch-icon" href="/static/logo.png"/>
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-MEHL0VK5XD"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-MEHL0VK5XD');</script>
@@ -357,7 +359,7 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
 </div>
 
 <nav>
-  <div class="logo">Lead<span>Solar</span></div>
+  <a href="/" class="logo" style="display:flex;align-items:center;gap:.55rem;text-decoration:none"><img src="/static/logo.png" alt="LeadSolar" style="width:2rem;height:2rem;border-radius:.4rem"/>Lead<span>Solar</span></a>
   <div class="nav-links">
     <a href="#problema">O problema</a>
     <a href="#como-funciona">Como funciona</a>

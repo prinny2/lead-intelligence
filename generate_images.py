@@ -232,7 +232,7 @@ make_product_card(
     plan_name="Starter",
     plan_label="Ideal para corretores e pequenas equipes",
     badge_text="ATÉ 500 LEADS/MÊS",
-    price_monthly="197",
+    price_monthly="297",
     features=[
         "Score IA 0-10 por lead",
         "Mensagem WhatsApp pronta",
@@ -250,7 +250,7 @@ make_product_card(
     plan_name="Pro",
     plan_label="Para equipes que escalam vendas solar",
     badge_text="ATÉ 2.000 LEADS/MÊS · MAIS POPULAR",
-    price_monthly="397",
+    price_monthly="497",
     features=[
         "Tudo do Starter",
         "Até 2.000 leads/mês",
@@ -268,7 +268,7 @@ make_product_card(
     plan_name="Empresarial",
     plan_label="Para grandes instaladoras e distribuidoras",
     badge_text="LEADS ILIMITADOS",
-    price_monthly="Sob consulta",
+    price_monthly="997",
     features=[
         "Tudo do Pro",
         "Leads ilimitados",
@@ -281,4 +281,89 @@ make_product_card(
 )
 
 make_logo()
+
+
+# ── 5. OG IMAGE (1200x630) ─────────────────────────────────────
+def make_og_image():
+    W, H = 1200, 630
+    img = Image.new("RGB", (W, H), BG_DARK)
+    draw = ImageDraw.Draw(img)
+
+    # Background gradient
+    for y in range(H):
+        t = y / H
+        c = lerp_color(BG_DARK, BG_CARD, t * 0.8)
+        draw.line([(0, y), (W, y)], fill=c)
+
+    # Grid texture
+    for x in range(0, W, 40):
+        draw.line([(x, 0), (x, H)], fill=(*GOLD, 8) if len(GOLD) == 3 else GOLD)
+    for y in range(0, H, 40):
+        draw.line([(0, y), (W, y)], fill=(245, 158, 11, 8))
+
+    # Large sun left
+    draw_sun(draw, 160, H // 2, 90, GOLD, rays=16)
+
+    # "LS" inside sun
+    f_ls = load_font(36, bold=True)
+    bbox = draw.textbbox((0, 0), "LS", font=f_ls)
+    draw.text((160 - (bbox[2]-bbox[0])//2, H//2 - (bbox[3]-bbox[1])//2), "LS", font=f_ls, fill=WHITE)
+
+    # Tagline above title
+    f_tag = load_font(18, bold=True)
+    tag_text = "LEADSOLAR  ·  QUALIFICAÇÃO DE LEADS SOLAR COM IA"
+    bbox = draw.textbbox((0, 0), tag_text, font=f_tag)
+    draw.text((310, 170), tag_text, font=f_tag, fill=GOLD)
+    draw.line([(310, 200), (890, 200)], fill=BORDER, width=1)
+
+    # Main headline
+    f_h1 = load_font(68, bold=True)
+    line1 = "Seu vendedor liga"
+    line2 = "pro lead certo."
+    draw.text((310, 215), line1, font=f_h1, fill=WHITE)
+    draw.text((310, 295), line2, font=f_h1, fill=GOLD)
+
+    # Sub
+    f_sub = load_font(24)
+    draw.text((310, 390), "Score automático 0–10 · WhatsApp pronto · 30 dias grátis", font=f_sub, fill=MUTED)
+
+    # Pill badges
+    f_pill = load_font(16, bold=True)
+    pills = ["Starter R$297/mês", "Pro R$497/mês", "Empresarial R$997/mês"]
+    px = 310
+    for pill in pills:
+        bw = draw.textbbox((0, 0), pill, font=f_pill)[2] + 28
+        draw.rounded_rectangle([px, 450, px + bw, 486], radius=14, fill=(*BG_PANEL,), outline=(*BORDER,), width=1)
+        draw.text((px + 14, 455), pill, font=f_pill, fill=MUTED)
+        px += bw + 12
+
+    # Domain
+    f_domain = load_font(18)
+    draw.text((310, 560), "lead-intelligence-production.up.railway.app", font=f_domain, fill=MUTED)
+
+    path = OUT / "og-image.png"
+    img.save(path, "PNG", optimize=True)
+    print(f"✓ {path}")
+
+
+# ── 6. FAVICON (64x64) ────────────────────────────────────────
+def make_favicon():
+    W = 64
+    img = Image.new("RGB", (W, W), BG_DARK)
+    draw = ImageDraw.Draw(img)
+    draw.rectangle([0, 0, W, W], fill=BG_DARK)
+    draw_sun(draw, W//2, W//2, 18, GOLD, rays=8)
+    f = load_font(11, bold=True)
+    bbox = draw.textbbox((0, 0), "LS", font=f)
+    draw.text((W//2 - (bbox[2]-bbox[0])//2, W//2 - (bbox[3]-bbox[1])//2 - 1), "LS", font=f, fill=WHITE)
+    path = OUT / "favicon.png"
+    img.save(path, "PNG", optimize=True)
+    # Also 32x32
+    img32 = img.resize((32, 32), Image.LANCZOS)
+    img32.save(OUT / "favicon-32.png", "PNG", optimize=True)
+    print(f"✓ {path}")
+
+
+make_og_image()
+make_favicon()
 print("\nTodas as imagens geradas em ./static/")
