@@ -237,6 +237,24 @@ footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--sun
 .counter-dot{width:.5rem;height:.5rem;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
 
+/* SCROLL ANIMATIONS */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .55s ease,transform .55s ease}
+.reveal.visible{opacity:1;transform:none}
+.reveal-left{opacity:0;transform:translateX(-28px);transition:opacity .55s ease,transform .55s ease}
+.reveal-left.visible{opacity:1;transform:none}
+
+/* STICKY MOBILE CTA */
+.sticky-cta{display:none;position:fixed;bottom:0;left:0;right:0;z-index:400;background:var(--bg);border-top:1px solid var(--border);padding:.75rem 1.25rem;gap:.75rem;align-items:center;justify-content:space-between}
+.sticky-cta p{font-size:.78rem;color:var(--muted);line-height:1.3}
+.sticky-cta p strong{color:var(--text);display:block}
+.sticky-cta a{background:var(--sun);color:#000;font-weight:700;padding:.65rem 1.1rem;border-radius:.5rem;text-decoration:none;font-size:.82rem;white-space:nowrap;flex-shrink:0}
+@media(max-width:768px){.sticky-cta{display:flex}body{padding-bottom:70px}}
+
+/* TRUST BADGES */
+.trust-row{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;margin-top:1.5rem}
+.trust-badge{display:flex;align-items:center;gap:.4rem;background:var(--surface);border:1px solid var(--border);border-radius:.5rem;padding:.4rem .85rem;font-size:.72rem;color:var(--muted)}
+.trust-badge svg{width:.9rem;height:.9rem;color:var(--green);flex-shrink:0}
+
 /* FLOATING WA */
 .wa-float{position:fixed;bottom:1.75rem;right:1.75rem;z-index:500;display:flex;align-items:center;gap:.65rem;background:#25d366;color:#fff;font-weight:700;font-size:.85rem;padding:.75rem 1.25rem;border-radius:3rem;box-shadow:0 4px 20px rgba(37,211,102,.35);text-decoration:none;transition:transform .2s,box-shadow .2s}
 .wa-float:hover{transform:translateY(-2px);box-shadow:0 6px 28px rgba(37,211,102,.45)}
@@ -307,7 +325,7 @@ footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--sun
         <a href="#contato" class="btn-sun">Quero ver meus leads organizados →</a>
         <a href="#como-funciona" class="btn-outline">Como funciona</a>
       </div>
-      <div class="hero-proof">
+      <div class="hero-proof reveal">
         <div class="proof-item"><strong>+3x</strong><span>fechamentos por mês</span></div>
         <div class="proof-item"><strong>-70%</strong><span>tempo em triagem</span></div>
         <div class="proof-item"><strong>30 dias</strong><span>grátis pra testar</span></div>
@@ -464,8 +482,36 @@ footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--sun
   </div>
 </section>
 
-<!-- MERCADO -->
+<!-- ANTES / DEPOIS -->
 <section class="section" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="container">
+    <div class="section-tag center reveal">Antes vs depois</div>
+    <h2 class="section-title center reveal">A diferença de ter o sistema</h2>
+    <div class="ba-table reveal">
+      <div class="ba-col bad-col">
+        <div class="ba-header bad">❌ Sem o LeadSolar</div>
+        <div class="ba-row">Planilha sem ordem nenhuma</div>
+        <div class="ba-row">Vendedor liga pra 50, fecha 2</div>
+        <div class="ba-row">Mensagem genérica no WhatsApp</div>
+        <div class="ba-row">Não sabe de onde vieram os clientes</div>
+        <div class="ba-row">Apartamento alugado perdeu 1 tarde</div>
+        <div class="ba-row">Lead esfria antes de ser abordado</div>
+      </div>
+      <div class="ba-col good-col">
+        <div class="ba-header good">✅ Com o LeadSolar</div>
+        <div class="ba-row">Fila priorizada todo dia de manhã</div>
+        <div class="ba-row">Liga pra 20 qualificados, fecha 5</div>
+        <div class="ba-row">WhatsApp com nome, cidade e conta</div>
+        <div class="ba-row">Funil de conversão com dados reais</div>
+        <div class="ba-row">Descartado em segundos, zero perda de tempo</div>
+        <div class="ba-row">Abordado em minutos, urgência alta</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MERCADO -->
+<section class="section" style="background:var(--bg);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
   <div class="container">
     <div class="section-tag center">O momento certo pra crescer</div>
     <h2 class="section-title center">O mercado solar nunca foi tão favorável no Brasil</h2>
@@ -576,7 +622,7 @@ footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--sun
       <div class="demo-result-box" id="demo-result-box">
         <div class="demo-placeholder" id="demo-placeholder">
           <div class="arrow">←</div>
-          <p>Preencha os dados ao lado e clique em <strong>"Ver score e mensagem"</strong> para ver o resultado.</p>
+          <p>Preencha os dados e clique em <strong>"Ver score e mensagem"</strong> para ver o resultado.</p>
         </div>
         <div class="demo-result" id="demo-result">
           <div class="demo-score-row">
@@ -738,6 +784,11 @@ footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--sun
       <span>✓ Cancele quando quiser</span>
     </div>
     <div id="form-feedback" style="display:none;margin-top:1.25rem;text-align:center;font-size:.875rem;font-weight:700"></div>
+    <div class="trust-row">
+      <div class="trust-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Dados protegidos · LGPD</div>
+      <div class="trust-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Cobrança transparente via Stripe</div>
+      <div class="trust-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Suporte via WhatsApp</div>
+    </div>
   </div>
 </section>
 
@@ -748,6 +799,12 @@ footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--sun
     <a href="/docs">API</a>
   </div>
 </footer>
+
+<!-- STICKY MOBILE CTA -->
+<div class="sticky-cta" id="sticky-cta">
+  <p><strong>30 dias grátis</strong>Sem cartão de crédito</p>
+  <a href="#contato" onclick="document.getElementById('sticky-cta').style.display='none'">Testar agora →</a>
+</div>
 
 <!-- FLOATING WA BUTTON -->
 <a class="wa-float" href="#contato">
@@ -898,6 +955,33 @@ function closeMobileMenu() {
     const cur = parseInt(el.textContent.replace(/\D/g, ''), 10);
     el.textContent = (cur + Math.floor(Math.random() * 3)).toLocaleString('pt-BR');
   }, 8000);
+})();
+
+// Scroll reveal
+(function() {
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+        io.unobserve(e.target);
+      }
+    });
+  }, {threshold: 0.1});
+  document.querySelectorAll('.reveal, .reveal-left, .pain, .feat, .step, .testi, .mcard, .faq-item, .plan').forEach(el => {
+    el.classList.add('reveal');
+    io.observe(el);
+  });
+})();
+
+// Hide WA float near bottom CTA to avoid overlap
+(function() {
+  const waBtn = document.querySelector('.wa-float');
+  const ctaEl = document.getElementById('contato');
+  if (!waBtn || !ctaEl) return;
+  const obs = new IntersectionObserver(entries => {
+    waBtn.style.display = entries[0].isIntersecting ? 'none' : '';
+  }, {threshold: 0.1});
+  obs.observe(ctaEl);
 })();
 </script>
 </body>
