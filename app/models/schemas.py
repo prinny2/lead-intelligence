@@ -98,6 +98,7 @@ class StoredLead(BaseModel):
     rule_delta: int = 0
     outcome: OutcomeType | None = None
     outcome_notes: str | None = None
+    org_id: str | None = None  # customer email — isolates data per tenant
 
     @classmethod
     def from_qualification(
@@ -107,6 +108,7 @@ class StoredLead(BaseModel):
         *,
         ai_raw_score: int | None = None,
         rule_delta: int = 0,
+        org_id: str | None = None,
     ) -> "StoredLead":
         return cls(
             timestamp=datetime.now(UTC).isoformat().replace("+00:00", "Z"),
@@ -129,6 +131,7 @@ class StoredLead(BaseModel):
             qualifier_reasons=response.qualifier_reasons,
             ai_raw_score=ai_raw_score,
             rule_delta=rule_delta,
+            org_id=org_id,
         )
 
 

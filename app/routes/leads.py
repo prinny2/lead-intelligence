@@ -5,9 +5,10 @@ import io
 import logging
 from datetime import UTC, datetime, timedelta
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import StreamingResponse
 
+from app.auth import ClientInfo, require_auth
 from app.models import LeadRequest, LeadResponse, LeadStats, OutcomeUpdate, StoredLead
 from app.services import get_ai_qualification, hybrid_score, load_leads, save_lead, update_lead_outcome
 from app.services.audit_service import log_event
@@ -41,7 +42,7 @@ def _find_duplicate(data: LeadRequest, leads: list[StoredLead]) -> StoredLead | 
     return None
 
 
-def _score_and_store(data: LeadRequest) -> LeadResponse:
+def _score_and_store(data: LeadRequest, org_id: str | None = None) -> LeadResponse:
     ai_output = get_ai_qualification(data)
     result = hybrid_score(data, ai_output)
     try:
@@ -49,6 +50,7 @@ def _score_and_store(data: LeadRequest) -> LeadResponse:
             data, result.response,
             ai_raw_score=result.ai_raw_score,
             rule_delta=result.rule_delta,
+            org_id=org_id,
         )
         save_lead(stored)
     except Exception as e:
@@ -57,9 +59,13 @@ def _score_and_store(data: LeadRequest) -> LeadResponse:
 
 
 @router.post("/lead", response_model=LeadResponse)
-def analyze_lead(data: LeadRequest) -> LeadResponse:
-    logger.info("lead name=%s city=%s", data.name, data.city)
-    existing = _find_duplicate(data, load_leads())
+def analyze_lead(
+    data: LeadRequest,
+    client: ClientInfo = Depends(require_auth),
+) -> LeadResponse:
+    org_id = client.client_id
+    logger.info("lead name=%s city=%s org=%s", data.name, data.city, org_id)
+    existing = _find_duplicate(data, load_leads(org_id=org_id))
     if existing:
         logger.info("duplicate_lead id=%s", existing.id)
         return LeadResponse(
@@ -70,7 +76,7 @@ def analyze_lead(data: LeadRequest) -> LeadResponse:
             decision=existing.decision,
             qualifier_reasons=existing.qualifier_reasons,
         )
-    response = _score_and_store(data)
+    response = _score_and_store(data, org_id=org_id)
     logger.info("lead score=%s urgency=%s", response.score, response.urgency)
     log_event("lead_qualified", endpoint="/lead", method="POST", status_code=200, score=response.score)
     return response
@@ -85,8 +91,9 @@ async def list_leads(
     city: str | None = Query(default=None),
     decision: str | None = Query(default=None),
     limit: int = Query(default=50, ge=1, le=500),
+    client: ClientInfo = Depends(require_auth),
 ) -> list[StoredLead]:
-    leads = load_leads()
+    leads = load_leads(org_id=client.client_id)
     if urgency:
         leads = [l for l in leads if l.urgency == urgency]
     if score_min is not None:
@@ -105,9 +112,11 @@ async def list_leads(
 
 
 @router.get("/leads/export")
-async def export_leads_csv() -> StreamingResponse:
+async def export_leads_csv(
+    client: ClientInfo = Depends(require_auth),
+) -> StreamingResponse:
     """Download all leads as CSV."""
-    leads = load_leads()
+    leads = load_leads(org_id=client.client_id)
     fields = [
         "id", "timestamp", "name", "city", "state", "monthly_bill",
         "property_type", "goal", "email", "phone", "company",
@@ -128,8 +137,11 @@ async def export_leads_csv() -> StreamingResponse:
 
 
 @router.get("/leads/{lead_id}", response_model=StoredLead)
-async def get_lead(lead_id: str) -> StoredLead:
-    leads = load_leads()
+async def get_lead(
+    lead_id: str,
+    client: ClientInfo = Depends(require_auth),
+) -> StoredLead:
+    leads = load_leads(org_id=client.client_id)
     for lead in leads:
         if lead.id == lead_id:
             return lead
@@ -137,7 +149,11 @@ async def get_lead(lead_id: str) -> StoredLead:
 
 
 @router.patch("/leads/{lead_id}/outcome", response_model=StoredLead)
-async def update_outcome(lead_id: str, body: OutcomeUpdate) -> StoredLead:
+async def update_outcome(
+    lead_id: str,
+    body: OutcomeUpdate,
+    client: ClientInfo = Depends(require_auth),
+) -> StoredLead:
     updated = update_lead_outcome(lead_id, body.outcome, body.notes)
     if updated is None:
         raise HTTPException(status_code=404, detail="lead not found")
@@ -146,8 +162,10 @@ async def update_outcome(lead_id: str, body: OutcomeUpdate) -> StoredLead:
 
 
 @router.get("/stats", response_model=LeadStats)
-async def get_stats() -> LeadStats:
-    leads = load_leads()
+async def get_stats(
+    client: ClientInfo = Depends(require_auth),
+) -> LeadStats:
+    leads = load_leads(org_id=client.client_id)
     if not leads:
         return LeadStats(
             total_leads=0,
@@ -196,11 +214,15 @@ async def get_stats() -> LeadStats:
 
 
 @router.post("/leads/bulk", response_model=list[LeadResponse])
-def bulk_ingest(leads_in: list[LeadRequest]) -> list[LeadResponse]:
+def bulk_ingest(
+    leads_in: list[LeadRequest],
+    client: ClientInfo = Depends(require_auth),
+) -> list[LeadResponse]:
     """Score up to 50 leads at once. Useful for CSV batch uploads."""
     if len(leads_in) > 50:
         raise HTTPException(status_code=422, detail="max 50 leads per request")
-    existing = load_leads()
+    org_id = client.client_id
+    existing = load_leads(org_id=org_id)
     results: list[LeadResponse] = []
     for data in leads_in:
         dup = _find_duplicate(data, existing)
@@ -213,5 +235,5 @@ def bulk_ingest(leads_in: list[LeadRequest]) -> list[LeadResponse]:
                 qualifier_reasons=dup.qualifier_reasons,
             ))
         else:
-            results.append(_score_and_store(data))
+            results.append(_score_and_store(data, org_id=org_id))
     return results

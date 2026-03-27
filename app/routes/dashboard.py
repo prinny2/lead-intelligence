@@ -1,15 +1,50 @@
-"""HTML dashboard for browsing and managing leads."""
+"""HTML dashboard — Google Sign-In + per-tenant lead management."""
 
-from fastapi import APIRouter
+import os
+
+from fastapi import APIRouter, Header, HTTPException
 from fastapi.responses import HTMLResponse
+
+from app.auth import _verify_firebase_token
 
 router = APIRouter()
 
-_HTML = """<!DOCTYPE html>
+
+@router.get("/me")
+async def me(authorization: str | None = Header(default=None)):
+    """Return current user info (requires Firebase Bearer token)."""
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Token ausente")
+    token = authorization[7:].strip()
+    client = _verify_firebase_token(token)
+    if not client:
+        raise HTTPException(status_code=401, detail="Token inválido")
+    return {
+        "email": client.email,
+        "name": client.client_name,
+        "tier": client.tier,
+        "org_id": client.client_id,
+    }
+
+
+def _dashboard_html() -> str:
+    project_id = os.getenv("GOOGLE_CLOUD_PROJECT", "")
+    firebase_api_key = os.getenv("FIREBASE_WEB_API_KEY", "")
+    auth_domain = os.getenv("FIREBASE_AUTH_DOMAIN", f"{project_id}.firebaseapp.com" if project_id else "")
+
+    # Build config block safely (no f-string for JS object literals)
+    fb_config = (
+        '{"apiKey":"' + firebase_api_key + '",'
+        '"authDomain":"' + auth_domain + '",'
+        '"projectId":"' + project_id + '"}'
+    )
+    no_config_msg = "" if firebase_api_key else "Firebase não configurado. Adicione FIREBASE_WEB_API_KEY nas variáveis de ambiente."
+
+    return """<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>LeadSolar — Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
@@ -19,8 +54,14 @@ header{background:#0f1929;padding:1.1rem 2rem;border-bottom:1px solid #1a3050;di
 header h1{font-size:1.2rem;font-weight:800;color:#f59e0b}
 header h1 span{color:#f8fafc;font-weight:400}
 .header-right{display:flex;gap:.75rem;align-items:center}
-.export-btn{background:#1a3050;color:#94a3b8;border:1px solid #1a3050;padding:.4rem 1rem;border-radius:.5rem;cursor:pointer;font-size:.82rem;text-decoration:none;transition:all .15s}
+.user-chip{display:flex;align-items:center;gap:.5rem;background:#132030;border:1px solid #1a3050;padding:.35rem .85rem;border-radius:999px;font-size:.8rem;color:#94a3b8}
+.user-chip img{width:1.4rem;height:1.4rem;border-radius:50%}
+.tier-badge{font-size:.65rem;font-weight:700;padding:.1rem .45rem;border-radius:999px;background:rgba(245,158,11,.15);color:#f59e0b;border:1px solid rgba(245,158,11,.3);text-transform:uppercase}
+.export-btn,.logout-btn{padding:.4rem 1rem;border-radius:.5rem;font-size:.82rem;cursor:pointer;text-decoration:none;transition:all .15s;border:1px solid #1a3050}
+.export-btn{background:#1a3050;color:#94a3b8}
 .export-btn:hover{background:#0ea5e9;color:#fff;border-color:#0ea5e9}
+.logout-btn{background:transparent;color:#64748b}
+.logout-btn:hover{color:#ef4444;border-color:#ef4444}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;padding:1.5rem 2rem 0}
 .card{background:#0f1929;border:1px solid #1a3050;border-radius:.75rem;padding:1.25rem}
 .card .label{font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;color:#64748b;margin-bottom:.4rem}
@@ -58,36 +99,58 @@ tr:hover td{background:#0f1929}
 .outcome-sel{background:#0f1929;border:1px solid #1a3050;color:#e2e8f0;padding:.2rem .4rem;border-radius:.4rem;font-size:.72rem}
 #toast{position:fixed;bottom:1.5rem;right:1.5rem;background:#0ea5e9;color:#fff;padding:.75rem 1.25rem;border-radius:.5rem;font-size:.82rem;display:none;z-index:999;font-weight:600}
 .empty{text-align:center;padding:3rem;color:#64748b}
-.pill-count{display:inline-block;background:#1a3050;color:#94a3b8;font-size:.68rem;padding:.1rem .5rem;border-radius:999px;margin-left:.4rem}
+/* Login */
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#060c18}
+.login-card{background:#0d1825;border:1px solid #1a2e48;border-radius:1.5rem;padding:2.5rem;max-width:420px;width:100%;text-align:center}
+.login-logo{font-size:1.6rem;font-weight:900;color:#f59e0b;margin-bottom:.25rem}
+.login-logo em{color:#f1f5f9;font-style:normal}
+.login-sub{color:#6b85a0;font-size:.9rem;margin-bottom:2rem;line-height:1.5}
+.google-btn{display:inline-flex;align-items:center;gap:.75rem;background:#fff;color:#1e293b;font-weight:700;font-size:.9rem;padding:.85rem 1.75rem;border-radius:.65rem;border:none;cursor:pointer;width:100%;justify-content:center;transition:box-shadow .2s}
+.google-btn:hover{box-shadow:0 4px 20px rgba(0,0,0,.2)}
+.google-btn svg{width:1.2rem;height:1.2rem;flex-shrink:0}
+.login-note{margin-top:1.25rem;font-size:.75rem;color:#4b5563}
+#app-screen{display:none}
 @media(max-width:768px){.charts-row{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.table-wrap{padding:0 1rem 1.5rem}.filters{padding:.75rem 1rem}}
 </style>
 </head>
 <body>
+
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">Lead<em>Solar</em></div>
+    <p class="login-sub">Seu painel de qualificação de leads.<br>Entre com a conta Google usada no cadastro.</p>
+    <button class="google-btn" id="google-btn">
+      <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+      Entrar com Google
+    </button>
+    <p class="login-note">Apenas clientes LeadSolar com conta ativa.</p>
+    <div id="login-error" style="display:none;margin-top:1rem;color:#ef4444;font-size:.8rem">""" + no_config_msg + """</div>
+  </div>
+</div>
+
+<div id="app-screen">
 <header>
   <h1>Lead<span>Solar</span> <span style="font-size:.75rem;color:#64748b;font-weight:400;margin-left:.5rem">Dashboard</span></h1>
   <div class="header-right">
-    <a href="/leads/export" class="export-btn">⬇ Exportar CSV</a>
+    <div class="user-chip">
+      <img id="user-photo" src="" alt="" style="display:none"/>
+      <span id="user-name">—</span>
+      <span class="tier-badge" id="user-tier">—</span>
+    </div>
+    <a href="/leads/export" class="export-btn" id="export-link">⬇ Exportar CSV</a>
+    <button class="logout-btn" id="logout-btn">Sair</button>
   </div>
 </header>
-
-<div class="stats" id="stats-row">
+<div class="stats">
   <div class="card"><div class="label">Total Leads</div><div class="value" id="s-total">—</div></div>
   <div class="card"><div class="label">Score Médio</div><div class="value" id="s-avg">—</div><div class="sub">/10</div></div>
   <div class="card"><div class="label">Alta Qualidade</div><div class="value" id="s-high">—</div><div class="sub">score ≥ 7</div></div>
   <div class="card"><div class="label">Conversão</div><div class="value" id="s-conv">—</div><div class="sub">fechados</div></div>
 </div>
-
 <div class="charts-row">
-  <div class="chart-box">
-    <h3>Distribuição de score</h3>
-    <canvas id="chart-score"></canvas>
-  </div>
-  <div class="chart-box">
-    <h3>Urgência dos leads</h3>
-    <canvas id="chart-urgency"></canvas>
-  </div>
+  <div class="chart-box"><h3>Distribuição de score</h3><canvas id="chart-score"></canvas></div>
+  <div class="chart-box"><h3>Urgência dos leads</h3><canvas id="chart-urgency"></canvas></div>
 </div>
-
 <div class="filters">
   <select id="f-urgency"><option value="">Urgência</option><option>alta</option><option>media</option><option>baixa</option></select>
   <select id="f-decision"><option value="">Decisão</option><option>accept</option><option>review</option><option>reject</option></select>
@@ -97,72 +160,126 @@ tr:hover td{background:#0f1929}
   <button class="clear-btn" onclick="clearFilters()">Limpar</button>
   <span id="leads-count" style="font-size:.78rem;color:#64748b"></span>
 </div>
-
 <div class="table-wrap">
 <table>
-  <thead>
-    <tr>
-      <th>Nome</th><th>Cidade</th><th>Conta</th><th>Tipo</th>
-      <th>Score</th><th>Urgência</th><th>Decisão</th><th>Outcome</th><th>WhatsApp</th>
-    </tr>
-  </thead>
-  <tbody id="leads-body">
-    <tr><td colspan="9" class="empty">Carregando...</td></tr>
-  </tbody>
+  <thead><tr><th>Nome</th><th>Cidade</th><th>Conta</th><th>Tipo</th><th>Score</th><th>Urgência</th><th>Decisão</th><th>Outcome</th><th>WhatsApp</th></tr></thead>
+  <tbody id="leads-body"><tr><td colspan="9" class="empty">Carregando...</td></tr></tbody>
 </table>
+</div>
 </div>
 
 <div id="toast"></div>
 
-<script>
-let scoreChart, urgencyChart;
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+
+const FB_CONFIG = """ + fb_config + """;
+let currentToken = null;
+let scoreChart = null, urgencyChart = null;
+
+const app = initializeApp(FB_CONFIG);
+const auth = getAuth(app);
+
+// Auth state
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    currentToken = await user.getIdToken();
+    await showApp(user);
+  } else {
+    showLogin();
+  }
+});
+
+// Buttons
+document.getElementById('google-btn').addEventListener('click', async () => {
+  const errEl = document.getElementById('login-error');
+  errEl.style.display = 'none';
+  try {
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+    await signInWithPopup(auth, provider);
+  } catch(e) {
+    errEl.textContent = e.code === 'auth/popup-closed-by-user' ? 'Login cancelado.' : 'Erro: ' + e.message;
+    errEl.style.display = 'block';
+  }
+});
+
+document.getElementById('logout-btn').addEventListener('click', async () => {
+  await signOut(auth);
+  currentToken = null;
+  showLogin();
+});
+
+function showLogin() {
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app-screen').style.display = 'none';
+}
+
+async function showApp(user) {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app-screen').style.display = 'block';
+  const photo = document.getElementById('user-photo');
+  if (user.photoURL) { photo.src = user.photoURL; photo.style.display = 'block'; }
+  document.getElementById('user-name').textContent = user.displayName || user.email;
+  try {
+    const r = await authFetch('/me');
+    if (r.ok) {
+      const data = await r.json();
+      document.getElementById('user-tier').textContent = data.tier;
+    }
+  } catch(e) {}
+  initCharts();
+  loadStats();
+  loadLeads();
+}
+
+async function authFetch(url, opts = {}) {
+  if (!currentToken && auth.currentUser) {
+    currentToken = await auth.currentUser.getIdToken();
+  }
+  return fetch(url, {
+    ...opts,
+    headers: { ...(opts.headers || {}), 'Authorization': 'Bearer ' + (currentToken || '') },
+  });
+}
 
 function initCharts() {
-  const chartDefaults = {
+  const C = window.Chart;
+  if (!C || scoreChart) return;
+  const cd = {
     plugins: { legend: { display: false } },
-    scales: { x: { ticks: { color: '#64748b', font: { size: 11 } }, grid: { color: '#1a3050' } }, y: { ticks: { color: '#64748b', font: { size: 11 } }, grid: { color: '#1a3050' } } },
+    scales: { x: { ticks: { color:'#64748b', font:{size:11} }, grid:{color:'#1a3050'} }, y: { ticks:{color:'#64748b',font:{size:11}}, grid:{color:'#1a3050'} } }
   };
-
-  scoreChart = new Chart(document.getElementById('chart-score'), {
-    type: 'bar',
-    data: {
-      labels: ['0-3 Baixo', '4-6 Médio', '7-10 Alto'],
-      datasets: [{ data: [0, 0, 0], backgroundColor: ['#dc2626', '#d97706', '#16a34a'], borderRadius: 6, borderSkipped: false }]
-    },
-    options: { ...chartDefaults, responsive: true, maintainAspectRatio: true },
+  scoreChart = new C(document.getElementById('chart-score'), {
+    type:'bar',
+    data:{ labels:['0-3','4-6','7-10'], datasets:[{data:[0,0,0],backgroundColor:['#dc2626','#d97706','#16a34a'],borderRadius:6,borderSkipped:false}] },
+    options:{...cd,responsive:true,maintainAspectRatio:true},
   });
-
-  urgencyChart = new Chart(document.getElementById('chart-urgency'), {
-    type: 'doughnut',
-    data: {
-      labels: ['Alta', 'Média', 'Baixa'],
-      datasets: [{ data: [0, 0, 0], backgroundColor: ['#dc2626', '#f59e0b', '#16a34a'], borderWidth: 2, borderColor: '#0f1929' }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: true,
-      plugins: { legend: { display: true, position: 'right', labels: { color: '#94a3b8', font: { size: 11 }, boxWidth: 12 } } },
-    },
+  urgencyChart = new C(document.getElementById('chart-urgency'), {
+    type:'doughnut',
+    data:{ labels:['Alta','Média','Baixa'], datasets:[{data:[0,0,0],backgroundColor:['#dc2626','#f59e0b','#16a34a'],borderWidth:2,borderColor:'#0f1929'}] },
+    options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:true,position:'right',labels:{color:'#94a3b8',font:{size:11},boxWidth:12}}}},
   });
 }
 
 async function loadStats() {
   try {
-    const r = await fetch('/stats');
+    const r = await authFetch('/stats');
     if (!r.ok) return;
     const d = await r.json();
     document.getElementById('s-total').textContent = d.total_leads;
     document.getElementById('s-avg').textContent = d.average_score;
     document.getElementById('s-high').textContent = d.high_quality_leads;
     document.getElementById('s-conv').textContent = d.conversion_rate + '%';
-
-    if (scoreChart && d.breakdown_by_urgency !== undefined) {
-      const all = await fetch('/leads?limit=500').then(r => r.json()).catch(() => []);
-      const low = all.filter(l => l.score <= 3).length;
-      const mid = all.filter(l => l.score >= 4 && l.score <= 6).length;
-      const high = all.filter(l => l.score >= 7).length;
-      scoreChart.data.datasets[0].data = [low, mid, high];
+    if (scoreChart) {
+      const all = await authFetch('/leads?limit=500').then(r=>r.json()).catch(()=>[]);
+      scoreChart.data.datasets[0].data = [
+        all.filter(l=>l.score<=3).length,
+        all.filter(l=>l.score>=4&&l.score<=6).length,
+        all.filter(l=>l.score>=7).length
+      ];
       scoreChart.update();
-
       const urg = d.breakdown_by_urgency || {};
       urgencyChart.data.datasets[0].data = [urg.alta||0, urg.media||0, urg.baixa||0];
       urgencyChart.update();
@@ -170,44 +287,39 @@ async function loadStats() {
   } catch(e) {}
 }
 
-async function loadLeads() {
+window.loadLeads = async function() {
+  const params = new URLSearchParams();
   const urgency = document.getElementById('f-urgency').value;
   const decision = document.getElementById('f-decision').value;
   const city = document.getElementById('f-city').value.trim();
   const scoreMin = document.getElementById('f-score-min').value;
-  const params = new URLSearchParams();
   if (urgency) params.set('urgency', urgency);
   if (decision) params.set('decision', decision);
   if (city) params.set('city', city);
   if (scoreMin) params.set('score_min', scoreMin);
   params.set('limit', '100');
-
   const tbody = document.getElementById('leads-body');
   tbody.innerHTML = '<tr><td colspan="9" class="empty">Carregando...</td></tr>';
   try {
-    const r = await fetch('/leads?' + params);
+    const r = await authFetch('/leads?' + params);
     if (!r.ok) { tbody.innerHTML = '<tr><td colspan="9" class="empty">Erro ao carregar leads.</td></tr>'; return; }
     const leads = await r.json();
     document.getElementById('leads-count').textContent = leads.length + ' lead' + (leads.length !== 1 ? 's' : '');
-    if (!leads.length) { tbody.innerHTML = '<tr><td colspan="9" class="empty">Nenhum lead encontrado.</td></tr>'; return; }
-    tbody.innerHTML = leads.map(row).join('');
+    tbody.innerHTML = leads.length ? leads.map(renderRow).join('') : '<tr><td colspan="9" class="empty">Nenhum lead encontrado.</td></tr>';
   } catch(e) {
     tbody.innerHTML = '<tr><td colspan="9" class="empty">API indisponível.</td></tr>';
   }
-}
+};
 
-function row(l) {
-  const sc = l.score >= 7 ? 'score-high' : l.score >= 4 ? 'score-mid' : 'score-low';
-  const urg = l.urgency || '';
-  const dec = l.decision || '';
+function renderRow(l) {
+  const sc = l.score>=7?'score-high':l.score>=4?'score-mid':'score-low';
+  const urg = l.urgency||'', dec = l.decision||'';
   const bill = 'R$' + Number(l.monthly_bill).toLocaleString('pt-BR');
   const outcomes = ['','closed','ghosted','not_viable','scheduled_visit','nurturing'];
   const outLabels = {'':'—','closed':'Fechado','ghosted':'Sumiu','not_viable':'Inviável','scheduled_visit':'Visita agendada','nurturing':'Nurturing'};
-  const opts = outcomes.map(o => `<option value="${o}" ${l.outcome===o?'selected':''}>${outLabels[o]||o}</option>`).join('');
-  const waBtn = l.whatsapp_message
-    ? `<button class="wa-btn" onclick="copyWA(this,'${l.id}')">📋 Copiar</button>`
-    : '<span style="color:#475569">—</span>';
-  const typeIcon = {casa:'🏠',apartamento:'🏢',comercial:'🏪'}[l.property_type] || '🏗';
+  const opts = outcomes.map(o=>`<option value="${o}" ${l.outcome===o?'selected':''}>${outLabels[o]||o}</option>`).join('');
+  const typeIcon = {casa:'🏠',apartamento:'🏢',comercial:'🏪'}[l.property_type]||'🏗';
+  const waBtn = l.whatsapp_message ? `<button class="wa-btn" onclick="copyWA(this,'${l.id}')">📋 Copiar</button>` : '<span style="color:#475569">—</span>';
   return `<tr>
     <td style="font-weight:600">${esc(l.name)}</td>
     <td>${esc(l.city)}</td>
@@ -221,54 +333,43 @@ function row(l) {
   </tr>`;
 }
 
-function esc(s){ const d=document.createElement('div');d.textContent=s||'';return d.innerHTML; }
+function esc(s) { const d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
 
-async function setOutcome(sel) {
-  const id = sel.dataset.id;
-  const outcome = sel.value;
+window.setOutcome = async function(sel) {
+  const id = sel.dataset.id, outcome = sel.value;
   if (!outcome) return;
   try {
-    const r = await fetch('/leads/' + id + '/outcome', {
-      method: 'PATCH',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({outcome})
+    const r = await authFetch('/leads/'+id+'/outcome', {
+      method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify({outcome})
     });
-    if (r.ok) { toast('✓ Outcome salvo!'); loadStats(); }
-    else toast('Erro ao salvar.', true);
+    if (r.ok) { toast('✓ Outcome salvo!'); loadStats(); } else toast('Erro ao salvar.', true);
   } catch(e) { toast('Erro de rede.', true); }
-}
+};
 
-async function copyWA(btn, id) {
+window.copyWA = async function(btn, id) {
   try {
-    const r = await fetch('/leads/' + id);
+    const r = await authFetch('/leads/'+id);
     if (!r.ok) return;
     const lead = await r.json();
     if (lead.whatsapp_message) {
       await navigator.clipboard.writeText(lead.whatsapp_message);
-      btn.textContent = '✓ Copiado!';
-      setTimeout(() => btn.textContent = '📋 Copiar', 2000);
+      btn.textContent='✓ Copiado!'; setTimeout(()=>btn.textContent='📋 Copiar',2000);
       toast('Mensagem copiada!');
     }
   } catch(e) { toast('Erro ao copiar.', true); }
-}
+};
 
-function clearFilters() {
-  ['f-urgency','f-decision'].forEach(id => document.getElementById(id).value='');
-  ['f-city','f-score-min'].forEach(id => document.getElementById(id).value='');
+window.clearFilters = function() {
+  ['f-urgency','f-decision'].forEach(id=>document.getElementById(id).value='');
+  ['f-city','f-score-min'].forEach(id=>document.getElementById(id).value='');
   loadLeads();
-}
+};
 
 function toast(msg, err=false) {
   const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.style.background = err ? '#dc2626' : '#0ea5e9';
-  t.style.display = 'block';
-  setTimeout(() => t.style.display='none', 2500);
+  t.textContent = msg; t.style.background = err ? '#dc2626' : '#0ea5e9';
+  t.style.display = 'block'; setTimeout(()=>t.style.display='none', 2500);
 }
-
-initCharts();
-loadStats();
-loadLeads();
 </script>
 </body>
 </html>"""
@@ -276,4 +377,4 @@ loadLeads();
 
 @router.get("/dashboard", response_class=HTMLResponse, include_in_schema=False)
 async def dashboard() -> HTMLResponse:
-    return HTMLResponse(content=_HTML)
+    return HTMLResponse(content=_dashboard_html())

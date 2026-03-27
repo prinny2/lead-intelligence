@@ -121,14 +121,15 @@ def _save_firestore(record: StoredLead) -> None:
         _save_jsonl(record)  # fallback
 
 
-def _load_firestore() -> list[StoredLead]:
+def _load_firestore(org_id: str | None = None) -> list[StoredLead]:
     db = _firestore_client()
     if db is None:
         return _load_jsonl()
     try:
-        docs = db.collection(_COLLECTION).order_by(
-            "timestamp", direction="DESCENDING"
-        ).limit(1000).stream()
+        query = db.collection(_COLLECTION)
+        if org_id:
+            query = query.where("org_id", "==", org_id)
+        docs = query.order_by("timestamp", direction="DESCENDING").limit(1000).stream()
         leads = []
         for doc in docs:
             try:
@@ -174,10 +175,13 @@ def save_lead(record: StoredLead) -> None:
         _save_jsonl(record)
 
 
-def load_leads() -> list[StoredLead]:
+def load_leads(org_id: str | None = None) -> list[StoredLead]:
     if _use_firestore():
-        return _load_firestore()
-    return _load_jsonl()
+        return _load_firestore(org_id=org_id)
+    leads = _load_jsonl()
+    if org_id:
+        leads = [l for l in leads if l.org_id == org_id]
+    return leads
 
 
 def update_lead_outcome(lead_id: str, outcome: str, notes: str | None = None) -> StoredLead | None:
