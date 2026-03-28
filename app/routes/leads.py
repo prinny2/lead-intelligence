@@ -56,6 +56,24 @@ def _score_and_store(data: LeadRequest, org_id: str | None = None) -> LeadRespon
         save_lead(stored)
     except Exception as e:
         logger.warning("storage_skipped error=%s", str(e))
+
+    # Notify customer of hot leads (fire-and-forget, never blocks response)
+    if org_id:
+        try:
+            from app.services.notification_service import notify_hot_lead
+            notify_hot_lead(
+                org_id=org_id,
+                lead_name=data.name,
+                lead_city=data.city,
+                monthly_bill=data.monthly_bill,
+                score=result.response.score,
+                urgency=result.response.urgency,
+                whatsapp_message=result.response.whatsapp_message,
+                recommendation=result.response.recommendation,
+            )
+        except Exception as e:
+            logger.debug("notification_skipped error=%s", e)
+
     return result.response
 
 
@@ -155,10 +173,14 @@ async def update_outcome(
     body: OutcomeUpdate,
     client: ClientInfo = Depends(require_auth),
 ) -> StoredLead:
+    # Verify the lead belongs to this client before updating (multi-tenancy)
+    owned = load_leads(org_id=client.client_id)
+    if not any(l.id == lead_id for l in owned):
+        raise HTTPException(status_code=404, detail="lead not found")
     updated = update_lead_outcome(lead_id, body.outcome, body.notes)
     if updated is None:
         raise HTTPException(status_code=404, detail="lead not found")
-    logger.info("outcome_updated lead_id=%s outcome=%s", lead_id, body.outcome)
+    logger.info("outcome_updated lead_id=%s outcome=%s org=%s", lead_id, body.outcome, client.client_id)
     return updated
 
 

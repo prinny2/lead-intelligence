@@ -135,7 +135,17 @@ async def form_webhook(payload: FormPayload) -> LeadResponse:
               goal/objetivo, email, phone/telefone/whatsapp, etc.
     """
     lead = payload.to_lead_request()
-    logger.info("webhook_form name=%s city=%s", lead.name, lead.city)
+
+    # Optional API key via query param — attributes webhook lead to a tenant
+    org_id: str | None = None
+    api_key_param = request.query_params.get("api_key", "").strip()
+    if api_key_param:
+        from app.auth import _lookup_api_key_firestore
+        client_info = _lookup_api_key_firestore(api_key_param)
+        if client_info:
+            org_id = client_info.client_id
+
+    logger.info("webhook_form name=%s city=%s org=%s", lead.name, lead.city, org_id or "anon")
 
     ai_output, solar_context = get_ai_qualification_with_solar(lead)
     result = hybrid_score(lead, ai_output, solar_context)
@@ -148,10 +158,27 @@ async def form_webhook(payload: FormPayload) -> LeadResponse:
             result.response,
             ai_raw_score=result.ai_raw_score,
             rule_delta=result.rule_delta,
+            org_id=org_id,
         )
         save_lead(stored)
     except Exception as e:
         logger.warning("webhook_storage_skipped error=%s", str(e))
+
+    if org_id:
+        try:
+            from app.services.notification_service import notify_hot_lead
+            notify_hot_lead(
+                org_id=org_id,
+                lead_name=lead.name,
+                lead_city=lead.city,
+                monthly_bill=lead.monthly_bill,
+                score=result.response.score,
+                urgency=result.response.urgency,
+                whatsapp_message=result.response.whatsapp_message,
+                recommendation=result.response.recommendation,
+            )
+        except Exception as e:
+            logger.debug("notification_skipped error=%s", e)
 
     return result.response
 
