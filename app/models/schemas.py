@@ -109,6 +109,7 @@ class StoredLead(BaseModel):
     outcome: OutcomeType | None = None
     outcome_notes: str | None = None
     org_id: str | None = None  # customer email — isolates data per tenant
+    score_breakdown: list[ScoreFactor] | None = None
 
     @classmethod
     def from_qualification(
@@ -142,6 +143,7 @@ class StoredLead(BaseModel):
             ai_raw_score=ai_raw_score,
             rule_delta=rule_delta,
             org_id=org_id,
+            score_breakdown=response.score_breakdown,
         )
 
 

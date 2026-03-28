@@ -217,7 +217,7 @@ h1{{font-size:1.6rem;font-weight:900;color:#22c55e;text-align:center;margin-bott
   </div>
 
   <div class="actions">
-    <a href="/docs" class="btn-primary">Ver documentação da API →</a>
+    <a href="/onboarding?api_key={api_key}" class="btn-primary" id="onboarding-btn">Configurar sua conta →</a>
     <a href="https://wa.me/5591992875776" class="btn-secondary" target="_blank" rel="noopener">📱 Suporte no WhatsApp</a>
   </div>
 

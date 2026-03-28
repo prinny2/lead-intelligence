@@ -100,6 +100,33 @@ tr:hover td{background:#0f1929}
 .outcome-sel{background:#0f1929;border:1px solid #1a3050;color:#e2e8f0;padding:.2rem .4rem;border-radius:.4rem;font-size:.72rem}
 #toast{position:fixed;bottom:1.5rem;right:1.5rem;background:#0ea5e9;color:#fff;padding:.75rem 1.25rem;border-radius:.5rem;font-size:.82rem;display:none;z-index:999;font-weight:600}
 .empty{text-align:center;padding:3rem;color:#64748b}
+/* Breakdown panel */
+#breakdown-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;backdrop-filter:blur(2px)}
+#breakdown-panel{position:fixed;top:0;right:-440px;width:420px;max-width:95vw;height:100vh;background:#0d1825;border-left:1px solid #1a3050;z-index:1001;padding:1.75rem 1.5rem;overflow-y:auto;transition:right .28s cubic-bezier(.4,0,.2,1)}
+#breakdown-panel.open{right:0}
+.bp-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+.bp-title{font-size:1rem;font-weight:800;color:#f1f5f9}
+.bp-close{background:none;border:none;color:#64748b;font-size:1.4rem;cursor:pointer;line-height:1;padding:.2rem}
+.bp-close:hover{color:#ef4444}
+.bp-lead-name{font-size:.8rem;color:#64748b;margin-top:.15rem}
+.bp-score-big{display:flex;align-items:center;gap:1rem;background:#132030;border:1px solid #1a3050;border-radius:.85rem;padding:1rem 1.25rem;margin-bottom:1.25rem}
+.bp-score-circle{width:3.5rem;height:3.5rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:900;flex-shrink:0}
+.bp-score-info{flex:1}
+.bp-score-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:#64748b;margin-bottom:.2rem}
+.bp-score-desc{font-size:.82rem;color:#e2e8f0}
+.bp-factors-title{font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:#64748b;margin-bottom:.75rem}
+.bp-factor{display:flex;gap:.85rem;align-items:flex-start;background:#132030;border:1px solid #1a3050;border-radius:.75rem;padding:.85rem 1rem;margin-bottom:.6rem}
+.bp-factor-icon{font-size:1.25rem;flex-shrink:0;margin-top:.05rem}
+.bp-factor-body{flex:1;min-width:0}
+.bp-factor-label{font-size:.78rem;font-weight:700;color:#e2e8f0;margin-bottom:.15rem;display:flex;align-items:center;gap:.5rem}
+.bp-impact{font-size:.7rem;font-weight:800;padding:.1rem .4rem;border-radius:.3rem}
+.impact-pos{background:rgba(22,163,74,.15);color:#22c55e}
+.impact-neg{background:rgba(220,38,38,.15);color:#ef4444}
+.impact-neu{background:rgba(100,116,139,.12);color:#64748b}
+.bp-factor-desc{font-size:.75rem;color:#64748b;line-height:1.5}
+.bp-reco{background:#0a1f12;border:1px solid rgba(34,197,94,.15);border-radius:.75rem;padding:1rem;margin-top:1rem}
+.bp-reco-title{font-size:.68rem;font-weight:700;color:#22c55e;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem}
+.bp-reco-text{font-size:.8rem;color:#94a3b8;line-height:1.6}
 /* Login */
 #login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#060c18}
 .login-card{background:#0d1825;border:1px solid #1a2e48;border-radius:1.5rem;padding:2.5rem;max-width:420px;width:100%;text-align:center}
@@ -170,6 +197,25 @@ tr:hover td{background:#0f1929}
 </div>
 
 <div id="toast"></div>
+
+<!-- Score Breakdown Panel -->
+<div id="breakdown-overlay" onclick="closeBreakdown()"></div>
+<div id="breakdown-panel">
+  <div class="bp-header">
+    <div>
+      <div class="bp-title">Análise detalhada do lead</div>
+      <div class="bp-lead-name" id="bp-name"></div>
+    </div>
+    <button class="bp-close" onclick="closeBreakdown()">✕</button>
+  </div>
+  <div class="bp-score-big" id="bp-score-big"></div>
+  <div class="bp-factors-title">Fatores que influenciaram o score</div>
+  <div id="bp-factors"></div>
+  <div class="bp-reco" id="bp-reco" style="display:none">
+    <div class="bp-reco-title">Recomendação</div>
+    <div class="bp-reco-text" id="bp-reco-text"></div>
+  </div>
+</div>
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
@@ -326,7 +372,7 @@ function renderRow(l) {
     <td>${esc(l.city)}</td>
     <td style="font-weight:600">${bill}</td>
     <td>${typeIcon} ${esc(l.property_type)}</td>
-    <td><span class="score ${sc}">${l.score}</span></td>
+    <td><span class="score ${sc}" onclick="showBreakdown('${l.id}','${esc(l.name)}')" style="cursor:pointer" title="Ver análise detalhada">${l.score}</span></td>
     <td><span class="badge badge-${urg}">${urg}</span></td>
     <td><span class="badge badge-${dec}">${dec||'—'}</span></td>
     <td><select class="outcome-sel" data-id="${l.id}" onchange="setOutcome(this)">${opts}</select></td>
@@ -371,6 +417,73 @@ function toast(msg, err=false) {
   t.textContent = msg; t.style.background = err ? '#dc2626' : '#0ea5e9';
   t.style.display = 'block'; setTimeout(()=>t.style.display='none', 2500);
 }
+
+// ── Breakdown panel ──────────────────────────────────────────────────────────
+
+window.showBreakdown = async function(id, name) {
+  document.getElementById('bp-name').textContent = name || '';
+  document.getElementById('bp-factors').innerHTML = '<div style="color:#64748b;font-size:.82rem;padding:.5rem 0">Carregando...</div>';
+  document.getElementById('bp-score-big').innerHTML = '';
+  document.getElementById('bp-reco').style.display = 'none';
+
+  document.getElementById('breakdown-overlay').style.display = 'block';
+  const panel = document.getElementById('breakdown-panel');
+  requestAnimationFrame(() => panel.classList.add('open'));
+
+  try {
+    const r = await authFetch('/leads/' + id);
+    if (!r.ok) { document.getElementById('bp-factors').innerHTML = '<div style="color:#ef4444;font-size:.82rem">Erro ao carregar.</div>'; return; }
+    const lead = await r.json();
+    _renderBreakdown(lead);
+  } catch(e) {
+    document.getElementById('bp-factors').innerHTML = '<div style="color:#ef4444;font-size:.82rem">Erro de rede.</div>';
+  }
+};
+
+window.closeBreakdown = function() {
+  const panel = document.getElementById('breakdown-panel');
+  panel.classList.remove('open');
+  setTimeout(() => { document.getElementById('breakdown-overlay').style.display = 'none'; }, 280);
+};
+
+function _renderBreakdown(lead) {
+  const sc = lead.score >= 7 ? 'score-high' : lead.score >= 4 ? 'score-mid' : 'score-low';
+  const scColors = {'score-high':'#16a34a','score-mid':'#d97706','score-low':'#dc2626'};
+  const scLabels = {'score-high':'Alta qualidade','score-mid':'Qualidade média','score-low':'Baixa qualidade'};
+  const col = scColors[sc];
+  document.getElementById('bp-score-big').innerHTML = `
+    <div class="bp-score-circle" style="background:${col}20;color:${col};border:2px solid ${col}40">${lead.score}</div>
+    <div class="bp-score-info">
+      <div class="bp-score-label">Score final</div>
+      <div class="bp-score-desc" style="font-weight:700;color:${col}">${scLabels[sc]}</div>
+      ${lead.ai_raw_score != null ? '<div class="bp-score-desc" style="margin-top:.2rem">IA base: ' + lead.ai_raw_score + '/10' + (lead.rule_delta !== 0 ? ' · Ajuste regras: ' + (lead.rule_delta > 0 ? '+' : '') + lead.rule_delta : '') + '</div>' : ''}
+    </div>`;
+
+  const factors = lead.score_breakdown;
+  const container = document.getElementById('bp-factors');
+  if (!factors || factors.length === 0) {
+    container.innerHTML = '<div style="color:#64748b;font-size:.82rem;padding:.5rem 0">Detalhamento não disponível para este lead.</div>';
+  } else {
+    container.innerHTML = factors.filter(f => f.factor !== 'ai_base').map(f => {
+      const impClass = f.impact > 0 ? 'impact-pos' : f.impact < 0 ? 'impact-neg' : 'impact-neu';
+      const impText = f.impact > 0 ? '+' + f.impact : f.impact < 0 ? String(f.impact) : '±0';
+      return `<div class="bp-factor">
+        <div class="bp-factor-icon">${f.icon || '📊'}</div>
+        <div class="bp-factor-body">
+          <div class="bp-factor-label">${esc(f.label)} <span class="bp-impact ${impClass}">${impText}</span></div>
+          <div class="bp-factor-desc">${esc(f.description)}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  if (lead.recommendation) {
+    document.getElementById('bp-reco-text').textContent = lead.recommendation;
+    document.getElementById('bp-reco').style.display = 'block';
+  }
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') window.closeBreakdown(); });
 </script>
 </body>
 </html>"""
