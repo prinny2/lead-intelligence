@@ -66,10 +66,18 @@ async def demo_score(body: DemoRequest, request: Request) -> DemoResponse:
         extra={"city": body.city, "monthly_bill": body.monthly_bill},
     )
 
+    # Derive decision from score for demo (qualifier needs contact info not available here)
+    if r.score >= 7:
+        decision = "accept"
+    elif r.score >= 4:
+        decision = "review"
+    else:
+        decision = "reject"
+
     return DemoResponse(
         score=r.score,
         urgency=r.urgency,
-        decision=r.decision,
+        decision=decision,
         recommendation=r.recommendation,
         whatsapp_message=r.whatsapp_message or "",
     )
