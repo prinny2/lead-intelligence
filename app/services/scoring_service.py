@@ -4,7 +4,7 @@ import logging
 from dataclasses import dataclass
 from typing import Any
 
-from app.models import DEFAULT_URGENCY, LeadRequest, LeadResponse, SCORE_MAX, SCORE_MIN, VALID_URGENCIES
+from app.models import DEFAULT_URGENCY, LeadRequest, LeadResponse, SCORE_MAX, SCORE_MIN, ScoreFactor, VALID_URGENCIES
 from app.services.recommendation_builder import build_sales_recommendation
 from app.services.whatsapp_builder import build_whatsapp_message
 from lead_intelligence.qualifier import qualify_lead as _qualify_lead
@@ -95,6 +95,89 @@ def _rule_adjustment(lead: LeadRequest, property_normalized: str) -> int:
     if any(w in goal_lower for w in LOW_INTENT_GOAL_WORDS):
         delta -= 3  # stronger penalty for curiosity wording
     return delta
+
+
+def _build_breakdown(
+    lead: LeadRequest,
+    property_normalized: str,
+    ai_raw: int | None,
+    solar_context: dict[str, Any] | None,
+) -> list[ScoreFactor]:
+    """Return list of ScoreFactor explaining every point in the final score."""
+    factors: list[ScoreFactor] = []
+
+    # 1. AI base
+    base = ai_raw if ai_raw is not None else DEFAULT_SCORE
+    factors.append(ScoreFactor(
+        factor="ai_base",
+        label="Análise de contexto",
+        impact=0,
+        description=f"Pontuação base da IA: {base}/10",
+        icon="🤖",
+    ))
+
+    # 2. Bill
+    bill = lead.monthly_bill
+    if bill > 700:
+        factors.append(ScoreFactor(factor="bill", label="Conta de luz", impact=2,
+            description=f"R${bill:.0f}/mês — muito alto, ótimo retorno solar", icon="⚡"))
+    elif bill >= 400:
+        factors.append(ScoreFactor(factor="bill", label="Conta de luz", impact=0,
+            description=f"R${bill:.0f}/mês — dentro do perfil solar", icon="⚡"))
+    elif bill >= 200:
+        factors.append(ScoreFactor(factor="bill", label="Conta de luz", impact=0,
+            description=f"R${bill:.0f}/mês — razoável, payback mais longo", icon="⚡"))
+    else:
+        factors.append(ScoreFactor(factor="bill", label="Conta de luz", impact=-3,
+            description=f"R${bill:.0f}/mês — baixo, solar pode não se pagar", icon="⚡"))
+
+    # 3. Property
+    if property_normalized == "apartamento":
+        factors.append(ScoreFactor(factor="property", label="Tipo de imóvel", impact=-2,
+            description="Apartamento — instalação limitada ou inviável", icon="🏢"))
+    elif property_normalized == "casa":
+        factors.append(ScoreFactor(factor="property", label="Tipo de imóvel", impact=0,
+            description="Casa — instalação viável no telhado", icon="🏠"))
+    elif property_normalized == "comercial":
+        factors.append(ScoreFactor(factor="property", label="Tipo de imóvel", impact=0,
+            description="Comercial — alto potencial de consumo", icon="🏭"))
+    else:
+        factors.append(ScoreFactor(factor="property", label="Tipo de imóvel", impact=0,
+            description="Tipo não especificado — verificar na abordagem", icon="🏠"))
+
+    # 4. Goal / urgency signal
+    goal_lower = (lead.goal or "").lower()
+    if any(w in goal_lower for w in URGENCY_GOAL_WORDS):
+        factors.append(ScoreFactor(factor="goal", label="Intenção de compra", impact=1,
+            description="Objetivo indica urgência: compra próxima", icon="🎯"))
+    elif any(w in goal_lower for w in LOW_INTENT_GOAL_WORDS):
+        factors.append(ScoreFactor(factor="goal", label="Intenção de compra", impact=-3,
+            description="Objetivo indica curiosidade, sem decisão de compra", icon="🎯"))
+    else:
+        factors.append(ScoreFactor(factor="goal", label="Intenção de compra", impact=0,
+            description="Objetivo neutro — confirmar na abordagem", icon="🎯"))
+
+    # 5. Solar potential
+    if solar_context:
+        payback = solar_context.get("estimated_payback_years", 0)
+        savings = solar_context.get("monthly_savings_estimate", 0)
+        sunshine = solar_context.get("sunshine_hours", 0)
+        if 0 < payback <= 5:
+            factors.append(ScoreFactor(factor="solar", label="Potencial solar", impact=1,
+                description=f"Payback {payback:.1f} anos em {lead.city} ({sunshine:.0f}h sol/ano) — excelente",
+                icon="☀️"))
+        elif payback <= 10:
+            factors.append(ScoreFactor(factor="solar", label="Potencial solar", impact=0,
+                description=f"Payback {payback:.1f} anos — razoável para a região",
+                icon="☀️"))
+        else:
+            factors.append(ScoreFactor(factor="solar", label="Potencial solar", impact=-1,
+                description=f"Payback {payback:.1f} anos — longo, abordagem mais cuidadosa",
+                icon="☀️"))
+        if savings > 0:
+            factors[-1].description += f" | Economia est. R${savings:.0f}/mês"
+
+    return factors
 
 
 def _normalize_urgency(raw: str | None) -> str:
@@ -215,6 +298,8 @@ def hybrid_score(
 
     whatsapp_message = build_whatsapp_message(lead, score, urgency)
 
+    breakdown = _build_breakdown(lead, property_normalized, ai_raw, solar_context)
+
     return HybridResult(
         response=LeadResponse(
             score=score,
@@ -223,6 +308,7 @@ def hybrid_score(
             whatsapp_message=whatsapp_message,
             decision=qualifier_decision,
             qualifier_reasons=qualifier_reasons,
+            score_breakdown=breakdown,
         ),
         ai_raw_score=ai_raw,
         rule_delta=delta,

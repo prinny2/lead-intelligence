@@ -9,6 +9,7 @@ from app.models.schemas import (
     OutcomeUpdate,
     SCORE_MAX,
     SCORE_MIN,
+    ScoreFactor,
     StoredLead,
     VALID_URGENCIES,
 )
@@ -22,6 +23,7 @@ __all__ = [
     "OutcomeUpdate",
     "SCORE_MAX",
     "SCORE_MIN",
+    "ScoreFactor",
     "StoredLead",
     "VALID_URGENCIES",
 ]

@@ -57,6 +57,15 @@ class LeadRequest(BaseModel):
         return value
 
 
+class ScoreFactor(BaseModel):
+    """One factor in the explainable score breakdown."""
+    factor: str        # "ai_base" | "bill" | "property" | "goal" | "solar"
+    label: str         # "Conta de luz"
+    impact: int        # -3..+3; 0 = neutral base
+    description: str   # "R$720/mês — alto potencial"
+    icon: str = ""
+
+
 class LeadResponse(BaseModel):
     """Qualification result returned by POST /lead."""
 
@@ -66,6 +75,7 @@ class LeadResponse(BaseModel):
     whatsapp_message: str | None = None
     decision: DecisionType | None = None
     qualifier_reasons: list[str] | None = None
+    score_breakdown: list[ScoreFactor] | None = None
 
 
 # --- Storage (JSONL records) ---
