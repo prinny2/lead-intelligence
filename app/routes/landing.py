@@ -66,11 +66,22 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(6,12,24,.92)
 
 /* CARD LATERAL DO HERO */
 .hero-card{background:var(--surface);border:1px solid var(--border);border-radius:1.25rem;overflow:hidden}
-.card-header{background:var(--surface2);padding:.85rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.75rem}
-.card-dot{width:.55rem;height:.55rem;border-radius:50%}
-.card-title{font-size:.78rem;color:var(--muted)}
-.card-body{padding:1.5rem;font-size:.82rem;font-family:'Courier New',monospace;line-height:2}
-.k{color:#7dd3fc}.vs{color:#86efac}.vn{color:#fca5a5}.vh{color:var(--green);font-weight:700}.c{color:var(--muted)}
+.card-header{background:var(--surface2);padding:.85rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.65rem}
+.card-status-dot{width:.55rem;height:.55rem;border-radius:50%;background:#22c55e;flex-shrink:0;box-shadow:0 0 6px #22c55e88;animation:pulse-dot 2s ease-in-out infinite}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.5}}
+.card-title{font-size:.78rem;color:var(--muted);flex:1}
+.card-time{font-size:.7rem;color:var(--muted);opacity:.6}
+.lead-info{display:flex;align-items:center;gap:.85rem;padding:1.1rem 1.25rem .9rem}
+.lead-avatar{width:2.4rem;height:2.4rem;border-radius:50%;background:linear-gradient(135deg,#b45309,#92400e);color:#fff;font-weight:800;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.lead-name{font-weight:700;font-size:.9rem;margin-bottom:.15rem}
+.lead-meta{font-size:.75rem;color:var(--muted)}
+.lead-score-section{padding:.1rem 1.25rem 1rem}
+.score-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem}
+.score-label-sm{font-size:.7rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.score-badge-pill{font-size:.72rem;font-weight:800;background:rgba(34,197,94,.15);color:var(--green);border:1px solid rgba(34,197,94,.3);padding:.2rem .65rem;border-radius:999px}
+.score-track{height:.45rem;background:rgba(255,255,255,.06);border-radius:999px;overflow:hidden;margin-bottom:.5rem}
+.score-fill{height:100%;background:linear-gradient(90deg,var(--sun),var(--green));border-radius:999px;transition:width 1s ease}
+.score-detail{font-size:.73rem;color:var(--muted);line-height:1.5}
 .card-wa{margin:1.25rem 1.5rem 1.5rem;background:#0d2218;border:1px solid #16a34a33;border-radius:.75rem;padding:1rem}
 .card-wa-label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--green);margin-bottom:.5rem}
 .card-wa-text{font-size:.8rem;color:#bbf7d0;line-height:1.6}
@@ -118,6 +129,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(6,12,24,.92)
 /* SECTION ACCENT LINE */
 .section-accent{width:3rem;height:.2rem;background:linear-gradient(90deg,var(--sun),transparent);border-radius:999px;margin:.75rem auto 0}
 .center .section-accent{margin-left:auto;margin-right:auto}
+
+/* ROI WIZARD */
+#roi-wizard.open{display:flex!important}
+.wz-chip{background:#132030;border:1px solid #1a2e48;color:#e2e8f0;text-align:left;padding:.85rem 1.1rem;border-radius:.75rem;font-size:.9rem;cursor:pointer;font-family:inherit;transition:all .15s;width:100%}
+.wz-chip:hover{border-color:#f59e0b;color:#f59e0b;background:rgba(245,158,11,.06)}
 
 /* PROBLEMA */
 .pain-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.25rem;margin-top:3rem}
@@ -384,7 +400,7 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
       </p>
       <div class="hero-btns">
         <button onclick="startCheckout('pro')" class="btn-sun" style="border:none;cursor:pointer;font-family:inherit">Começar grátis por 30 dias →</button>
-        <a href="#precos" class="btn-outline">Ver planos</a>
+        <button onclick="openWizard()" class="btn-outline" style="border:1px solid var(--border);background:none;cursor:pointer;font-family:inherit;color:var(--muted);padding:.85rem 1.75rem;border-radius:.6rem;font-size:.95rem;transition:all .2s" onmouseover="this.style.borderColor='var(--sun)';this.style.color='var(--sun)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Calcule seu ROI →</button>
       </div>
       <div class="hero-no-risk"><span>✓</span> Sem cartão de crédito &nbsp;·&nbsp; <span>✓</span> Cancele quando quiser &nbsp;·&nbsp; <span>✓</span> Setup em 1 hora</div>
       <div class="hero-proof anim">
@@ -399,22 +415,27 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
     </div>
     <div class="hero-card">
       <div class="card-header">
-        <div class="card-dot" style="background:#ff5f57"></div>
-        <div class="card-dot" style="background:#febc2e"></div>
-        <div class="card-dot" style="background:#28c840"></div>
-        <span class="card-title">Lead recebido agora — Curitiba, PR</span>
+        <span class="card-status-dot"></span>
+        <span class="card-title">Lead recebido agora · Curitiba, PR</span>
+        <span class="card-time">há 12s</span>
       </div>
-      <div class="card-body">
-        <span class="c">// Marcos Oliveira, conta R$720/mês, casa</span><br>
-        {<br>
-        &nbsp;<span class="k">"score"</span>: <span class="vh">9</span>,<br>
-        &nbsp;<span class="k">"urgency"</span>: <span class="vs">"alta"</span>,<br>
-        &nbsp;<span class="k">"decision"</span>: <span class="vh">"ligar hoje"</span>,<br>
-        &nbsp;<span class="k">"reason"</span>: <span class="vs">"R$720 em Curitiba justifica sistema 6kWp, retorno em 4 anos"</span><br>
-        }
+      <div class="lead-info">
+        <div class="lead-avatar">MO</div>
+        <div>
+          <div class="lead-name">Marcos Oliveira</div>
+          <div class="lead-meta">Casa própria · R$720/mês · Curitiba, PR</div>
+        </div>
+      </div>
+      <div class="lead-score-section">
+        <div class="score-row">
+          <span class="score-label-sm">Potencial de fechamento</span>
+          <span class="score-badge-pill">9/10 — Ligar hoje ↑</span>
+        </div>
+        <div class="score-track"><div class="score-fill" style="width:90%"></div></div>
+        <div class="score-detail">R$720/mês em Curitiba → sistema 6kWp, payback em 4 anos</div>
       </div>
       <div class="card-wa">
-        <div class="card-wa-label">📱 WhatsApp pronto pra copiar</div>
+        <div class="card-wa-label">📱 Mensagem pronta para enviar</div>
         <div class="card-wa-text">"Oi Marcos! Vi que sua conta de luz chega a R$720/mês em Curitiba. Com solar você economiza em torno de R$576 por mês — o sistema se paga em menos de 4 anos. Posso te mandar uma simulação hoje? ☀️"</div>
       </div>
     </div>
@@ -678,7 +699,7 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
               </select>
             </div>
           </div>
-          <button type="submit" class="demo-submit" id="demo-btn">Ver score e mensagem →</button>
+          <button type="submit" class="demo-submit" id="demo-btn">Ver resultado e mensagem →</button>
         </form>
       </div>
       <div class="demo-result-box" id="demo-result-box">
@@ -752,7 +773,7 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
           O sistema funciona pra leads que vêm do Instagram e Meta Ads?
           <span class="faq-icon">+</span>
         </button>
-        <div class="faq-a">Sim. Meta Leads Ads conecta direto via webhook. Quando alguém preenche o formulário do seu anúncio, o lead já cai qualificado no painel em segundos — sem copiar e colar nada no WhatsApp.</div>
+        <div class="faq-a">Sim. Meta Leads Ads conecta automaticamente. Quando alguém preenche o formulário do seu anúncio, o lead já cai qualificado no painel em segundos — sem copiar e colar nada no WhatsApp.</div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">
@@ -832,8 +853,8 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
           <li>Tudo do Pro</li>
           <li>Setup e integração incluso</li>
           <li>Treinamento do time</li>
-          <li>Acesso completo à API</li>
-          <li>SLA 99.9% de uptime</li>
+          <li>Integração com qualquer sistema</li>
+          <li>Disponibilidade garantida 24/7</li>
           <li>Gerente de conta dedicado</li>
           <li>NF e contrato formal</li>
         </ul>
@@ -900,6 +921,63 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
   <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.121.554 4.112 1.523 5.837L0 24l6.335-1.505A11.942 11.942 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.006-1.371l-.36-.214-3.727.885.916-3.618-.235-.372A9.818 9.818 0 1112 21.818z"/></svg>
   <span>Falar no WhatsApp</span>
 </a>
+
+<!-- ROI WIZARD MODAL -->
+<div id="roi-wizard" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(6,12,24,.88);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:1.5rem">
+  <div style="background:#0d1825;border:1px solid #1a2e48;border-radius:1.5rem;max-width:520px;width:100%;padding:2rem;position:relative;box-shadow:0 24px 64px rgba(0,0,0,.5)">
+    <button onclick="closeWizard()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:#6b85a0;font-size:1.2rem;cursor:pointer;line-height:1;padding:.25rem">✕</button>
+    <!-- STEP 1 -->
+    <div id="wz-step-1">
+      <div style="font-size:.7rem;font-weight:700;color:#f59e0b;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem">Passo 1 de 3</div>
+      <div style="font-size:1.2rem;font-weight:800;margin-bottom:.35rem">Quantos leads chegam por mês?</div>
+      <div style="font-size:.85rem;color:#6b85a0;margin-bottom:1.5rem">Todos os canais somados: formulário, Meta Ads, indicação...</div>
+      <div style="display:flex;flex-direction:column;gap:.65rem">
+        <button class="wz-chip" onclick="wzNext(1,'lt100','Menos de 100 leads')">Menos de 100 leads</button>
+        <button class="wz-chip" onclick="wzNext(1,'100to500','100 a 500 leads')">100 a 500 leads</button>
+        <button class="wz-chip" onclick="wzNext(1,'500to2000','500 a 2.000 leads')">500 a 2.000 leads</button>
+        <button class="wz-chip" onclick="wzNext(1,'gt2000','Mais de 2.000 leads')">Mais de 2.000 leads</button>
+      </div>
+    </div>
+    <!-- STEP 2 -->
+    <div id="wz-step-2" style="display:none">
+      <div style="font-size:.7rem;font-weight:700;color:#f59e0b;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem">Passo 2 de 3</div>
+      <div style="font-size:1.2rem;font-weight:800;margin-bottom:.35rem">Qual o maior problema hoje?</div>
+      <div style="font-size:.85rem;color:#6b85a0;margin-bottom:1.5rem">Escolha o que mais impacta seus resultados.</div>
+      <div style="display:flex;flex-direction:column;gap:.65rem">
+        <button class="wz-chip" onclick="wzNext(2,'waste','Vendedor perde tempo com leads que não compram')">Vendedor perde tempo com leads que não compram</button>
+        <button class="wz-chip" onclick="wzNext(2,'priority','Não sei quais leads ligar primeiro')">Não sei quais leads ligar primeiro</button>
+        <button class="wz-chip" onclick="wzNext(2,'message','As mensagens não geram resposta')">As mensagens não geram resposta</button>
+      </div>
+    </div>
+    <!-- STEP 3 -->
+    <div id="wz-step-3" style="display:none">
+      <div style="font-size:.7rem;font-weight:700;color:#f59e0b;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem">Passo 3 de 3</div>
+      <div style="font-size:1.2rem;font-weight:800;margin-bottom:.35rem">Qual o ticket médio por contrato?</div>
+      <div style="font-size:.85rem;color:#6b85a0;margin-bottom:1.5rem">Valor médio de um contrato fechado.</div>
+      <div style="display:flex;flex-direction:column;gap:.65rem">
+        <button class="wz-chip" onclick="wzResult('lt15k',15000)">Até R$ 15.000</button>
+        <button class="wz-chip" onclick="wzResult('15to50k',32500)">R$ 15.000 – R$ 50.000</button>
+        <button class="wz-chip" onclick="wzResult('gt50k',65000)">Acima de R$ 50.000</button>
+      </div>
+    </div>
+    <!-- RESULT -->
+    <div id="wz-result" style="display:none">
+      <div style="text-align:center;margin-bottom:1.5rem">
+        <div style="font-size:2.2rem;margin-bottom:.5rem">💰</div>
+        <div style="font-size:.8rem;color:#6b85a0;margin-bottom:.35rem">Potencial extra por mês</div>
+        <div id="wz-revenue" style="font-size:2rem;font-weight:900;color:#f59e0b;line-height:1;margin-bottom:.25rem"></div>
+        <div id="wz-revenue-detail" style="font-size:.82rem;color:#6b85a0"></div>
+      </div>
+      <div id="wz-plan-card" style="background:#132030;border:1px solid #1a3050;border-radius:1rem;padding:1.25rem;margin-bottom:1.25rem">
+        <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#f59e0b;margin-bottom:.35rem">Plano recomendado para você</div>
+        <div id="wz-plan-name" style="font-size:1rem;font-weight:800;margin-bottom:.2rem"></div>
+        <div id="wz-plan-pitch" style="font-size:.82rem;color:#6b85a0"></div>
+      </div>
+      <button id="wz-cta" onclick="" style="width:100%;background:linear-gradient(135deg,#f59e0b,#d97706);color:#000;font-weight:800;padding:.9rem;border-radius:.65rem;border:none;font-size:.95rem;cursor:pointer;font-family:inherit;margin-bottom:.75rem">Começar grátis por 30 dias →</button>
+      <div style="text-align:center;font-size:.75rem;color:#6b85a0">Sem cartão · 30 dias grátis · Cancele quando quiser</div>
+    </div>
+  </div>
+</div>
 
 <div id="toast">✓ Copiado!</div>
 
@@ -1119,6 +1197,48 @@ if (firstCTA) firstCTA.classList.add('btn-sun-pulse');
     waBtn.style.display = e.isIntersecting ? 'none' : '';
   }, {threshold: 0.1}).observe(ctaEl);
 })();
+
+// ROI WIZARD
+const _wzAnswers = {};
+
+function openWizard() {
+  document.getElementById('roi-wizard').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeWizard() {
+  document.getElementById('roi-wizard').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('roi-wizard').addEventListener('click', function(e) {
+  if (e.target === this) closeWizard();
+});
+
+function wzNext(step, key, label) {
+  _wzAnswers['step' + step] = {key, label};
+  document.getElementById('wz-step-' + step).style.display = 'none';
+  document.getElementById('wz-step-' + (step + 1)).style.display = 'block';
+}
+
+function wzResult(ticketKey, ticketVal) {
+  _wzAnswers.ticket = {key: ticketKey, val: ticketVal};
+
+  const leadsMap = {lt100: 75, '100to500': 280, '500to2000': 1100, gt2000: 2500};
+  const leads = leadsMap[_wzAnswers.step1.key] || 280;
+  const extraCloses = Math.round(leads * 0.03);
+  const extraRevenue = extraCloses * ticketVal;
+
+  const planMap = {lt100: {plan:'starter', name:'Starter', pitch:'Perfeito para times pequenos — até 500 leads/mês.', price:'R$297'}, '100to500': {plan:'starter', name:'Starter', pitch:'Ideal para seu volume — até 500 leads/mês com priorização automática.', price:'R$297'}, '500to2000': {plan:'pro', name:'Pro', pitch:'Feito para o seu volume — até 2.000 leads/mês com simulação de ROI.', price:'R$497'}, gt2000: {plan:'enterprise', name:'Empresarial', pitch:'Para o seu volume, precisamos conversar. Leads ilimitados + setup incluso.', price:'R$997'}};
+  const rec = planMap[_wzAnswers.step1.key] || planMap['100to500'];
+
+  document.getElementById('wz-revenue').textContent = 'R$ ' + extraRevenue.toLocaleString('pt-BR');
+  document.getElementById('wz-revenue-detail').textContent = extraCloses + ' contratos a mais por mês × R$ ' + ticketVal.toLocaleString('pt-BR') + ' de ticket médio';
+  document.getElementById('wz-plan-name').textContent = 'LeadSolar ' + rec.name + ' — ' + rec.price + '/mês';
+  document.getElementById('wz-plan-pitch').textContent = rec.pitch;
+  document.getElementById('wz-cta').onclick = function() { closeWizard(); startCheckout(rec.plan); };
+
+  document.getElementById('wz-step-3').style.display = 'none';
+  document.getElementById('wz-result').style.display = 'block';
+}
 </script>
 </body>
 </html>"""
