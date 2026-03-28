@@ -11,6 +11,37 @@ from lead_intelligence.qualifier import qualify_lead as _qualify_lead
 
 logger = logging.getLogger("lead_intelligence")
 
+
+def get_ai_qualification_with_solar(lead: LeadRequest) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
+    """
+    Run solar enrichment then AI qualification (Gemini → Anthropic fallback).
+    Returns (ai_output, solar_context). Either can be None.
+    """
+    solar_context: dict[str, Any] | None = None
+    try:
+        from app.services.solar_enrichment_service import enrich_lead_solar
+        solar_context = enrich_lead_solar(lead.city, lead.state, lead.monthly_bill)
+    except Exception as e:
+        logger.debug("solar_enrichment_skipped error=%s", e)
+
+    # Try Gemini first
+    ai_output: dict[str, Any] | None = None
+    try:
+        from app.services.gemini_service import get_gemini_qualification
+        ai_output = get_gemini_qualification(lead, solar_context)
+    except Exception as e:
+        logger.debug("gemini_skipped error=%s", e)
+
+    # Fall back to Anthropic
+    if ai_output is None:
+        try:
+            from app.services.ai_service import get_ai_qualification
+            ai_output = get_ai_qualification(lead)
+        except Exception as e:
+            logger.debug("anthropic_skipped error=%s", e)
+
+    return ai_output, solar_context
+
 DEFAULT_SCORE = 5
 DEFAULT_RECOMMENDATION = "Análise indisponível; tente novamente."
 
@@ -114,9 +145,14 @@ class HybridResult:
     rule_delta: int
 
 
-def hybrid_score(lead: LeadRequest, ai_output: dict[str, Any] | None) -> HybridResult:
+def hybrid_score(
+    lead: LeadRequest,
+    ai_output: dict[str, Any] | None,
+    solar_context: dict[str, Any] | None = None,
+) -> HybridResult:
     """
-    Build LeadResponse from AI + rules. Returns result plus ai_raw_score and rule_delta for storage.
+    Build LeadResponse from AI + rules + solar data.
+    Returns result plus ai_raw_score and rule_delta for storage.
     """
     property_normalized = _normalize_property_type(lead.property_type)
 
@@ -137,6 +173,15 @@ def hybrid_score(lead: LeadRequest, ai_output: dict[str, Any] | None) -> HybridR
         urgency_raw = None
 
     delta = _rule_adjustment(lead, property_normalized)
+
+    # Solar bonus/penalty: great payback → +1, very poor → -1
+    if solar_context:
+        payback = solar_context.get("estimated_payback_years", 0)
+        if 0 < payback <= 5:
+            delta += 1
+        elif payback > 15:
+            delta -= 1
+
     score = max(SCORE_MIN, min(SCORE_MAX, base + delta))
 
     urgency = _normalize_urgency(urgency_raw)

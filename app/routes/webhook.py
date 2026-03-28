@@ -9,7 +9,8 @@ from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, ConfigDict, field_validator
 
 from app.models import LeadRequest, LeadResponse, StoredLead
-from app.services import get_ai_qualification, hybrid_score, save_lead
+from app.services import hybrid_score, save_lead
+from app.services.scoring_service import get_ai_qualification_with_solar
 
 logger = logging.getLogger("lead_intelligence")
 
@@ -136,8 +137,8 @@ async def form_webhook(payload: FormPayload) -> LeadResponse:
     lead = payload.to_lead_request()
     logger.info("webhook_form name=%s city=%s", lead.name, lead.city)
 
-    ai_output = get_ai_qualification(lead)
-    result = hybrid_score(lead, ai_output)
+    ai_output, solar_context = get_ai_qualification_with_solar(lead)
+    result = hybrid_score(lead, ai_output, solar_context)
 
     logger.info("webhook score=%s urgency=%s", result.response.score, result.response.urgency)
 

@@ -10,7 +10,8 @@ from fastapi.responses import StreamingResponse
 
 from app.auth import ClientInfo, require_auth
 from app.models import LeadRequest, LeadResponse, LeadStats, OutcomeUpdate, StoredLead
-from app.services import get_ai_qualification, hybrid_score, load_leads, save_lead, update_lead_outcome
+from app.services import hybrid_score, load_leads, save_lead, update_lead_outcome
+from app.services.scoring_service import get_ai_qualification_with_solar
 from app.services.audit_service import log_event
 
 logger = logging.getLogger("lead_intelligence")
@@ -43,8 +44,8 @@ def _find_duplicate(data: LeadRequest, leads: list[StoredLead]) -> StoredLead | 
 
 
 def _score_and_store(data: LeadRequest, org_id: str | None = None) -> LeadResponse:
-    ai_output = get_ai_qualification(data)
-    result = hybrid_score(data, ai_output)
+    ai_output, solar_context = get_ai_qualification_with_solar(data)
+    result = hybrid_score(data, ai_output, solar_context)
     try:
         stored = StoredLead.from_qualification(
             data, result.response,
