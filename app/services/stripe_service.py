@@ -13,22 +13,22 @@ logger = logging.getLogger("lead_intelligence.stripe")
 PLANS = {
     "starter": {
         "name": "LeadSolar Starter",
-        "price_id": "price_1TFFdtPvTQyWBe6uIdY737DH",
-        "price_id_annual": "price_1TFcdaPvTQyWBe6uIQN7Bp9u",
+        "price_id": "price_1TG0zaLWhPBYYTxm8o4T4gvi",
+        "price_id_annual": "price_1TG0zaLWhPBYYTxmPQnuMtzD",
         "rate_limit": 500,
         "tier": "starter",
     },
     "pro": {
         "name": "LeadSolar Pro",
-        "price_id": "price_1TFFdvPvTQyWBe6uMMD919W8",
-        "price_id_annual": "price_1TFcdfPvTQyWBe6u0ycyMkYA",
+        "price_id": "price_1TG0zaLWhPBYYTxmoKIIOGvl",
+        "price_id_annual": "price_1TG0zZLWhPBYYTxm8u5UlJn4",
         "rate_limit": 2000,
         "tier": "pro",
     },
     "enterprise": {
         "name": "LeadSolar Empresarial",
-        "price_id": "price_1TFFdwPvTQyWBe6ucsHOsNWC",
-        "price_id_annual": "price_1TFcdkPvTQyWBe6ulp0WJHqR",
+        "price_id": "price_1TG0zaLWhPBYYTxm9rdOgNyV",
+        "price_id_annual": "price_1TG0zZLWhPBYYTxmImhCrB53",
         "rate_limit": 100000,
         "tier": "enterprise",
     },
