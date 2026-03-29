@@ -1,10 +1,14 @@
 """Onboarding wizard — served at /onboarding after Stripe checkout."""
 
+import os
+
 from fastapi import APIRouter, Query
 from fastapi.responses import HTMLResponse, JSONResponse
 from typing import Optional
 
 router = APIRouter()
+
+_BASE_URL = os.getenv("BASE_URL", "https://lead-intelligence-production.up.railway.app")
 
 # ---------------------------------------------------------------------------
 # Helper data: per-integration setup guide (also exposed as JSON endpoint)
@@ -78,12 +82,23 @@ _GUIDES: dict[str, dict] = {
 # JSON guide endpoint (for future dashboard use)
 # ---------------------------------------------------------------------------
 
+def _resolve_guides() -> dict[str, dict]:
+    """Return guides with BASE_URL substituted for the hardcoded production URL."""
+    import json
+    _PROD_URL = "https://lead-intelligence-production.up.railway.app"
+    if _BASE_URL == _PROD_URL:
+        return _GUIDES
+    raw = json.dumps(_GUIDES).replace(_PROD_URL, _BASE_URL)
+    return json.loads(raw)
+
+
 @router.get("/onboarding/guide")
 async def onboarding_guide(integration: Optional[str] = Query(default=None)):
     """Return setup steps JSON for a given integration key."""
-    if integration and integration in _GUIDES:
-        return JSONResponse(content=_GUIDES[integration])
-    return JSONResponse(content={"integrations": list(_GUIDES.keys()), "guides": _GUIDES})
+    guides = _resolve_guides()
+    if integration and integration in guides:
+        return JSONResponse(content=guides[integration])
+    return JSONResponse(content={"integrations": list(guides.keys()), "guides": guides})
 
 
 # ---------------------------------------------------------------------------
@@ -809,4 +824,6 @@ async def onboarding(
       - plan: subscribed plan slug (optional)
       - api_key: the newly issued API key to display to the user (optional)
     """
-    return HTMLResponse(content=_HTML)
+    _PROD_URL = "https://lead-intelligence-production.up.railway.app"
+    html = _HTML.replace(_PROD_URL, _BASE_URL) if _BASE_URL != _PROD_URL else _HTML
+    return HTMLResponse(content=html)

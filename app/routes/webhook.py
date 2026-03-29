@@ -125,7 +125,7 @@ class FormPayload(BaseModel):
 
 
 @router.post("/webhook/form", response_model=LeadResponse)
-async def form_webhook(payload: FormPayload) -> LeadResponse:
+async def form_webhook(payload: FormPayload, request: Request) -> LeadResponse:
     """
     Receive a lead from Google Forms / Zapier / Make and qualify it.
 
