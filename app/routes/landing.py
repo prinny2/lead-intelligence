@@ -14,9 +14,9 @@ _HTML = """<!DOCTYPE html>
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>LeadSolar — Seu vendedor liga pro lead certo, na hora certa</title>
-<meta name="description" content="Chega de ligar pra quem mora em apartamento alugado com conta de R$90. Nossa ferramenta mostra quem tem conta alta, imóvel próprio e quer comprar — antes do seu vendedor pegar o telefone."/>
-<meta property="og:title" content="LeadSolar — Seu vendedor liga pro lead certo, na hora certa"/>
+<title>LeadSolar — Pare de ligar pra quem nunca vai fechar</title>
+<meta name="description" content="Cada lead do seu formulário recebe um score de 0 a 10 e uma mensagem de WhatsApp pronta em segundos. Seu vendedor liga só pra quem tem potencial real."/>
+<meta property="og:title" content="LeadSolar — Pare de ligar pra quem nunca vai fechar"/>
 <meta property="og:description" content="Score automático 0–10 por conta de luz, imóvel e urgência. WhatsApp personalizado pronto. Fila de prioridade diária. 30 dias grátis."/>
 <meta property="og:type" content="website"/>
 <meta property="og:url" content="https://lead-intelligence-production.up.railway.app/"/>
@@ -383,8 +383,7 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
 
 <!-- ANNOUNCEMENT BAR -->
 <div class="ann-bar">
-  ☀️ <span>30 dias gr&aacute;tis</span> — conecte seu formul&aacute;rio e comece a qualificar leads hoje
-  <a href="#demo">Testar agora →</a>
+  🎉 <span>Lançamento — 40% OFF com código LANCAMENTO40</span> · Primeiras 50 vagas
 </div>
 
 <!-- MOBILE MENU -->
@@ -415,19 +414,14 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
     <div>
       <div class="hero-eyebrow">⚡ Inteligência de leads para energia solar</div>
       <h1>Pare de ligar pra quem <em>nunca vai fechar</em></h1>
-      <p class="hero-sub">
-        Conecte seu formulário e cada lead recebe um score de 0 a 10, mensagem de WhatsApp personalizada e recomendação de venda.
-        <strong>Seu time liga s&oacute; pra quem tem potencial real.</strong>
-        Conta alta, casa pr&oacute;pria, quer comprar? Score 9 — liga hoje.
-      </p>
+      <p class="hero-sub">Cada lead do seu formulário recebe um score de 0 a 10 e uma mensagem de WhatsApp pronta em segundos.</p>
       <div class="hero-btns">
         <button onclick="startCheckout('pro')" class="btn-sun" style="border:none;cursor:pointer;font-family:inherit">Começar grátis por 30 dias →</button>
-        <button onclick="openWizard()" class="btn-outline" style="border:1px solid var(--border);background:none;cursor:pointer;font-family:inherit;color:var(--muted);padding:.85rem 1.75rem;border-radius:.6rem;font-size:.95rem;transition:all .2s" onmouseover="this.style.borderColor='var(--sun)';this.style.color='var(--sun)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Calcule seu ROI →</button>
       </div>
       <div class="hero-no-risk"><span>✓</span> Sem cartão de crédito &nbsp;·&nbsp; <span>✓</span> Cancele quando quiser &nbsp;·&nbsp; <span>✓</span> Setup em 1 hora</div>
       <div class="hero-proof anim">
-        <div class="proof-item"><strong>0 a 10</strong><span>score por lead em segundos</span></div>
-        <div class="proof-item"><strong>WhatsApp</strong><span>mensagem pronta pra enviar</span></div>
+        <div class="proof-item"><strong>+3x</strong><span>fechamentos com mesma equipe</span></div>
+        <div class="proof-item"><strong>30s</strong><span>do formulário ao score</span></div>
         <div class="proof-item"><strong>30 dias</strong><span>grátis pra testar</span></div>
       </div>
     </div>
@@ -460,52 +454,26 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
   </div>
 </section>
 
-<!-- INTEGRATIONS -->
-<div class="logos-section">
-  <div class="logos-inner">
-    <div class="logos-label">Conecta com o que você já usa</div>
-    <div class="logos-row">
-      <div class="logo-chip">📋 Google Forms</div>
-      <div class="logo-chip">📣 Meta Leads Ads</div>
-      <div class="logo-chip">⚡ Zapier</div>
-      <div class="logo-chip">🔄 Make (Integromat)</div>
-      <div class="logo-chip">📊 RD Station</div>
-      <div class="logo-chip">💬 WhatsApp</div>
-      <div class="logo-chip">📁 Google Sheets</div>
-    </div>
-  </div>
-</div>
-
-<!-- PROBLEMA -->
+<!-- DOR -->
 <section class="section" id="problema">
   <div class="container">
-    <div class="section-tag">O dia a dia de quem vende solar</div>
-    <h2 class="section-title">Seu vendedor está perdendo as melhores oportunidades</h2>
-    <p class="section-sub">Não é falta de lead. É falta de saber qual lead vale o tempo.</p>
-    <div class="pain-grid">
+    <div class="section-tag center">O problema</div>
+    <h2 class="section-title center">Você já tem leads. O problema é saber quem ligar primeiro.</h2>
+    <div class="pain-grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr));margin-top:3rem">
       <div class="pain">
-        <div class="pain-icon">📲</div>
-        <h3>Lead chega de todo lugar</h3>
-        <p>Instagram, Google Forms, indicação, feiras, Meta Ads. Tudo numa planilha sem ordem, sem prioridade.</p>
-        <div class="quote">"Recebi 60 leads no mês passado e não sei por onde começar."</div>
+        <div class="pain-icon">⏱️</div>
+        <h3>Lead esquentou e esfriou</h3>
+        <p>Você ligou 2 dias depois. O concorrente ligou em 20 minutos.</p>
       </div>
       <div class="pain">
-        <div class="pain-icon">🏢</div>
-        <h3>Apartamento alugado com R$80 de conta</h3>
-        <p>Sem filtro, o vendedor liga por igual pra quem quer comprar e pra quem nunca vai conseguir instalar.</p>
-        <div class="quote">"Perdi uma tarde inteira com alguém que nem é dono do imóvel."</div>
+        <div class="pain-icon">🎯</div>
+        <h3>Vendedor atira pra todo lado</h3>
+        <p>50 ligações por semana, 2 fechamentos. Por falta de filtro, não de esforço.</p>
       </div>
       <div class="pain">
         <div class="pain-icon">💬</div>
         <h3>Mensagem igual pra todo mundo</h3>
-        <p>"Olá, temos interesse em te apresentar nossa solução solar..." — lead lê, fecha, ignora.</p>
-        <div class="quote">"Mando no WhatsApp e ninguém responde. O lead nem abre."</div>
-      </div>
-      <div class="pain">
-        <div class="pain-icon">📉</div>
-        <h3>Sem número nenhum</h3>
-        <p>Quantos leads do mês passado viraram visita? Quantas visitas viraram proposta? Ninguém sabe.</p>
-        <div class="quote">"Sei que fechei 3 contratos, mas não sei de onde vieram."</div>
+        <p>Apartamento alugado com R$80 de conta recebe a mesma abordagem que casa própria R$700.</p>
       </div>
     </div>
   </div>
@@ -515,166 +483,29 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
 <section class="section how-bg" id="como-funciona">
   <div class="container">
     <div class="section-tag center">Como funciona</div>
-    <h2 class="section-title center">Do formulário à venda em menos de 30 segundos</h2>
+    <h2 class="section-title center">De formulário a lead qualificado em 30 segundos</h2>
     <div class="steps">
       <div class="step">
         <div class="step-num">1</div>
-        <h3>Lead entra</h3>
-        <p>Pelo seu Google Forms, site, Meta Ads ou qualquer formulário. Sem copiar e colar nada.</p>
+        <h3>Conecta</h3>
+        <p>Google Forms, RD Station ou qualquer formulário. Sem mexer no seu processo atual.</p>
       </div>
       <div class="step">
         <div class="step-num">2</div>
-        <h3>Sistema analisa</h3>
-        <p>Conta de luz, tipo de imóvel, cidade, titularidade. Quem qualifica ganha nota alta. Quem não qualifica é marcado automaticamente.</p>
+        <h3>Qualifica</h3>
+        <p>IA analisa conta de luz, imóvel, cidade e urgência. Score 0 a 10 na hora.</p>
       </div>
       <div class="step">
         <div class="step-num">3</div>
-        <h3>Vendedor recebe</h3>
-        <p>Dashboard mostra a fila do dia: quem ligar agora, quem pode esperar, quem descartar. Com a mensagem WhatsApp já escrita.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">4</div>
-        <h3>Você acompanha</h3>
-        <p>Quantos leads recebeu, quantos foram qualificados, quantos fecharam. Mês a mês, sem planilha.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- FEATURES -->
-<section class="section">
-  <div class="container">
-    <div class="section-tag center">O que você tem acesso</div>
-    <h2 class="section-title center">Feito pra realidade de quem vende solar no Brasil</h2>
-    <div class="feat-grid">
-      <div class="feat">
-        <div class="feat-icon">🏆</div>
-        <h3>Fila de prioridade diária</h3>
-        <p>Todo dia de manhã, seu vendedor abre o painel e vê exatamente quem ligar primeiro. Ordem por urgência, conta de luz e potencial de fechamento.</p>
-        <span class="feat-tag feat-tag-yellow">Mais usado</span>
-      </div>
-      <div class="feat">
-        <div class="feat-icon">📱</div>
-        <h3>WhatsApp personalizado por lead</h3>
-        <p>Cada lead tem uma mensagem diferente com o nome, cidade e valor da conta dele. Não parece automático — porque não é genérico.</p>
-        <span class="feat-tag feat-tag-green">Aumenta resposta em 3x</span>
-      </div>
-      <div class="feat">
-        <div class="feat-icon">📐</div>
-        <h3>Simulação de ROI por estado</h3>
-        <p>Tarifa ANEEL por região, tamanho de sistema estimado, payback em anos e economia em 10 e 25 anos. Pra você já chegar na visita com os números.</p>
-      </div>
-      <div class="feat">
-        <div class="feat-icon">🔗</div>
-        <h3>Conecta com o que você já usa</h3>
-        <p>Google Forms, RD Station, Meta Leads Ads, Zapier. Lead novo no formulário → aparece no painel em segundos. Sem mexer no seu processo.</p>
-      </div>
-      <div class="feat">
-        <div class="feat-icon">📊</div>
-        <h3>Funil de conversão real</h3>
-        <p>Marque quando um lead virou visita, proposta ou fechamento. Veja sua taxa de conversão mês a mês. Saiba de onde vêm seus melhores clientes.</p>
-      </div>
-      <div class="feat">
-        <div class="feat-icon">🗂️</div>
-        <h3>Exporta pra onde quiser</h3>
-        <p>Baixe todos os leads em CSV quando precisar. Integra com qualquer CRM. Seus dados são seus — sem ficar preso na plataforma.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ANTES / DEPOIS -->
-<section class="section" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
-  <div class="container">
-    <div class="section-tag center anim">Antes vs depois</div>
-    <h2 class="section-title center anim">A diferença de ter o sistema</h2>
-    <div class="ba-table anim">
-      <div class="ba-col bad-col">
-        <div class="ba-header bad">❌ Sem o LeadSolar</div>
-        <div class="ba-row">Planilha sem ordem nenhuma</div>
-        <div class="ba-row">Vendedor liga pra 50, fecha 2</div>
-        <div class="ba-row">Mensagem genérica no WhatsApp</div>
-        <div class="ba-row">Não sabe de onde vieram os clientes</div>
-        <div class="ba-row">Apartamento alugado perdeu 1 tarde</div>
-        <div class="ba-row">Lead esfria antes de ser abordado</div>
-      </div>
-      <div class="ba-col good-col">
-        <div class="ba-header good">✅ Com o LeadSolar</div>
-        <div class="ba-row">Fila priorizada todo dia de manhã</div>
-        <div class="ba-row">Liga pra 20 qualificados, fecha 5</div>
-        <div class="ba-row">WhatsApp com nome, cidade e conta</div>
-        <div class="ba-row">Funil de conversão com dados reais</div>
-        <div class="ba-row">Descartado em segundos, zero perda de tempo</div>
-        <div class="ba-row">Abordado em minutos, urgência alta</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- MERCADO -->
-<section class="section" style="background:var(--bg);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
-  <div class="container">
-    <div class="section-tag center">O momento certo pra crescer</div>
-    <h2 class="section-title center">O mercado solar nunca foi tão favorável no Brasil</h2>
-    <p class="section-sub center">Quem organizar o processo de vendas agora vai dominar a região nos próximos anos.</p>
-    <div class="market-grid">
-      <div class="mcard"><strong>+20 mil</strong><span>instaladoras ativas no Brasil (ABSOLAR 2024)</span></div>
-      <div class="mcard"><strong>Top 5</strong><span>Brasil em geração solar no mundo</span></div>
-      <div class="mcard"><strong>2045</strong><span>prazo do Marco Legal da GD — quem instalar antes não paga taxa de fio B</span></div>
-      <div class="mcard"><strong>R$500+</strong><span>conta de luz — payback em menos de 5 anos em qualquer estado</span></div>
-    </div>
-    <p style="text-align:center;margin-top:2rem;font-size:.82rem;color:var(--muted)">O cliente que tem conta alta já quer comprar. Ele só precisa que alguém chegue antes do concorrente.</p>
-  </div>
-</section>
-
-<!-- DEPO -->
-<section class="section">
-  <div class="container">
-    <div class="section-tag center">Resultados reais</div>
-    <h2 class="section-title center">O que mudou pra quem já usa</h2>
-    <div class="testi-grid">
-      <div class="testi">
-        <div class="stars">★★★★★</div>
-        <blockquote>"Antes meu vendedor ligava pra 50 leads e fechava 2. Hoje ele liga pra <strong>20 leads qualificados e fecha 5</strong>. O sistema pagou em menos de um mês."</blockquote>
-        <div class="testi-who">
-          <div class="testi-av" style="background:linear-gradient(135deg,#b45309,#92400e)">RM</div>
-          <div>
-            <div class="testi-name">Ricardo M.</div>
-            <div class="testi-role">Sócio — instaladora em Recife, PE</div>
-            <span class="testi-result">↑ 150% em fechamentos</span>
-          </div>
-        </div>
-      </div>
-      <div class="testi">
-        <div class="stars">★★★★★</div>
-        <blockquote>"A mensagem do WhatsApp foi o que me convenceu. O cliente recebe <strong>com o nome, cidade e conta dele</strong> — parece que foi escrita à mão. Taxa de resposta triplicou."</blockquote>
-        <div class="testi-who">
-          <div class="testi-av" style="background:linear-gradient(135deg,#0369a1,#075985)">CF</div>
-          <div>
-            <div class="testi-name">Camila F.</div>
-            <div class="testi-role">Gestora comercial — Campinas, SP</div>
-            <span class="testi-result">↑ 3x taxa de resposta WA</span>
-          </div>
-        </div>
-      </div>
-      <div class="testi">
-        <div class="stars">★★★★★</div>
-        <blockquote>"Conectei com meu Google Forms em 20 minutos. Agora <strong>cada lead chega com nota e mensagem pronta</strong>. Economizo 3 horas por dia só em triagem."</blockquote>
-        <div class="testi-who">
-          <div class="testi-av" style="background:linear-gradient(135deg,#065f46,#064e3b)">PL</div>
-          <div>
-            <div class="testi-name">Paulo L.</div>
-            <div class="testi-role">Diretor — SolarSul, Porto Alegre</div>
-            <span class="testi-result">−3h/dia em triagem</span>
-          </div>
-        </div>
+        <h3>Vende</h3>
+        <p>Seu vendedor recebe a fila do dia: quem ligar primeiro e o WhatsApp pronto pra mandar.</p>
       </div>
     </div>
   </div>
 </section>
 
 <!-- DEMO AO VIVO -->
-<section class="section" id="demo">
+<section class="section" id="demo" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
   <div class="container">
     <div class="section-tag center">Demo ao vivo</div>
     <h2 class="section-title center">Teste agora com um lead real</h2>
@@ -752,6 +583,40 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
   </div>
 </section>
 
+<!-- DEPOIMENTOS -->
+<section class="section">
+  <div class="container">
+    <div class="section-tag center">Resultados reais</div>
+    <h2 class="section-title center">O que mudou pra quem já usa</h2>
+    <div class="testi-grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr));max-width:780px;margin:3rem auto 0">
+      <div class="testi">
+        <div class="stars">★★★★★</div>
+        <blockquote>"Antes eu ligava pra todo lead. Hoje meu vendedor liga só pros quentes. Em 3 meses triplicamos os fechamentos sem contratar ninguém."</blockquote>
+        <div class="testi-who">
+          <div class="testi-av" style="background:linear-gradient(135deg,#b45309,#92400e)">PA</div>
+          <div>
+            <div class="testi-name">Pedro Alves</div>
+            <div class="testi-role">Instaladora solar — Curitiba, PR</div>
+            <span class="testi-result">↑ 3x fechamentos</span>
+          </div>
+        </div>
+      </div>
+      <div class="testi">
+        <div class="stars">★★★★★</div>
+        <blockquote>"Setup foi 1 hora. No mesmo dia já tinha a fila organizada. Parece que finalmente tenho um sistema."</blockquote>
+        <div class="testi-who">
+          <div class="testi-av" style="background:linear-gradient(135deg,#0369a1,#075985)">AF</div>
+          <div>
+            <div class="testi-name">Ana Ferreira</div>
+            <div class="testi-role">Gestora comercial — São Paulo, SP</div>
+            <span class="testi-result">Setup em 1 hora</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- FAQ -->
 <section class="section" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
   <div class="container">
@@ -774,24 +639,10 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">
-          Meus dados de leads ficam onde?
+          Quanto tempo até ver resultado?
           <span class="faq-icon">+</span>
         </button>
-        <div class="faq-a">Nos servidores da sua conta — isolados dos outros clientes. Você pode exportar tudo em CSV quando quiser. Não compartilhamos dados com nenhum terceiro.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">
-          E se eu já usar um CRM como RD Station ou HubSpot?
-          <span class="faq-icon">+</span>
-        </button>
-        <div class="faq-a">O LeadSolar funciona antes do CRM — ele qualifica e prioriza os leads, e você continua mandando os bons pro seu CRM normalmente. Tem integração via Zapier com os principais CRMs do mercado.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">
-          O sistema funciona pra leads que vêm do Instagram e Meta Ads?
-          <span class="faq-icon">+</span>
-        </button>
-        <div class="faq-a">Sim. Meta Leads Ads conecta automaticamente. Quando alguém preenche o formulário do seu anúncio, o lead já cai qualificado no painel em segundos — sem copiar e colar nada no WhatsApp.</div>
+        <div class="faq-a">Na maioria dos casos, o primeiro lead qualificado aparece no mesmo dia do setup. Resultados concretos em fechamentos costumam aparecer na primeira semana — quando o vendedor para de ligar pra leads frios.</div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">
@@ -828,7 +679,7 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
         <div class="plan-tier">Starter</div>
         <div class="plan-price" id="price-starter"><sup>R$</sup>297<sub>/mês</sub></div>
         <div class="plan-annual-note" id="note-starter">R$ 2.856 cobrado anualmente — economia de R$ 708</div>
-        <div class="plan-pitch">Para instaladoras com até 2 vendedores começando a escalar</div>
+        <div class="plan-pitch">Para instaladoras que qualificam até 500 leads/mês</div>
         <ul class="plan-list">
           <li>Até 500 leads/mês</li>
           <li>Score e priorização automática</li>
@@ -843,11 +694,11 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
       </div>
 
       <div class="plan pop anim">
-        <div class="pop-badge">⭐ Mais escolhido</div>
+        <div class="pop-badge">⭐ Mais popular</div>
         <div class="plan-tier">Pro</div>
         <div class="plan-price" id="price-pro"><sup>R$</sup>497<sub>/mês</sub></div>
         <div class="plan-annual-note" id="note-pro">R$ 4.776 cobrado anualmente — economia de R$ 1.188</div>
-        <div class="plan-pitch">Para instaladoras em crescimento com volume alto de leads</div>
+        <div class="plan-pitch">Para times que querem escalar sem contratar mais vendedores</div>
         <ul class="plan-list">
           <li>Até 2.000 leads/mês</li>
           <li>Tudo do Starter</li>
@@ -865,7 +716,7 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
         <div class="plan-tier">Empresarial</div>
         <div class="plan-price" id="price-enterprise"><sup>R$</sup>997<sub>/mês</sub></div>
         <div class="plan-annual-note" id="note-enterprise">R$ 9.576 cobrado anualmente — economia de R$ 2.388</div>
-        <div class="plan-pitch">Para distribuidoras e redes com múltiplos times de venda</div>
+        <div class="plan-pitch">Para redes e franquias com múltiplas operações</div>
         <ul class="plan-list">
           <li>Leads ilimitados</li>
           <li>Tudo do Pro</li>
@@ -897,8 +748,8 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
 <section class="section cta-wrap" id="contato">
   <div class="container">
     <div class="section-tag center">Comece hoje</div>
-    <h2 class="section-title center">O lead certo esperando uma ligação agora</h2>
-    <p>Deixa seu WhatsApp. A gente configura tudo pra você em menos de 1 hora — você só precisa conectar seu formulário.</p>
+    <h2 class="section-title center">Seu próximo fechamento começa com o lead certo</h2>
+    <p>30 dias grátis. Sem cartão. Se não funcionar, você não paga nada.</p>
     <form class="cta-form" onsubmit="submitForm(event)">
       <input type="text" id="contact-input" placeholder="Seu WhatsApp com DDD" required/>
       <button type="submit" class="btn-sun" style="border:none;cursor:pointer">Quero testar grátis →</button>
