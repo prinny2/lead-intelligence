@@ -14,7 +14,7 @@
 
 - GCP project com billing ativo
 - `gcloud` CLI instalado
-- Domínio `leadsolarinteligence.com.br` configurado
+- Domínio `leadsolarinteligencia.com.br` configurado
 
 ## Passo a passo
 
@@ -77,7 +77,7 @@ gcloud builds submit --config=cloudbuild.yaml
 ```bash
 gcloud run domain-mappings create \
   --service=lead-intelligence \
-  --domain=leadsolarinteligence.com.br \
+  --domain=leadsolarinteligencia.com.br \
   --region=southamerica-east1
 ```
 
@@ -86,7 +86,7 @@ O comando retorna registros DNS (A e/ou AAAA) para configurar no registrar.
 ### 7. Configurar Stripe webhook
 
 No Stripe Dashboard:
-- URL: `https://leadsolarinteligence.com.br/webhook/stripe`
+- URL: `https://leadsolarinteligencia.com.br/webhook/stripe`
 - Eventos: `checkout.session.completed`, `customer.subscription.deleted`, `invoice.payment_failed`, `invoice.paid`
 - Copiar `whsec_...` e atualizar no Secret Manager
 

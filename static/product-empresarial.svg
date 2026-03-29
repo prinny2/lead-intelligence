@@ -1,0 +1,66 @@
+<svg width="800" height="450" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI', Arial, sans-serif">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e293b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f172a;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#f59e0b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fef3c7;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <rect width="800" height="450" fill="url(#bgGrad)" rx="16"/>
+
+  <!-- Gold border glow effect -->
+  <rect x="1" y="1" width="798" height="448" fill="none" stroke="#f59e0b" stroke-width="1.5" rx="15" opacity="0.3"/>
+  <rect x="0" y="0" width="800" height="4" fill="url(#accentGrad)" rx="2"/>
+
+  <!-- Enterprise badge -->
+  <rect x="40" y="40" width="185" height="36" rx="18" fill="none" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="132" y="63" text-anchor="middle" fill="#fbbf24" font-size="13" font-weight="700" letter-spacing="1">♦ EMPRESARIAL</text>
+
+  <!-- Crown/star icon -->
+  <g transform="translate(608, 76)">
+    <circle cx="0" cy="0" r="34" fill="#f59e0b" opacity="0.08"/>
+    <circle cx="0" cy="0" r="24" fill="#f59e0b" opacity="0.12"/>
+    <text x="0" y="13" text-anchor="middle" fill="#fbbf24" font-size="34">👑</text>
+  </g>
+
+  <!-- Plan name -->
+  <text x="40" y="130" fill="#ffffff" font-size="42" font-weight="700">LeadSolar</text>
+  <text x="40" y="175" fill="url(#goldGrad)" font-size="42" font-weight="700">Empresarial</text>
+
+  <!-- Tagline -->
+  <text x="40" y="215" fill="#94a3b8" font-size="16">Para redes e distribuidoras com múltiplos times.</text>
+  <text x="40" y="237" fill="#94a3b8" font-size="16">Leads ilimitados. Configuramos tudo em menos de uma semana.</text>
+
+  <!-- Divider -->
+  <line x1="40" y1="265" x2="760" y2="265" stroke="#334155" stroke-width="1"/>
+
+  <!-- Features -->
+  <g transform="translate(40, 290)">
+    <circle cx="10" cy="10" r="10" fill="#f59e0b" opacity="0.2"/>
+    <text x="10" y="15" text-anchor="middle" fill="#fbbf24" font-size="12">✓</text>
+    <text x="30" y="15" fill="#e2e8f0" font-size="15">Leads ilimitados</text>
+
+    <circle cx="10" cy="46" r="10" fill="#f59e0b" opacity="0.2"/>
+    <text x="10" y="51" text-anchor="middle" fill="#fbbf24" font-size="12">✓</text>
+    <text x="30" y="51" fill="#e2e8f0" font-size="15">Configuração inclusa + treinamento</text>
+
+    <circle cx="370" cy="10" r="10" fill="#f59e0b" opacity="0.2"/>
+    <text x="370" y="15" text-anchor="middle" fill="#fbbf24" font-size="12">✓</text>
+    <text x="390" y="15" fill="#e2e8f0" font-size="15">Gerente de conta dedicado</text>
+
+    <circle cx="370" cy="46" r="10" fill="#f59e0b" opacity="0.2"/>
+    <text x="370" y="51" text-anchor="middle" fill="#fbbf24" font-size="12">✓</text>
+    <text x="390" y="51" fill="#e2e8f0" font-size="15">Nota fiscal + suporte prioritário</text>
+  </g>
+
+  <text x="760" y="430" text-anchor="end" fill="#475569" font-size="13">leadsolarinteligencia.com.br</text>
+</svg>
