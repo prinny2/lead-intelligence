@@ -61,7 +61,7 @@ async def create_checkout(body: CheckoutRequest, request: Request):
 # Success page
 # ──────────────────────────────────────────────
 
-@router.get("/checkout/success", response_class=HTMLResponse)
+@router.get("/checkout/success")
 async def checkout_success(session_id: str):
     try:
         customer = provision_customer(session_id)
@@ -69,15 +69,16 @@ async def checkout_success(session_id: str):
         logger.error("provision_error: %s", e)
         raise HTTPException(status_code=400, detail="Sessão inválida ou expirada.")
 
-    email = customer.get("email", "")
     plan = customer.get("plan", "pro")
-    billing = customer.get("billing", "monthly")
-    api_key = customer.get("api_key", "")
     already = customer.get("already_provisioned", False)
+    api_key = customer.get("api_key", "")
 
     log_event("customer_provisioned", endpoint="/checkout/success",
               method="GET", status_code=200, extra={"plan": plan, "already": already})
-    return HTMLResponse(_success_html(email, plan, billing, api_key, already))
+
+    # Always redirect to onboarding — api_key is present in both new and already_provisioned cases
+    redirect_url = f"/onboarding?api_key={api_key}" if api_key else "/onboarding"
+    return RedirectResponse(url=redirect_url, status_code=303)
 
 
 # ──────────────────────────────────────────────

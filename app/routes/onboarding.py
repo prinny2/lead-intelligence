@@ -121,6 +121,43 @@ async def link_google(body: LinkGoogleRequest):
     return {"linked": True}
 
 
+class OnboardingLinkRequest(BaseModel):
+    uid: str
+    api_key: str
+
+
+@router.post("/onboarding/link")
+async def onboarding_link(body: OnboardingLinkRequest):
+    """
+    Save google_uid to the customer document identified by api_key.
+    Called after Firebase signInWithPopup on the onboarding page.
+    Receives the Firebase UID directly (not a token) since the client already
+    has it from the Auth result.
+    """
+    from app.auth import _get_firestore
+    import logging as _logging
+    _log = _logging.getLogger("lead_intelligence.onboarding")
+    db = _get_firestore()
+    if not db:
+        raise HTTPException(status_code=503, detail="Serviço temporariamente indisponível.")
+    try:
+        docs = (
+            db.collection("customers")
+            .where("api_key", "==", body.api_key)
+            .limit(1)
+            .get()
+        )
+        for doc in docs:
+            doc.reference.update({"google_uid": body.uid})
+            return {"linked": True}
+        raise HTTPException(status_code=404, detail="Chave não encontrada. Verifique e tente novamente.")
+    except HTTPException:
+        raise
+    except Exception as e:
+        _log.warning("onboarding_link_failed error=%s", e)
+        raise HTTPException(status_code=500, detail="Erro ao salvar vínculo. Tente novamente.")
+
+
 class RecoverKeyRequest(BaseModel):
     firebase_token: str
 
@@ -459,13 +496,13 @@ nav{
 
       <!-- Google account linking -->
       <div style="border:1px solid var(--border);border-radius:.75rem;padding:1.25rem;margin-bottom:1.5rem;background:var(--surface2)">
-        <div style="font-size:.85rem;font-weight:700;margin-bottom:.35rem">🔐 Salvar acesso ao dashboard</div>
-        <div style="font-size:.8rem;color:var(--muted);margin-bottom:.85rem;line-height:1.5">Vincule seu Google para recuperar a chave e acessar o dashboard sem precisar guardar a chave.</div>
+        <div style="font-size:.85rem;font-weight:700;margin-bottom:.35rem">🔐 Entrar no Dashboard</div>
+        <div style="font-size:.8rem;color:var(--muted);margin-bottom:.85rem;line-height:1.5">Vincule seu Google para acessar o dashboard agora e recuperar a chave no futuro sem precisar guardá-la.</div>
         <button class="google-btn" id="googleLinkBtn" onclick="linkGoogleAccount()">
           <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"/>
-          Salvar acesso com Google
+          Entrar no Dashboard com Google
         </button>
-        <div class="link-success" id="linkSuccess">✓ Conta Google vinculada! Você pode acessar o dashboard com Google a qualquer momento.</div>
+        <div class="link-success" id="linkSuccess">✓ Conta Google vinculada! Redirecionando para o dashboard…</div>
         <span class="skip-link" onclick="goToStep(2)">Pular por agora →</span>
       </div>
 
@@ -905,23 +942,37 @@ async function linkGoogleAccount() {
   btn.innerHTML = '<span class="spinner" style="border-color:rgba(0,0,0,.2);border-top-color:#1a1a1a"></span> Abrindo Google…';
   try {
     const fb = await _initFirebase();
-    if (!fb) { showToast('Firebase não configurado'); btn.disabled = false; btn.innerHTML = '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"/> Salvar acesso com Google'; return; }
+    if (!fb) { showToast('Firebase não configurado'); btn.disabled = false; btn.innerHTML = '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"/> Entrar no Dashboard com Google'; return; }
     const provider = new fb.GoogleAuthProvider();
     const result = await fb.signInWithPopup(fb.auth, provider);
+    const uid = result.user.uid;
     const token = await result.user.getIdToken();
-    const resp = await fetch('/api/link-google', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ firebase_token: token, api_key: apiKey })
-    });
-    if (!resp.ok) { const d = await resp.json(); throw new Error(d.detail || 'Erro ao vincular'); }
+    // Try new /onboarding/link first (uid-based), fallback to /api/link-google (token-based)
+    let linked = false;
+    try {
+      const r1 = await fetch('/onboarding/link', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ uid, api_key: apiKey })
+      });
+      linked = r1.ok;
+    } catch(_) {}
+    if (!linked) {
+      const r2 = await fetch('/api/link-google', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ firebase_token: token, api_key: apiKey })
+      });
+      if (!r2.ok) { const d = await r2.json(); throw new Error(d.detail || 'Erro ao vincular'); }
+    }
     document.getElementById('linkSuccess').style.display = 'block';
     btn.style.display = 'none';
-    showToast('✓ Conta Google vinculada com sucesso!');
+    showToast('✓ Conta Google vinculada! Abrindo dashboard…');
+    setTimeout(() => { window.location.href = '/dashboard'; }, 1500);
   } catch(e) {
     showToast('Erro: ' + (e.message || 'Tente novamente'));
     btn.disabled = false;
-    btn.innerHTML = '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"/> Salvar acesso com Google';
+    btn.innerHTML = '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"/> Entrar no Dashboard com Google';
   }
 }
 </script>
