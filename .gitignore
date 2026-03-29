@@ -38,3 +38,4 @@ leads.jsonl
 # OS
 .DS_Store
 Thumbs.db
+lead_intelligence.egg-info/
