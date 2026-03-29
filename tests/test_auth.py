@@ -53,12 +53,12 @@ class TestVerifyFirebaseToken(unittest.TestCase):
         uid_q = MagicMock()
         uid_q.where.return_value.limit.return_value.get.return_value = [doc_uid]
 
-        def where_side_effect(field, op, value):
+        def mock_where_by_field(field, op, value):
             if field == "email":
                 return email_q.where.return_value
             return uid_q.where.return_value
 
-        db.collection.return_value.where.side_effect = where_side_effect
+        db.collection.return_value.where.side_effect = mock_where_by_field
         mock_fs.return_value = db
 
         result = _verify_firebase_token("tok")
@@ -180,11 +180,12 @@ class TestGetApiKeyForFirebaseToken(unittest.TestCase):
 
         doc = _make_doc({"api_key": "ls_uid_key_456", "status": "active"})
         db = MagicMock()
-        call_count = [0]
+        email_call_done = False
 
         def get_side_effect():
-            call_count[0] += 1
-            if call_count[0] == 1:
+            nonlocal email_call_done
+            if not email_call_done:
+                email_call_done = True
                 return []  # email lookup
             return [doc]  # uid lookup
 
