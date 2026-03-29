@@ -358,6 +358,24 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
   .ba-table{grid-template-columns:1fr}
   .ba-col.bad-col{border-bottom:1px solid var(--border)}
   .wa-float span{display:none}
+  /* ── Botões mobile ── */
+  .hero-btns{flex-direction:column;align-items:stretch;gap:.7rem}
+  .hero-btns .btn-sun,.hero-btns .btn-outline,.hero-btns button{
+    width:100%!important;box-sizing:border-box!important;text-align:center!important;
+    white-space:normal!important;padding:.9rem 1rem!important}
+  /* ── CTA form mobile ── */
+  .cta-form{flex-direction:column;align-items:stretch}
+  .cta-form input{min-width:unset;width:100%}
+  .cta-form .btn-sun,.cta-form button{width:100%;box-sizing:border-box}
+  /* ── Announcement bar ── */
+  .ann-bar{font-size:.72rem;padding:.4rem .75rem;line-height:1.5}
+  .ann-bar span{display:block}
+  /* ── Proof items ── */
+  .hero-proof{gap:1rem}
+  /* ── Price grid força coluna única em telas muito pequenas ── */
+  .price-grid{grid-template-columns:1fr}
+  /* ── Steps ── */
+  .steps{grid-template-columns:1fr}
 }
 </style>
 </head>
