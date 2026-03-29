@@ -13,22 +13,22 @@ logger = logging.getLogger("lead_intelligence.stripe")
 PLANS = {
     "starter": {
         "name": "LeadSolar Starter",
-        "price_id": "price_1TFFdtPvTQyWBe6uIdY737DH",        # R$297/mês
-        "price_id_annual": "price_1TFcdaPvTQyWBe6uIQN7Bp9u",  # R$2856/ano
+        "price_id": "price_1TG0zaLWhPBYYTxm8o4T4gvi",        # R$297/mês
+        "price_id_annual": "price_1TG0zaLWhPBYYTxmPQnuMtzD",  # R$2856/ano
         "rate_limit": 500,
         "tier": "starter",
     },
     "pro": {
         "name": "LeadSolar Pro",
-        "price_id": "price_1TFFdvPvTQyWBe6uMMD919W8",          # R$497/mês
-        "price_id_annual": "price_1TFcdfPvTQyWBe6u0ycyMkYA",  # R$4776/ano
+        "price_id": "price_1TG0zaLWhPBYYTxmoKIIOGvl",          # R$497/mês
+        "price_id_annual": "price_1TG0zZLWhPBYYTxm8u5UlJn4",  # R$4776/ano
         "rate_limit": 2000,
         "tier": "pro",
     },
     "enterprise": {
         "name": "LeadSolar Empresarial",
-        "price_id": "price_1TFFdwPvTQyWBe6ucsHOsNWC",          # R$997/mês
-        "price_id_annual": "price_1TFcdkPvTQyWBe6ulp0WJHqR",  # R$9576/ano
+        "price_id": "price_1TG0zaLWhPBYYTxm9rdOgNyV",          # R$997/mês
+        "price_id_annual": "price_1TG0zZLWhPBYYTxmImhCrB53",  # R$9576/ano
         "rate_limit": 100000,
         "tier": "enterprise",
     },

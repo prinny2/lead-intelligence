@@ -417,6 +417,7 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
       <p class="hero-sub">Cada lead do seu formulário recebe um score de 0 a 10 e uma mensagem de WhatsApp pronta em segundos.</p>
       <div class="hero-btns">
         <button onclick="startCheckout('pro')" class="btn-sun" style="border:none;cursor:pointer;font-family:inherit">Começar grátis por 30 dias →</button>
+        <button onclick="openWizard()" class="btn-outline" style="background:none;border:1px solid var(--border);cursor:pointer;font-family:inherit;color:var(--muted);padding:.85rem 1.75rem;border-radius:.6rem;font-size:.95rem">Calcular meu ROI →</button>
       </div>
       <div class="hero-no-risk"><span>✓</span> Sem cartão de crédito &nbsp;·&nbsp; <span>✓</span> Cancele quando quiser &nbsp;·&nbsp; <span>✓</span> Setup em 1 hora</div>
       <div class="hero-proof anim">
