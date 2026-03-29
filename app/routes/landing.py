@@ -1,9 +1,13 @@
 """Landing page — served at /."""
 
+import os
+
 from fastapi import APIRouter
 from fastapi.responses import HTMLResponse
 
 router = APIRouter()
+
+_BASE_URL = os.getenv("BASE_URL", "https://lead-intelligence-production.up.railway.app")
 
 _HTML = """<!DOCTYPE html>
 <html lang="pt-BR">
@@ -361,8 +365,8 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
 
 <!-- ANNOUNCEMENT BAR -->
 <div class="ann-bar">
-  🚀 Lançamento: <span>plano anual com 20% de desconto + 30 dias grátis sem cartão</span>
-  <a href="#precos">Ver planos →</a>
+  ☀️ <span>30 dias gr&aacute;tis</span> — conecte seu formul&aacute;rio e comece a qualificar leads hoje
+  <a href="#demo">Testar agora →</a>
 </div>
 
 <!-- MOBILE MENU -->
@@ -391,12 +395,12 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
 <section class="hero">
   <div class="hero-inner">
     <div>
-      <div class="hero-eyebrow">⚡ Para instaladoras de energia solar</div>
-      <h1>Seu vendedor já sabe <em>quem ligar primeiro</em> amanhã de manhã</h1>
+      <div class="hero-eyebrow">⚡ Inteligência de leads para energia solar</div>
+      <h1>Pare de ligar pra quem <em>nunca vai fechar</em></h1>
       <p class="hero-sub">
-        Cada lead recebe uma nota de 0 a 10 com base na conta de luz, tipo de imóvel e urgência.
-        <strong>Conta acima de R$400 em casa própria? Ligação hoje.</strong>
-        Apartamento alugado com conta de R$90? Nem perde tempo.
+        Conecte seu formulário e cada lead recebe um score de 0 a 10, mensagem de WhatsApp personalizada e recomendação de venda.
+        <strong>Seu time liga s&oacute; pra quem tem potencial real.</strong>
+        Conta alta, casa pr&oacute;pria, quer comprar? Score 9 — liga hoje.
       </p>
       <div class="hero-btns">
         <button onclick="startCheckout('pro')" class="btn-sun" style="border:none;cursor:pointer;font-family:inherit">Começar grátis por 30 dias →</button>
@@ -404,13 +408,9 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
       </div>
       <div class="hero-no-risk"><span>✓</span> Sem cartão de crédito &nbsp;·&nbsp; <span>✓</span> Cancele quando quiser &nbsp;·&nbsp; <span>✓</span> Setup em 1 hora</div>
       <div class="hero-proof anim">
-        <div class="proof-item"><strong>+3x</strong><span>fechamentos por mês</span></div>
-        <div class="proof-item"><strong>-70%</strong><span>tempo em triagem</span></div>
+        <div class="proof-item"><strong>0 a 10</strong><span>score por lead em segundos</span></div>
+        <div class="proof-item"><strong>WhatsApp</strong><span>mensagem pronta pra enviar</span></div>
         <div class="proof-item"><strong>30 dias</strong><span>grátis pra testar</span></div>
-      </div>
-      <div class="counter-live">
-        <span class="counter-dot"></span>
-        <span id="leads-counter">2.847</span> leads qualificados hoje
       </div>
     </div>
     <div class="hero-card">
@@ -1131,18 +1131,6 @@ function closeMobileMenu() {
   document.getElementById('mobile-menu').classList.remove('open');
 }
 
-// Animate counter
-(function() {
-  const el = document.getElementById('leads-counter');
-  if (!el) return;
-  const base = 2847 + Math.floor(Math.random() * 200);
-  el.textContent = base.toLocaleString('pt-BR');
-  setInterval(() => {
-    const cur = parseInt(el.textContent.replace(/\D/g, ''), 10);
-    el.textContent = (cur + Math.floor(Math.random() * 3)).toLocaleString('pt-BR');
-  }, 8000);
-})();
-
 // Scroll reveal — safe: only animate elements NOT already visible
 (function() {
   document.body.classList.add('js-ready');
@@ -1246,7 +1234,9 @@ function wzResult(ticketKey, ticketVal) {
 
 @router.get("/", response_class=HTMLResponse, include_in_schema=False)
 async def landing() -> HTMLResponse:
-    return HTMLResponse(content=_HTML)
+    _PROD_URL = "https://lead-intelligence-production.up.railway.app"
+    html = _HTML.replace(_PROD_URL, _BASE_URL) if _BASE_URL != _PROD_URL else _HTML
+    return HTMLResponse(content=html)
 
 
 _LEGAL_STYLE = """
