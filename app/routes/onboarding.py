@@ -2,8 +2,9 @@
 
 import os
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import HTMLResponse, JSONResponse
+from pydantic import BaseModel
 from typing import Optional
 
 router = APIRouter()
@@ -99,6 +100,39 @@ async def onboarding_guide(integration: Optional[str] = Query(default=None)):
     if integration and integration in guides:
         return JSONResponse(content=guides[integration])
     return JSONResponse(content={"integrations": list(guides.keys()), "guides": guides})
+
+
+# ---------------------------------------------------------------------------
+# Google account linking endpoints
+# ---------------------------------------------------------------------------
+
+class LinkGoogleRequest(BaseModel):
+    firebase_token: str
+    api_key: str
+
+
+@router.post("/api/link-google")
+async def link_google(body: LinkGoogleRequest):
+    """Link a Google account (Firebase UID) to an API key for future recovery."""
+    from app.auth import link_google_account
+    ok = link_google_account(body.firebase_token, body.api_key)
+    if not ok:
+        raise HTTPException(status_code=400, detail="Não foi possível vincular. Verifique a chave e tente novamente.")
+    return {"linked": True}
+
+
+class RecoverKeyRequest(BaseModel):
+    firebase_token: str
+
+
+@router.post("/api/recover-key")
+async def recover_key(body: RecoverKeyRequest):
+    """Return the API key for a verified Firebase token."""
+    from app.auth import get_api_key_for_firebase_token
+    key = get_api_key_for_firebase_token(body.firebase_token)
+    if not key:
+        raise HTTPException(status_code=404, detail="Nenhuma conta encontrada para este login Google.")
+    return {"api_key": key}
 
 
 # ---------------------------------------------------------------------------
@@ -337,6 +371,28 @@ nav{
 }
 .btn-dash:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(245,158,11,.4)}
 
+/* ── GOOGLE LOGIN ── */
+.google-btn{
+  display:flex;align-items:center;justify-content:center;gap:.7rem;
+  background:#fff;color:#1a1a1a;font-weight:600;padding:.75rem 1.5rem;
+  border-radius:.6rem;border:none;cursor:pointer;font-size:.9rem;
+  width:100%;font-family:inherit;transition:all .2s;
+  box-shadow:0 2px 8px rgba(0,0,0,.18);
+}
+.google-btn:hover{box-shadow:0 4px 16px rgba(0,0,0,.25);transform:translateY(-1px)}
+.google-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.google-btn img{width:20px;height:20px}
+.link-success{
+  background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);
+  border-radius:.5rem;padding:.75rem 1rem;font-size:.85rem;color:#22c55e;
+  text-align:center;display:none;margin-top:.75rem;
+}
+.skip-link{
+  display:block;text-align:center;margin-top:.6rem;
+  font-size:.78rem;color:var(--muted);cursor:pointer;text-decoration:underline;
+}
+.skip-link:hover{color:var(--text)}
+
 /* ── SPINNER ── */
 .spinner{
   width:18px;height:18px;border:2px solid rgba(0,0,0,.2);
@@ -401,8 +457,20 @@ nav{
         <span><strong>Guarde agora</strong> — não será exibida novamente. Salve em um gerenciador de senhas ou documento seguro.</span>
       </div>
 
+      <!-- Google account linking -->
+      <div style="border:1px solid var(--border);border-radius:.75rem;padding:1.25rem;margin-bottom:1.5rem;background:var(--surface2)">
+        <div style="font-size:.85rem;font-weight:700;margin-bottom:.35rem">🔐 Salvar acesso ao dashboard</div>
+        <div style="font-size:.8rem;color:var(--muted);margin-bottom:.85rem;line-height:1.5">Vincule seu Google para recuperar a chave e acessar o dashboard sem precisar guardar a chave.</div>
+        <button class="google-btn" id="googleLinkBtn" onclick="linkGoogleAccount()">
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"/>
+          Salvar acesso com Google
+        </button>
+        <div class="link-success" id="linkSuccess">✓ Conta Google vinculada! Você pode acessar o dashboard com Google a qualquer momento.</div>
+        <span class="skip-link" onclick="goToStep(2)">Pular por agora →</span>
+      </div>
+
       <div class="btn-row" style="justify-content:center">
-        <button class="btn-primary" onclick="goToStep(2)">Escolher integração →</button>
+        <button class="btn-primary" id="btnNext1" onclick="goToStep(2)">Escolher integração →</button>
       </div>
     </div>
   </div>
@@ -805,9 +873,161 @@ function scoreColor(score, bg) {
   if (score >= 5)   return bg ? 'rgba(245,158,11,.08)' : '#f59e0b';
   return bg ? 'rgba(239,68,68,.08)' : '#ef4444';
 }
+
+// ── Google / Firebase Auth ─────────────────────────────────────────────────
+let _firebaseAuth = null;
+
+async function _initFirebase() {
+  if (_firebaseAuth) return _firebaseAuth;
+  const FIREBASE_API_KEY = window.__FIREBASE_API_KEY || '';
+  const FIREBASE_AUTH_DOMAIN = window.__FIREBASE_AUTH_DOMAIN || '';
+  if (!FIREBASE_API_KEY) return null;
+  try {
+    const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+    const { getAuth, GoogleAuthProvider, signInWithPopup } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
+    const app = initializeApp({ apiKey: FIREBASE_API_KEY, authDomain: FIREBASE_AUTH_DOMAIN });
+    _firebaseAuth = { getAuth, GoogleAuthProvider, signInWithPopup, auth: getAuth(app) };
+    return _firebaseAuth;
+  } catch(e) {
+    console.error('Firebase init error', e);
+    return null;
+  }
+}
+
+async function linkGoogleAccount() {
+  const btn = document.getElementById('googleLinkBtn');
+  const apiKey = document.getElementById('apiKeyDisplay').textContent.trim();
+  if (!apiKey || apiKey.startsWith('ls_xxx')) {
+    showToast('Chave não disponível — acesse via /checkout/success');
+    return;
+  }
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner" style="border-color:rgba(0,0,0,.2);border-top-color:#1a1a1a"></span> Abrindo Google…';
+  try {
+    const fb = await _initFirebase();
+    if (!fb) { showToast('Firebase não configurado'); btn.disabled = false; btn.innerHTML = '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"/> Salvar acesso com Google'; return; }
+    const provider = new fb.GoogleAuthProvider();
+    const result = await fb.signInWithPopup(fb.auth, provider);
+    const token = await result.user.getIdToken();
+    const resp = await fetch('/api/link-google', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ firebase_token: token, api_key: apiKey })
+    });
+    if (!resp.ok) { const d = await resp.json(); throw new Error(d.detail || 'Erro ao vincular'); }
+    document.getElementById('linkSuccess').style.display = 'block';
+    btn.style.display = 'none';
+    showToast('✓ Conta Google vinculada com sucesso!');
+  } catch(e) {
+    showToast('Erro: ' + (e.message || 'Tente novamente'));
+    btn.disabled = false;
+    btn.innerHTML = '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"/> Salvar acesso com Google';
+  }
+}
 </script>
 </body>
 </html>"""
+
+
+@router.get("/recover-key", response_class=HTMLResponse)
+async def recover_key_page():
+    """Self-service API key recovery via Google login."""
+    firebase_api_key = os.getenv("FIREBASE_WEB_API_KEY", "")
+    firebase_auth_domain = os.getenv("FIREBASE_AUTH_DOMAIN", "")
+    html = f"""<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Recuperar chave — LeadSolar</title>
+<link rel="icon" type="image/png" href="/static/favicon.png"/>
+<script>window.__FIREBASE_API_KEY='{firebase_api_key}';window.__FIREBASE_AUTH_DOMAIN='{firebase_auth_domain}';</script>
+<style>
+*{{box-sizing:border-box;margin:0;padding:0}}
+body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#060c18;color:#f1f5f9;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem}}
+.card{{background:#0d1825;border:1px solid #1a2e48;border-radius:1.5rem;padding:2.5rem;max-width:480px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.4)}}
+.logo{{font-size:1.1rem;font-weight:900;color:#f59e0b;text-align:center;margin-bottom:2rem;letter-spacing:-.02em}}
+.logo span{{color:#f1f5f9;font-weight:400}}
+h1{{font-size:1.4rem;font-weight:800;margin-bottom:.4rem;letter-spacing:-.03em;text-align:center}}
+p{{color:#6b85a0;font-size:.88rem;margin-bottom:2rem;line-height:1.6;text-align:center}}
+.google-btn{{display:flex;align-items:center;justify-content:center;gap:.7rem;background:#fff;color:#1a1a1a;font-weight:600;padding:.8rem 1.5rem;border-radius:.65rem;border:none;cursor:pointer;font-size:.95rem;width:100%;font-family:inherit;transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.18)}}
+.google-btn:hover{{box-shadow:0 4px 16px rgba(0,0,0,.28);transform:translateY(-1px)}}
+.google-btn:disabled{{opacity:.5;cursor:not-allowed;transform:none}}
+.google-btn img{{width:20px;height:20px}}
+.key-card{{background:#0a1f12;border:1px solid rgba(34,197,94,.25);border-radius:1rem;padding:1.25rem;margin-top:1.5rem;display:none}}
+.key-label{{font-size:.72rem;font-weight:700;color:#22c55e;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.6rem}}
+.key-box{{font-family:'Courier New',monospace;font-size:.85rem;color:#fbbf24;background:#060c18;border:1px solid #1a2e48;border-radius:.5rem;padding:.85rem 1rem;word-break:break-all;margin-bottom:.75rem}}
+.copy-btn{{background:#22c55e;color:#000;font-weight:700;border:none;padding:.5rem 1.1rem;border-radius:.45rem;cursor:pointer;font-size:.82rem;font-family:inherit;transition:background .2s;width:100%}}
+.copy-btn:hover{{background:#16a34a}}
+.err{{color:#ef4444;font-size:.83rem;text-align:center;margin-top:.75rem;display:none}}
+.actions{{display:flex;gap:.75rem;margin-top:1.5rem;flex-wrap:wrap}}
+.btn-primary{{flex:1;background:linear-gradient(135deg,#f59e0b,#d97706);color:#000;font-weight:700;padding:.8rem;border-radius:.6rem;text-decoration:none;text-align:center;font-size:.88rem}}
+.btn-secondary{{flex:1;background:transparent;border:1px solid #1a2e48;color:#6b85a0;padding:.8rem;border-radius:.6rem;text-decoration:none;text-align:center;font-size:.88rem}}
+.btn-secondary:hover{{border-color:#6b85a0;color:#f1f5f9}}
+@keyframes spin{{to{{transform:rotate(360deg)}}}}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">Lead<span>Solar</span></div>
+  <h1>Recuperar minha chave</h1>
+  <p>Entre com a conta Google vinculada no momento da assinatura para recuperar sua chave de API.</p>
+  <button class="google-btn" id="googleBtn" onclick="recoverWithGoogle()">
+    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"/>
+    Entrar com Google
+  </button>
+  <div class="err" id="err"></div>
+  <div class="key-card" id="keyCard">
+    <div class="key-label">🔑 Sua chave de API</div>
+    <div class="key-box" id="keyDisplay"></div>
+    <button class="copy-btn" onclick="copyKey()">Copiar chave</button>
+  </div>
+  <div class="actions">
+    <a href="/dashboard" class="btn-primary">Acessar dashboard →</a>
+    <a href="/" class="btn-secondary">← Início</a>
+  </div>
+</div>
+<script type="module">
+async function recoverWithGoogle() {{
+  const btn = document.getElementById('googleBtn');
+  const err = document.getElementById('err');
+  err.style.display = 'none';
+  btn.disabled = true;
+  btn.innerHTML = '<span style="display:inline-block;width:16px;height:16px;border:2px solid #ccc;border-top-color:#333;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:.5rem"></span> Abrindo Google…';
+  try {{
+    const {{ initializeApp }} = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+    const {{ getAuth, GoogleAuthProvider, signInWithPopup }} = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
+    const app = initializeApp({{ apiKey: window.__FIREBASE_API_KEY, authDomain: window.__FIREBASE_AUTH_DOMAIN }});
+    const auth = getAuth(app);
+    const result = await signInWithPopup(auth, new GoogleAuthProvider());
+    const token = await result.user.getIdToken();
+    const resp = await fetch('/api/recover-key', {{
+      method: 'POST',
+      headers: {{'Content-Type': 'application/json'}},
+      body: JSON.stringify({{ firebase_token: token }})
+    }});
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.detail || 'Conta não encontrada');
+    document.getElementById('keyDisplay').textContent = data.api_key;
+    document.getElementById('keyCard').style.display = 'block';
+    btn.style.display = 'none';
+  }} catch(e) {{
+    err.textContent = e.message;
+    err.style.display = 'block';
+    btn.disabled = false;
+    btn.innerHTML = '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style="width:20px"/> Tentar novamente';
+  }}
+}}
+window.recoverWithGoogle = recoverWithGoogle;
+function copyKey() {{
+  navigator.clipboard.writeText(document.getElementById('keyDisplay').textContent)
+    .then(() => {{ const b = document.querySelector('.copy-btn'); b.textContent = '✓ Copiado!'; setTimeout(() => b.textContent = 'Copiar chave', 2000); }});
+}}
+window.copyKey = copyKey;
+</script>
+</body>
+</html>"""
+    return HTMLResponse(content=html)
 
 
 @router.get("/onboarding")
@@ -826,4 +1046,14 @@ async def onboarding(
     """
     _PROD_URL = "https://lead-intelligence-production.up.railway.app"
     html = _HTML.replace(_PROD_URL, _BASE_URL) if _BASE_URL != _PROD_URL else _HTML
+
+    # Inject Firebase config so the Google login button works
+    firebase_api_key = os.getenv("FIREBASE_WEB_API_KEY", "")
+    firebase_auth_domain = os.getenv("FIREBASE_AUTH_DOMAIN", "")
+    config_script = (
+        f"<script>window.__FIREBASE_API_KEY='{firebase_api_key}';"
+        f"window.__FIREBASE_AUTH_DOMAIN='{firebase_auth_domain}';</script>"
+    )
+    html = html.replace("</head>", config_script + "</head>", 1)
+
     return HTMLResponse(content=html)
