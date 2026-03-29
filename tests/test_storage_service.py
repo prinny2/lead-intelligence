@@ -8,7 +8,14 @@ from pathlib import Path
 from unittest.mock import patch
 
 from app.models import LeadRequest, LeadResponse, StoredLead
-from app.services.storage_service import DEFAULT_LEADS_FILE, _get_leads_file, load_leads, save_lead
+from app.services.storage_service import (
+    DEFAULT_LEADS_FILE,
+    _get_leads_file,
+    _update_jsonl,
+    load_leads,
+    save_lead,
+    update_lead_outcome,
+)
 
 
 def _make_stored_lead(**kwargs) -> StoredLead:
@@ -141,6 +148,94 @@ class StorageServiceTests(unittest.TestCase):
         self.assertEqual(stored.ai_raw_score, 7)
         self.assertEqual(stored.rule_delta, 1)
         self.assertTrue(stored.timestamp.endswith("Z"))
+
+
+class UpdateLeadOutcomeTests(unittest.TestCase):
+    """Tests for _update_jsonl and update_lead_outcome."""
+
+    def setUp(self) -> None:
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.leads_file = os.path.join(self.temp_dir.name, "leads.jsonl")
+        self.env_patcher = patch.dict(os.environ, {"LEADS_FILE": self.leads_file})
+        self.env_patcher.start()
+
+    def tearDown(self) -> None:
+        self.env_patcher.stop()
+        self.temp_dir.cleanup()
+
+    def _save_and_get_id(self, **kwargs) -> str:
+        record = _make_stored_lead(**kwargs)
+        save_lead(record)
+        return record.id
+
+    def test_update_jsonl_updates_outcome(self) -> None:
+        lead_id = self._save_and_get_id()
+        result = _update_jsonl(lead_id, "closed", None)
+        self.assertIsNotNone(result)
+        self.assertEqual(result.outcome, "closed")
+
+    def test_update_jsonl_updates_outcome_notes(self) -> None:
+        lead_id = self._save_and_get_id()
+        result = _update_jsonl(lead_id, "ghosted", "não atendeu")
+        self.assertEqual(result.outcome_notes, "não atendeu")
+
+    def test_update_jsonl_returns_none_for_missing_id(self) -> None:
+        result = _update_jsonl("nonexistent-id", "closed", None)
+        self.assertIsNone(result)
+
+    def test_update_jsonl_persists_change_to_file(self) -> None:
+        lead_id = self._save_and_get_id()
+        _update_jsonl(lead_id, "closed", None)
+        reloaded = load_leads()
+        self.assertEqual(reloaded[0].outcome, "closed")
+
+    def test_update_lead_outcome_delegates_to_jsonl(self) -> None:
+        lead_id = self._save_and_get_id()
+        result = update_lead_outcome(lead_id, "scheduled_visit", "agendou visita")
+        self.assertIsNotNone(result)
+        self.assertEqual(result.outcome, "scheduled_visit")
+
+    def test_update_lead_outcome_returns_none_for_missing_id(self) -> None:
+        result = update_lead_outcome("bad-id", "closed", None)
+        self.assertIsNone(result)
+
+
+class OrgIdFilterTests(unittest.TestCase):
+    """Tests for load_leads(org_id=...) filtering in the JSONL backend."""
+
+    def setUp(self) -> None:
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.leads_file = os.path.join(self.temp_dir.name, "leads.jsonl")
+        self.env_patcher = patch.dict(os.environ, {"LEADS_FILE": self.leads_file})
+        self.env_patcher.start()
+
+    def tearDown(self) -> None:
+        self.env_patcher.stop()
+        self.temp_dir.cleanup()
+
+    def test_load_without_org_id_returns_all_leads(self) -> None:
+        save_lead(_make_stored_lead(name="Org1"))
+        save_lead(_make_stored_lead(name="Org2"))
+        leads = load_leads()
+        self.assertEqual(len(leads), 2)
+
+    def test_load_with_org_id_filters_by_org(self) -> None:
+        from app.models import StoredLead as SL
+        r1 = _make_stored_lead(name="Seller-A")
+        r1_with_org = r1.model_copy(update={"org_id": "seller-a@solar.com"})
+        r2 = _make_stored_lead(name="Seller-B")
+        r2_with_org = r2.model_copy(update={"org_id": "seller-b@solar.com"})
+        save_lead(r1_with_org)
+        save_lead(r2_with_org)
+
+        leads = load_leads(org_id="seller-a@solar.com")
+        self.assertEqual(len(leads), 1)
+        self.assertEqual(leads[0].name, "Seller-A")
+
+    def test_load_with_nonexistent_org_id_returns_empty(self) -> None:
+        save_lead(_make_stored_lead())
+        leads = load_leads(org_id="nobody@example.com")
+        self.assertEqual(leads, [])
 
 
 if __name__ == "__main__":
