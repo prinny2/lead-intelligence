@@ -13,6 +13,7 @@ from app.models import LeadRequest, LeadResponse, LeadStats, OutcomeUpdate, Stor
 from app.services import hybrid_score, load_leads, save_lead, update_lead_outcome
 from app.services.scoring_service import get_ai_qualification_with_solar
 from app.services.audit_service import log_event
+from app.services.sheets_service import push_lead_result_to_sheet
 
 logger = logging.getLogger("lead_intelligence")
 
@@ -74,6 +75,15 @@ def _score_and_store(data: LeadRequest, org_id: str | None = None) -> LeadRespon
         except Exception as e:
             logger.debug("notification_skipped error=%s", e)
 
+    push_lead_result_to_sheet(
+        name=data.name,
+        city=data.city,
+        state=data.state,
+        score=result.response.score,
+        decision=result.response.decision,
+        urgency=result.response.urgency,
+        whatsapp_message=result.response.whatsapp_message,
+    )
     return result.response
 
 
