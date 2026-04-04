@@ -352,33 +352,75 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
 .mobile-menu-close{position:absolute;top:1.5rem;right:1.5rem;background:none;border:none;cursor:pointer;color:var(--muted);font-size:1.5rem}
 
 @media(max-width:768px){
-  .hero-inner{grid-template-columns:1fr}
-  .hero-card{display:none}
+  /* ── Nav ── */
   nav .nav-links{display:none}
   .nav-ham{display:block}
-  .hero{padding:6rem 1.25rem 3rem}
-  .section{padding:3.5rem 1.25rem}
-  .ba-table{grid-template-columns:1fr}
-  .ba-col.bad-col{border-bottom:1px solid var(--border)}
-  .wa-float span{display:none}
+  nav{padding:.75rem 1.1rem}
+
+  /* ── Hero ── */
+  .hero-inner{grid-template-columns:1fr}
+  .hero-card{display:none}
+  .hero{padding:5.5rem 1.1rem 2.5rem;min-height:auto}
+  .hero h1{font-size:clamp(1.75rem,7vw,2.4rem)}
+  .hero-sub{font-size:.92rem}
+  .hero-proof{gap:.85rem;margin-top:1.75rem;padding-top:1.5rem}
+  .proof-item strong{font-size:1.5rem}
+
   /* ── Botões mobile ── */
   .hero-btns{flex-direction:column;align-items:stretch;gap:.7rem}
   .hero-btns .btn-sun,.hero-btns .btn-outline,.hero-btns button{
     width:100%!important;box-sizing:border-box!important;text-align:center!important;
     white-space:normal!important;padding:.9rem 1rem!important}
-  /* ── CTA form mobile ── */
+
+  /* ── Sections ── */
+  .section{padding:3rem 1.1rem}
+  .section-title{font-size:clamp(1.5rem,6vw,2rem)}
+
+  /* ── Grids — força 1 coluna ── */
+  .feat-grid{grid-template-columns:1fr}
+  .testi-grid{grid-template-columns:1fr}
+  .market-grid{grid-template-columns:repeat(2,1fr)}
+  .steps{grid-template-columns:1fr;gap:1.5rem}
+  .price-grid{grid-template-columns:1fr}
+  .ba-table{grid-template-columns:1fr}
+  .ba-col.bad-col{border-bottom:1px solid var(--border)}
+  .pain-grid{grid-template-columns:1fr}
+
+  /* ── Demo ── */
+  .demo-wrap{grid-template-columns:1fr}
+  .demo-row{grid-template-columns:1fr}
+
+  /* ── CTA form ── */
   .cta-form{flex-direction:column;align-items:stretch}
   .cta-form input{min-width:unset;width:100%}
   .cta-form .btn-sun,.cta-form button{width:100%;box-sizing:border-box}
+  .cta-trust{gap:.65rem}
+  .cta-trust span{font-size:.7rem}
+
+  /* ── Trust badges ── */
+  .trust-row{gap:.5rem}
+  .trust-badge{font-size:.68rem;padding:.35rem .65rem}
+
   /* ── Announcement bar ── */
-  .ann-bar{font-size:.72rem;padding:.4rem .75rem;line-height:1.5}
-  .ann-bar span{display:block}
-  /* ── Proof items ── */
-  .hero-proof{gap:1rem}
-  /* ── Price grid força coluna única em telas muito pequenas ── */
-  .price-grid{grid-template-columns:1fr}
-  /* ── Steps ── */
-  .steps{grid-template-columns:1fr}
+  .ann-bar{font-size:.7rem;padding:.4rem .75rem;line-height:1.5}
+
+  /* ── WA float — sobe acima do sticky CTA ── */
+  .wa-float{bottom:5.5rem;right:1rem;padding:.6rem 1rem;font-size:.8rem}
+  .wa-float span{display:none}
+
+  /* ── Sticky CTA ── */
+  .sticky-cta{display:flex}
+  body{padding-bottom:70px}
+
+  /* ── Guarantee ── */
+  .guarantee-wrap{flex-direction:column;align-items:center;text-align:center;padding:1.5rem}
+
+  /* ── Billing toggle ── */
+  .billing-toggle{flex-wrap:wrap;justify-content:center;gap:.5rem}
+
+  /* ── Plan card ── */
+  .plan{padding:1.5rem}
+  .plan-price{font-size:2.5rem}
 }
 </style>
 </head>
