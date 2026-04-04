@@ -29,6 +29,9 @@ _HTML = """<!DOCTYPE html>
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-MEHL0VK5XD"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-MEHL0VK5XD');</script>
+<!-- Meta Pixel -->
+<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','1230863952146253');fbq('track','PageView');</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1230863952146253&ev=PageView&noscript=1"/></noscript>
 <style>
 :root{
   --bg:#060c18;--surface:#0d1825;--surface2:#132030;--border:#1a2e48;
@@ -939,6 +942,7 @@ async function submitForm(e) {
       msg.style.color = '#22c55e';
       msg.textContent = '✓ Recebido! Vamos te chamar no WhatsApp em breve.';
       document.getElementById('contact-input').value = '';
+      if (typeof fbq !== 'undefined') fbq('track', 'Lead');
     } else {
       msg.style.color = '#ef4444';
       msg.textContent = 'Algo deu errado. Tente novamente.';
@@ -983,6 +987,7 @@ async function startCheckout(plan) {
     });
     if (!r.ok) throw new Error('Erro ao iniciar pagamento');
     const data = await r.json();
+    if (typeof fbq !== 'undefined') fbq('track', 'InitiateCheckout');
     window.location.href = data.checkout_url;
   } catch(err) {
     alert('Erro ao iniciar checkout. Tente novamente ou entre em contato pelo WhatsApp.');
