@@ -19,8 +19,8 @@ _HTML = """<!DOCTYPE html>
 <meta property="og:title" content="LeadSolar — Pare de ligar pra quem nunca vai fechar"/>
 <meta property="og:description" content="Score automático 0–10 por conta de luz, imóvel e urgência. WhatsApp personalizado pronto. Fila de prioridade diária. 30 dias grátis."/>
 <meta property="og:type" content="website"/>
-<meta property="og:url" content="https://lead-intelligence-production.up.railway.app/"/>
-<meta property="og:image" content="https://lead-intelligence-production.up.railway.app/og-image.png"/>
+<meta property="og:url" content="https://leadsolarintelligence.com.br/"/>
+<meta property="og:image" content="https://leadsolarintelligence.com.br/static/og-image.png"/>
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:title" content="LeadSolar — Score automático de leads solares"/>
 <meta name="twitter:description" content="Seu vendedor já sabe quem ligar primeiro amanhã de manhã. 30 dias grátis, sem cartão."/>
