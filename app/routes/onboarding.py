@@ -9,7 +9,7 @@ from typing import Optional
 
 router = APIRouter()
 
-_BASE_URL = os.getenv("BASE_URL", "https://lead-intelligence-production.up.railway.app")
+_BASE_URL = os.getenv("BASE_URL", "https://leadsolarintelligence.com.br")
 
 # ---------------------------------------------------------------------------
 # Helper data: per-integration setup guide (also exposed as JSON endpoint)
@@ -22,11 +22,11 @@ _GUIDES: dict[str, dict] = {
         "steps": [
             "Abra seu formulário no Google Forms.",
             "No Zapier, crie um novo Zap e escolha Google Forms como trigger.",
-            "Conecte ao LeadSolar via webhook: Action → Webhook by Zapier → POST → https://lead-intelligence-production.up.railway.app/webhook/form",
+            "Conecte ao LeadSolar via webhook: Action → Webhook by Zapier → POST → https://leadsolarintelligence.com.br/webhook/form",
             "Mapeie os campos: Nome → name, Cidade → city, Conta de luz → monthly_bill, Tipo de imóvel → property_type.",
             "Ative o Zap e envie uma resposta de teste para confirmar.",
         ],
-        "code": 'POST https://lead-intelligence-production.up.railway.app/webhook/form\nContent-Type: application/json\n\n{\n  "name": "{{Nome}}",\n  "city": "{{Cidade}}",\n  "monthly_bill": {{Conta de Luz}},\n  "property_type": "{{Tipo de Imóvel}}"\n}',
+        "code": 'POST https://leadsolarintelligence.com.br/webhook/form\nContent-Type: application/json\n\n{\n  "name": "{{Nome}}",\n  "city": "{{Cidade}}",\n  "monthly_bill": {{Conta de Luz}},\n  "property_type": "{{Tipo de Imóvel}}"\n}',
     },
     "meta_ads": {
         "label": "Meta Leads Ads",
@@ -35,22 +35,22 @@ _GUIDES: dict[str, dict] = {
             "Acesse o Meta Business Suite → Leads Center.",
             "Clique em \"Integrações\" → \"CRM\" e escolha Zapier.",
             "No Zapier, conecte o trigger do Meta Lead Ads à sua conta.",
-            "Adicione uma Action: Webhook by Zapier → POST → https://lead-intelligence-production.up.railway.app/webhook/form",
+            "Adicione uma Action: Webhook by Zapier → POST → https://leadsolarintelligence.com.br/webhook/form",
             "Mapeie os campos do formulário do anúncio para name, city, monthly_bill e property_type. Ative o Zap.",
         ],
-        "code": 'POST https://lead-intelligence-production.up.railway.app/webhook/form\nContent-Type: application/json\n\n{\n  "name": "{{full_name}}",\n  "city": "{{city}}",\n  "monthly_bill": {{conta_de_luz}},\n  "property_type": "{{tipo_de_imovel}}"\n}',
+        "code": 'POST https://leadsolarintelligence.com.br/webhook/form\nContent-Type: application/json\n\n{\n  "name": "{{full_name}}",\n  "city": "{{city}}",\n  "monthly_bill": {{conta_de_luz}},\n  "property_type": "{{tipo_de_imovel}}"\n}',
     },
     "rdstation": {
         "label": "RD Station",
         "icon": "📊",
         "steps": [
             "No RD Station, vá em Configurações → Integrações → Webhooks.",
-            "Clique em \"Novo Webhook\" e insira a URL: https://lead-intelligence-production.up.railway.app/webhook/rdstation",
+            "Clique em \"Novo Webhook\" e insira a URL: https://leadsolarintelligence.com.br/webhook/rdstation",
             "Selecione o evento: \"Lead convertido\".",
             "Configure os campos personalizados do formulário: cf_conta_de_luz, cf_tipo_imovel.",
             "Salve e teste enviando um lead de conversão.",
         ],
-        "code": '# URL do Webhook RD Station\nhttps://lead-intelligence-production.up.railway.app/webhook/rdstation\n\n# Campos personalizados esperados\ncf_conta_de_luz   → monthly_bill\ncf_tipo_imovel    → property_type\nnome              → name\ncidade            → city',
+        "code": '# URL do Webhook RD Station\nhttps://leadsolarintelligence.com.br/webhook/rdstation\n\n# Campos personalizados esperados\ncf_conta_de_luz   → monthly_bill\ncf_tipo_imovel    → property_type\nnome              → name\ncidade            → city',
     },
     "zapier_make": {
         "label": "Zapier / Make",
@@ -59,22 +59,22 @@ _GUIDES: dict[str, dict] = {
             "Crie um novo Zap ou Cenário no Zapier/Make.",
             "Defina o trigger: seu formulário, CRM ou qualquer fonte de lead.",
             "Adicione uma Action: HTTP Request (Make) ou Webhook by Zapier.",
-            "Configure: método POST, URL https://lead-intelligence-production.up.railway.app/webhook/form, Content-Type: application/json.",
+            "Configure: método POST, URL https://leadsolarintelligence.com.br/webhook/form, Content-Type: application/json.",
             "Mapeie os campos e ative o Zap/Cenário.",
         ],
-        "code": 'POST https://lead-intelligence-production.up.railway.app/webhook/form\nContent-Type: application/json\nX-API-Key: SUA_CHAVE_AQUI\n\n{\n  "name": "string",\n  "city": "string",\n  "monthly_bill": 350,\n  "property_type": "casa_propria | apartamento | comercial",\n  "goal": "economia | independencia | revenda"\n}',
+        "code": 'POST https://leadsolarintelligence.com.br/webhook/form\nContent-Type: application/json\nX-API-Key: SUA_CHAVE_AQUI\n\n{\n  "name": "string",\n  "city": "string",\n  "monthly_bill": 350,\n  "property_type": "casa_propria | apartamento | comercial",\n  "goal": "economia | independencia | revenda"\n}',
     },
     "manual": {
         "label": "Inserção Manual",
         "icon": "✏️",
         "steps": [
             "Copie sua chave de API exibida na etapa anterior.",
-            "Faça um POST para https://lead-intelligence-production.up.railway.app/lead com o header X-API-Key.",
+            "Faça um POST para https://leadsolarintelligence.com.br/lead com o header X-API-Key.",
             "Inclua no body JSON os campos obrigatórios: name, city, monthly_bill, property_type.",
             "A resposta retornará score (0-10), decision, urgency e whatsapp_message prontos.",
             "Use o dashboard em /dashboard para ver todos os seus leads qualificados.",
         ],
-        "code": 'curl -X POST https://lead-intelligence-production.up.railway.app/lead \\\n  -H "Content-Type: application/json" \\\n  -H "X-API-Key: SUA_CHAVE_AQUI" \\\n  -d \'{\n    "name": "João Silva",\n    "city": "Fortaleza",\n    "monthly_bill": 480,\n    "property_type": "casa_propria",\n    "goal": "economia"\n  }\'',
+        "code": 'curl -X POST https://leadsolarintelligence.com.br/lead \\\n  -H "Content-Type: application/json" \\\n  -H "X-API-Key: SUA_CHAVE_AQUI" \\\n  -d \'{\n    "name": "João Silva",\n    "city": "Fortaleza",\n    "monthly_bill": 480,\n    "property_type": "casa_propria",\n    "goal": "economia"\n  }\'',
     },
 }
 
@@ -86,7 +86,7 @@ _GUIDES: dict[str, dict] = {
 def _resolve_guides() -> dict[str, dict]:
     """Return guides with BASE_URL substituted for the hardcoded production URL."""
     import json
-    _PROD_URL = "https://lead-intelligence-production.up.railway.app"
+    _PROD_URL = "https://leadsolarintelligence.com.br"
     if _BASE_URL == _PROD_URL:
         return _GUIDES
     raw = json.dumps(_GUIDES).replace(_PROD_URL, _BASE_URL)
@@ -568,7 +568,7 @@ nav{
       <div class="code-block" id="guideCode"></div>
 
       <p style="font-size:.8rem;color:var(--muted);margin-bottom:1.75rem">
-        Base URL: <code style="color:var(--sky);font-size:.8rem">https://lead-intelligence-production.up.railway.app</code>
+        Base URL: <code style="color:var(--sky);font-size:.8rem">https://leadsolarintelligence.com.br</code>
       </p>
 
       <div class="btn-row">
@@ -674,11 +674,11 @@ const GUIDES = {
     steps: [
       'Abra seu formulário no Google Forms.',
       'No Zapier, crie um novo Zap e escolha Google Forms como trigger.',
-      'Conecte ao LeadSolar via webhook: Action → Webhook by Zapier → POST → https://lead-intelligence-production.up.railway.app/webhook/form',
+      'Conecte ao LeadSolar via webhook: Action → Webhook by Zapier → POST → https://leadsolarintelligence.com.br/webhook/form',
       'Mapeie os campos: Nome → name, Cidade → city, Conta de luz → monthly_bill, Tipo de imóvel → property_type.',
       'Ative o Zap e envie uma resposta de teste para confirmar.'
     ],
-    code: 'POST https://lead-intelligence-production.up.railway.app/webhook/form\nContent-Type: application/json\n\n{\n  "name": "{{Nome}}",\n  "city": "{{Cidade}}",\n  "monthly_bill": {{Conta de Luz}},\n  "property_type": "{{Tipo de Im\\u00f3vel}}"\n}'
+    code: 'POST https://leadsolarintelligence.com.br/webhook/form\nContent-Type: application/json\n\n{\n  "name": "{{Nome}}",\n  "city": "{{Cidade}}",\n  "monthly_bill": {{Conta de Luz}},\n  "property_type": "{{Tipo de Im\\u00f3vel}}"\n}'
   },
   meta_ads: {
     label: 'Meta Leads Ads', icon: '📣',
@@ -686,21 +686,21 @@ const GUIDES = {
       'Acesse o Meta Business Suite → Leads Center.',
       'Clique em "Integrações" → "CRM" e escolha Zapier.',
       'No Zapier, conecte o trigger do Meta Lead Ads à sua conta.',
-      'Adicione uma Action: Webhook by Zapier → POST → https://lead-intelligence-production.up.railway.app/webhook/form',
+      'Adicione uma Action: Webhook by Zapier → POST → https://leadsolarintelligence.com.br/webhook/form',
       'Mapeie os campos do formulário do anúncio para name, city, monthly_bill e property_type. Ative o Zap.'
     ],
-    code: 'POST https://lead-intelligence-production.up.railway.app/webhook/form\nContent-Type: application/json\n\n{\n  "name": "{{full_name}}",\n  "city": "{{city}}",\n  "monthly_bill": {{conta_de_luz}},\n  "property_type": "{{tipo_de_imovel}}"\n}'
+    code: 'POST https://leadsolarintelligence.com.br/webhook/form\nContent-Type: application/json\n\n{\n  "name": "{{full_name}}",\n  "city": "{{city}}",\n  "monthly_bill": {{conta_de_luz}},\n  "property_type": "{{tipo_de_imovel}}"\n}'
   },
   rdstation: {
     label: 'RD Station', icon: '📊',
     steps: [
       'No RD Station, vá em Configurações → Integrações → Webhooks.',
-      'Clique em "Novo Webhook" e insira a URL: https://lead-intelligence-production.up.railway.app/webhook/rdstation',
+      'Clique em "Novo Webhook" e insira a URL: https://leadsolarintelligence.com.br/webhook/rdstation',
       'Selecione o evento: "Lead convertido".',
       'Configure os campos personalizados do formulário: cf_conta_de_luz, cf_tipo_imovel.',
       'Salve e teste enviando um lead de conversão.'
     ],
-    code: '# URL do Webhook RD Station\nhttps://lead-intelligence-production.up.railway.app/webhook/rdstation\n\n# Campos personalizados esperados\ncf_conta_de_luz   → monthly_bill\ncf_tipo_imovel    → property_type\nnome              → name\ncidade            → city'
+    code: '# URL do Webhook RD Station\nhttps://leadsolarintelligence.com.br/webhook/rdstation\n\n# Campos personalizados esperados\ncf_conta_de_luz   → monthly_bill\ncf_tipo_imovel    → property_type\nnome              → name\ncidade            → city'
   },
   zapier_make: {
     label: 'Zapier / Make', icon: '⚡',
@@ -708,21 +708,21 @@ const GUIDES = {
       'Crie um novo Zap ou Cenário no Zapier/Make.',
       'Defina o trigger: seu formulário, CRM ou qualquer fonte de lead.',
       'Adicione uma Action: HTTP Request (Make) ou Webhook by Zapier.',
-      'Configure: método POST, URL https://lead-intelligence-production.up.railway.app/webhook/form, Content-Type: application/json.',
+      'Configure: método POST, URL https://leadsolarintelligence.com.br/webhook/form, Content-Type: application/json.',
       'Mapeie os campos e ative o Zap/Cenário.'
     ],
-    code: 'POST https://lead-intelligence-production.up.railway.app/webhook/form\nContent-Type: application/json\nX-API-Key: SUA_CHAVE_AQUI\n\n{\n  "name": "string",\n  "city": "string",\n  "monthly_bill": 350,\n  "property_type": "casa_propria | apartamento | comercial",\n  "goal": "economia | independencia | revenda"\n}'
+    code: 'POST https://leadsolarintelligence.com.br/webhook/form\nContent-Type: application/json\nX-API-Key: SUA_CHAVE_AQUI\n\n{\n  "name": "string",\n  "city": "string",\n  "monthly_bill": 350,\n  "property_type": "casa_propria | apartamento | comercial",\n  "goal": "economia | independencia | revenda"\n}'
   },
   manual: {
     label: 'Inserção Manual', icon: '✏️',
     steps: [
       'Copie sua chave de API exibida na etapa 1.',
-      'Faça um POST para https://lead-intelligence-production.up.railway.app/lead com o header X-API-Key.',
+      'Faça um POST para https://leadsolarintelligence.com.br/lead com o header X-API-Key.',
       'Inclua no body JSON os campos obrigatórios: name, city, monthly_bill, property_type.',
       'A resposta retornará score (0-10), decision, urgency e whatsapp_message prontos.',
       'Use o dashboard em /dashboard para ver todos os seus leads qualificados.'
     ],
-    code: "curl -X POST https://lead-intelligence-production.up.railway.app/lead \\\\\n  -H \"Content-Type: application/json\" \\\\\n  -H \"X-API-Key: SUA_CHAVE_AQUI\" \\\\\n  -d '{\n    \"name\": \"Jo\\u00e3o Silva\",\n    \"city\": \"Fortaleza\",\n    \"monthly_bill\": 480,\n    \"property_type\": \"casa_propria\",\n    \"goal\": \"economia\"\n  }'"
+    code: "curl -X POST https://leadsolarintelligence.com.br/lead \\\\\n  -H \"Content-Type: application/json\" \\\\\n  -H \"X-API-Key: SUA_CHAVE_AQUI\" \\\\\n  -d '{\n    \"name\": \"Jo\\u00e3o Silva\",\n    \"city\": \"Fortaleza\",\n    \"monthly_bill\": 480,\n    \"property_type\": \"casa_propria\",\n    \"goal\": \"economia\"\n  }'"
   }
 };
 
@@ -1095,7 +1095,7 @@ async def onboarding(
       - plan: subscribed plan slug (optional)
       - api_key: the newly issued API key to display to the user (optional)
     """
-    _PROD_URL = "https://lead-intelligence-production.up.railway.app"
+    _PROD_URL = "https://leadsolarintelligence.com.br"
     html = _HTML.replace(_PROD_URL, _BASE_URL) if _BASE_URL != _PROD_URL else _HTML
 
     # Inject Firebase config so the Google login button works

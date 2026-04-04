@@ -117,7 +117,7 @@ def _hot_lead_html(
       </div>
       {wa_block}
       <div style="margin-top:20px;text-align:center">
-        <a href="https://lead-intelligence-production.up.railway.app/dashboard"
+        <a href="https://leadsolarintelligence.com.br/dashboard"
            style="display:inline-block;background:linear-gradient(135deg,#f59e0b,#d97706);color:#000;font-weight:700;padding:12px 28px;border-radius:8px;text-decoration:none;font-size:14px">
           Ver no Dashboard →
         </a>

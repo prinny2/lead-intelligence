@@ -205,7 +205,7 @@ class RDStationPayload(BaseModel):
     RD Station webhook event payload.
     Supports both Marketing (event_type/payload) and CRM (funnel_name/contact) formats.
     Configure in RD Station: Configurações → Integrações → Webhooks
-    URL: https://lead-intelligence-production.up.railway.app/webhook/rdstation?api_key=sk-ls-...
+    URL: https://leadsolarintelligence.com.br/webhook/rdstation?api_key=sk-ls-...
     Events: Lead convertido, Lead atualizado
     """
     model_config = ConfigDict(extra="allow")
