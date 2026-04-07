@@ -404,10 +404,8 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
   /* ── Announcement bar ── */
   .ann-bar{font-size:.7rem;padding:.4rem .75rem;line-height:1.5}
 
-  /* ── WA float — lado esquerdo no mobile, não conflita com conteúdo ── */
-  .wa-float{bottom:5rem;right:auto;left:.75rem;padding:.65rem;border-radius:50%;width:3rem;height:3rem;justify-content:center}
-  .wa-float span{display:none}
-  .wa-float svg{width:1.4rem;height:1.4rem}
+  /* ── WA float — oculto no mobile (sticky CTA já cobre conversão) ── */
+  .wa-float{display:none!important}
 
   /* ── Sticky CTA ── */
   .sticky-cta{display:flex}
@@ -828,8 +826,8 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
 
 <!-- STICKY MOBILE CTA -->
 <div class="sticky-cta" id="sticky-cta">
-  <p><strong>30 dias grátis</strong>Sem cartão de crédito</p>
-  <a href="#contato" onclick="document.getElementById('sticky-cta').style.display='none'">Testar agora →</a>
+  <a href="https://wa.me/5591985156690" target="_blank" rel="noopener" style="background:#25d366;color:#fff;font-weight:700;padding:.65rem .9rem;border-radius:.5rem;text-decoration:none;font-size:.8rem;white-space:nowrap;flex-shrink:0">💬 WhatsApp</a>
+  <a href="#contato" onclick="document.getElementById('sticky-cta').style.display='none'" style="flex:1;text-align:center">Testar grátis →</a>
 </div>
 
 <!-- FLOATING WA BUTTON -->
