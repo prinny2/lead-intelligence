@@ -404,17 +404,14 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
   /* ── Announcement bar ── */
   .ann-bar{font-size:.7rem;padding:.4rem .75rem;line-height:1.5}
 
-  /* ── WA float — ícone pequeno no canto, não sobrepõe conteúdo ── */
-  .wa-float{bottom:5rem;right:.75rem;padding:.65rem;border-radius:50%;width:3rem;height:3rem;justify-content:center}
+  /* ── WA float — lado esquerdo no mobile, não conflita com conteúdo ── */
+  .wa-float{bottom:5rem;right:auto;left:.75rem;padding:.65rem;border-radius:50%;width:3rem;height:3rem;justify-content:center}
   .wa-float span{display:none}
   .wa-float svg{width:1.4rem;height:1.4rem}
 
   /* ── Sticky CTA ── */
   .sticky-cta{display:flex}
   body{padding-bottom:70px}
-
-  /* ── Evita conteúdo sob o botão WA ── */
-  .section,.hero{padding-right:1.1rem}
 
   /* ── Guarantee ── */
   .guarantee-wrap{flex-direction:column;align-items:center;text-align:center;padding:1.5rem}
