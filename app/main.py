@@ -36,7 +36,10 @@ logging.basicConfig(
     stream=sys.stdout,
 )
 
+from fastapi.exceptions import HTTPException
+
 from app.routes import api_router
+from app.routes.errors import not_found_handler
 from app.services.audit_service import log_event
 
 app = FastAPI(
@@ -87,5 +90,7 @@ async def audit_middleware(request: Request, call_next):
 _static_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "static")
 if os.path.isdir(_static_dir):
     app.mount("/static", StaticFiles(directory=_static_dir), name="static")
+
+app.add_exception_handler(404, not_found_handler)
 
 app.include_router(api_router)

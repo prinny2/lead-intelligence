@@ -427,7 +427,7 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
 
 <!-- ANNOUNCEMENT BAR -->
 <div class="ann-bar">
-  🎉 <span>Lançamento — 40% OFF com código LANCAMENTO40</span> · Primeiras 50 vagas
+  🎉 <span>Lançamento — 40% OFF com código LANCAMENTO40</span> · Válido até 30/04 · <strong>12 vagas restantes</strong>
 </div>
 
 <!-- MOBILE MENU -->
@@ -494,6 +494,12 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
       <div class="card-wa">
         <div class="card-wa-label">📱 Mensagem pronta para enviar</div>
         <div class="card-wa-text">"Oi Marcos! Vi que sua conta de luz chega a R$720/mês em Curitiba. Com solar você economiza em torno de R$576 por mês — o sistema se paga em menos de 4 anos. Posso te mandar uma simulação hoje? ☀️"</div>
+      </div>
+      <div style="padding:.6rem 1.25rem 1rem;border-top:1px solid var(--border)">
+        <a href="/dashboard" style="font-size:.75rem;color:var(--muted);text-decoration:none;display:flex;align-items:center;gap:.4rem">
+          <span style="width:.45rem;height:.45rem;border-radius:50%;background:var(--green);display:inline-block;animation:pulse-dot 2s ease-in-out infinite"></span>
+          Ver painel ao vivo →
+        </a>
       </div>
     </div>
   </div>
@@ -631,32 +637,20 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
 <!-- DEPOIMENTOS -->
 <section class="section">
   <div class="container">
-    <div class="section-tag center">Resultados reais</div>
-    <h2 class="section-title center">O que mudou pra quem já usa</h2>
-    <div class="testi-grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr));max-width:780px;margin:3rem auto 0">
-      <div class="testi">
-        <div class="stars">★★★★★</div>
-        <blockquote>"Antes eu ligava pra todo lead. Hoje meu vendedor liga só pros quentes. Em 3 meses triplicamos os fechamentos sem contratar ninguém."</blockquote>
-        <div class="testi-who">
-          <div class="testi-av" style="background:linear-gradient(135deg,#b45309,#92400e)">PA</div>
-          <div>
-            <div class="testi-name">Pedro Alves</div>
-            <div class="testi-role">Instaladora solar — Curitiba, PR</div>
-            <span class="testi-result">↑ 3x fechamentos</span>
-          </div>
-        </div>
+    <div class="section-tag center">Por que funciona</div>
+    <h2 class="section-title center">Números que importam</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem;margin-top:3rem;max-width:700px;margin-left:auto;margin-right:auto">
+      <div class="mcard">
+        <strong>30s</strong>
+        <span>do formulário ao score qualificado</span>
       </div>
-      <div class="testi">
-        <div class="stars">★★★★★</div>
-        <blockquote>"Setup foi 1 hora. No mesmo dia já tinha a fila organizada. Parece que finalmente tenho um sistema."</blockquote>
-        <div class="testi-who">
-          <div class="testi-av" style="background:linear-gradient(135deg,#0369a1,#075985)">AF</div>
-          <div>
-            <div class="testi-name">Ana Ferreira</div>
-            <div class="testi-role">Gestora comercial — São Paulo, SP</div>
-            <span class="testi-result">Setup em 1 hora</span>
-          </div>
-        </div>
+      <div class="mcard">
+        <strong>R$0</strong>
+        <span>sem cartão nos primeiros 30 dias</span>
+      </div>
+      <div class="mcard">
+        <strong>1h</strong>
+        <span>pra configurar do zero com suporte incluso</span>
       </div>
     </div>
   </div>
@@ -826,8 +820,8 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
 
 <!-- STICKY MOBILE CTA -->
 <div class="sticky-cta" id="sticky-cta">
-  <a href="https://wa.me/5591985156690" target="_blank" rel="noopener" style="background:#25d366;color:#fff;font-weight:700;padding:.65rem .9rem;border-radius:.5rem;text-decoration:none;font-size:.8rem;white-space:nowrap;flex-shrink:0">💬 WhatsApp</a>
-  <a href="#contato" onclick="document.getElementById('sticky-cta').style.display='none'" style="flex:1;text-align:center">Testar grátis →</a>
+  <p><strong>30 dias grátis</strong>Fale pelo WhatsApp agora</p>
+  <a href="https://wa.me/5591985156690?text=Ol%C3%A1%2C%20quero%20testar%20o%20LeadSolar" target="_blank" rel="noopener">Falar no WhatsApp →</a>
 </div>
 
 <!-- FLOATING WA BUTTON -->
