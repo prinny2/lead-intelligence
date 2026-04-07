@@ -404,13 +404,17 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
   /* ── Announcement bar ── */
   .ann-bar{font-size:.7rem;padding:.4rem .75rem;line-height:1.5}
 
-  /* ── WA float — sobe acima do sticky CTA ── */
-  .wa-float{bottom:5.5rem;right:1rem;padding:.6rem 1rem;font-size:.8rem}
+  /* ── WA float — ícone pequeno no canto, não sobrepõe conteúdo ── */
+  .wa-float{bottom:5rem;right:.75rem;padding:.65rem;border-radius:50%;width:3rem;height:3rem;justify-content:center}
   .wa-float span{display:none}
+  .wa-float svg{width:1.4rem;height:1.4rem}
 
   /* ── Sticky CTA ── */
   .sticky-cta{display:flex}
   body{padding-bottom:70px}
+
+  /* ── Evita conteúdo sob o botão WA ── */
+  .section,.hero{padding-right:1.1rem}
 
   /* ── Guarantee ── */
   .guarantee-wrap{flex-direction:column;align-items:center;text-align:center;padding:1.5rem}
@@ -780,7 +784,7 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
     <p class="price-note">30 dias grátis em todos os planos · Sem cartão · Cancele quando quiser</p>
 
     <!-- GARANTIA -->
-    <div class="guarantee-wrap anim">
+    <div class="guarantee-wrap">
       <div class="guarantee-icon">🛡️</div>
       <div>
         <div class="guarantee-title">Garantia de 30 dias — ou devolvemos tudo</div>
