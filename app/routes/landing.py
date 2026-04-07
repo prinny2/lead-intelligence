@@ -427,7 +427,7 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
 
 <!-- ANNOUNCEMENT BAR -->
 <div class="ann-bar">
-  🎉 <span>Lançamento — 40% OFF com código LANCAMENTO40</span> · Válido até 30/04 · <strong>12 vagas restantes</strong>
+  🎉 <span>Lançamento — 40% OFF com o código SOLAR40</span> · Válido até 30/04
 </div>
 
 <!-- MOBILE MENU -->
@@ -456,18 +456,18 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
 <section class="hero">
   <div class="hero-inner">
     <div>
-      <div class="hero-eyebrow">⚡ Inteligência de leads para energia solar</div>
-      <h1>Pare de ligar pra quem <em>nunca vai fechar</em></h1>
-      <p class="hero-sub">Cada lead do seu formulário recebe um score de 0 a 10 e uma mensagem de WhatsApp pronta em segundos.</p>
+      <div class="hero-eyebrow">⚡ Feito para instaladoras de energia solar</div>
+      <h1>Seu vendedor já sabe quem ligar <em>primeiro amanhã de manhã</em></h1>
+      <p class="hero-sub">Todo lead que chega ganha uma nota e uma mensagem de WhatsApp pronta. Seu time liga só pra quem tem chance real de fechar.</p>
       <div class="hero-btns">
         <button onclick="startCheckout('pro')" class="btn-sun" style="border:none;cursor:pointer;font-family:inherit">Começar grátis por 30 dias →</button>
         <button onclick="openWizard()" class="btn-outline" style="background:none;border:1px solid var(--border);cursor:pointer;font-family:inherit;color:var(--muted);padding:.85rem 1.75rem;border-radius:.6rem;font-size:.95rem">Calcular meu ROI →</button>
       </div>
       <div class="hero-no-risk"><span>✓</span> Sem cartão de crédito &nbsp;·&nbsp; <span>✓</span> Cancele quando quiser &nbsp;·&nbsp; <span>✓</span> Setup em 1 hora</div>
       <div class="hero-proof anim">
-        <div class="proof-item"><strong>+3x</strong><span>fechamentos com mesma equipe</span></div>
-        <div class="proof-item"><strong>30s</strong><span>do formulário ao score</span></div>
-        <div class="proof-item"><strong>30 dias</strong><span>grátis pra testar</span></div>
+        <div class="proof-item"><strong>1 hora</strong><span>pra configurar e já usar</span></div>
+        <div class="proof-item"><strong>0</strong><span>leads frios na fila do vendedor</span></div>
+        <div class="proof-item"><strong>30 dias</strong><span>pra testar sem pagar nada</span></div>
       </div>
     </div>
     <div class="hero-card">
@@ -509,22 +509,22 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
 <section class="section" id="problema">
   <div class="container">
     <div class="section-tag center">O problema</div>
-    <h2 class="section-title center">Você já tem leads. O problema é saber quem ligar primeiro.</h2>
+    <h2 class="section-title center">Todo dia seu vendedor liga pra gente errada. Isso custa caro.</h2>
     <div class="pain-grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr));margin-top:3rem">
       <div class="pain">
         <div class="pain-icon">⏱️</div>
-        <h3>Lead esquentou e esfriou</h3>
-        <p>Você ligou 2 dias depois. O concorrente ligou em 20 minutos.</p>
+        <h3>Lead quente virou lead frio</h3>
+        <p>Chegou o lead às 10h. Seu vendedor ligou às 17h. O concorrente ligou às 10h05.</p>
       </div>
       <div class="pain">
         <div class="pain-icon">🎯</div>
-        <h3>Vendedor atira pra todo lado</h3>
-        <p>50 ligações por semana, 2 fechamentos. Por falta de filtro, não de esforço.</p>
+        <h3>Ninguém sabe quem ligar primeiro</h3>
+        <p>Sem critério, o vendedor liga por ordem de chegada. Não por ordem de chance de fechar.</p>
       </div>
       <div class="pain">
         <div class="pain-icon">💬</div>
-        <h3>Mensagem igual pra todo mundo</h3>
-        <p>Apartamento alugado com R$80 de conta recebe a mesma abordagem que casa própria R$700.</p>
+        <h3>Mesma mensagem pra todo mundo</h3>
+        <p>Apartamento alugado recebe o mesmo WhatsApp que casa própria com conta de R$800. Não faz sentido.</p>
       </div>
     </div>
   </div>
@@ -534,22 +534,22 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
 <section class="section how-bg" id="como-funciona">
   <div class="container">
     <div class="section-tag center">Como funciona</div>
-    <h2 class="section-title center">De formulário a lead qualificado em 30 segundos</h2>
+    <h2 class="section-title center">Três coisas que acontecem quando um lead chega</h2>
     <div class="steps">
       <div class="step">
         <div class="step-num">1</div>
-        <h3>Conecta</h3>
-        <p>Google Forms, RD Station ou qualquer formulário. Sem mexer no seu processo atual.</p>
+        <h3>Lead chega</h3>
+        <p>Pelo seu formulário do Google, pelo anúncio do Meta ou qualquer outro. Sem mudar nada do que você já usa.</p>
       </div>
       <div class="step">
         <div class="step-num">2</div>
-        <h3>Qualifica</h3>
-        <p>IA analisa conta de luz, imóvel, cidade e urgência. Score 0 a 10 na hora.</p>
+        <h3>Sistema analisa</h3>
+        <p>Conta de luz, tipo de imóvel, cidade, o que a pessoa escreveu. Tudo vira uma nota de 0 a 10.</p>
       </div>
       <div class="step">
         <div class="step-num">3</div>
-        <h3>Vende</h3>
-        <p>Seu vendedor recebe a fila do dia: quem ligar primeiro e o WhatsApp pronto pra mandar.</p>
+        <h3>Vendedor age</h3>
+        <p>Recebe a fila do dia: quem ligar primeiro e a mensagem de WhatsApp já escrita pra cada um.</p>
       </div>
     </div>
   </div>
@@ -559,8 +559,8 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
 <section class="section" id="demo" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
   <div class="container">
     <div class="section-tag center">Demo ao vivo</div>
-    <h2 class="section-title center">Teste agora com um lead real</h2>
-    <p class="section-sub center">Preencha os dados de qualquer lead e veja o score, a decisão e a mensagem WhatsApp pronta — em segundos.</p>
+    <h2 class="section-title center">Veja funcionando agora — com um lead de verdade</h2>
+    <p class="section-sub center">Preenche os dados de qualquer lead seu. Em segundos você vê a nota, a decisão e a mensagem de WhatsApp pronta.</p>
     <div class="demo-wrap">
       <div class="demo-form-box">
         <h3>Dados do lead</h3>
@@ -664,31 +664,31 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
     <div class="faq-list">
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">
-          Funciona com o Google Forms que eu já uso?
+          Preciso mudar meu formulário atual?
           <span class="faq-icon">+</span>
         </button>
-        <div class="faq-a">Sim. Você conecta seu formulário existente via Zapier ou Make em menos de 20 minutos — sem mudar nada no seu processo atual. Todo lead novo que chegar já aparece qualificado no painel.</div>
+        <div class="faq-a">Não. O LeadSolar conecta com o que você já usa — Google Forms, Meta Ads, RD Station, qualquer coisa. Você não muda nada no seu processo.</div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">
-          Preciso de equipe técnica pra configurar?
+          Meu vendedor vai precisar aprender algum sistema novo?
           <span class="faq-icon">+</span>
         </button>
-        <div class="faq-a">Não. A gente configura tudo pra você em até 1 hora por chamada. Você não precisa saber programar nada — só nos dar acesso ao seu formulário e definir qual número de WhatsApp recebe as notificações.</div>
+        <div class="faq-a">Não. Ele recebe uma mensagem no WhatsApp com a fila do dia e os textos prontos. É só ligar e mandar.</div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">
-          Quanto tempo até ver resultado?
+          Recebo poucos leads por mês. Vale a pena?
           <span class="faq-icon">+</span>
         </button>
-        <div class="faq-a">Na maioria dos casos, o primeiro lead qualificado aparece no mesmo dia do setup. Resultados concretos em fechamentos costumam aparecer na primeira semana — quando o vendedor para de ligar pra leads frios.</div>
+        <div class="faq-a">Se você recebe 20 leads por mês e fecha 2, melhorar pra 4 fechamentos já paga o LeadSolar várias vezes. O que importa não é o volume — é não desperdiçar o que chega.</div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">
-          Posso cancelar quando quiser?
+          Como sei que a nota está certa?
           <span class="faq-icon">+</span>
         </button>
-        <div class="faq-a">Sim, sem multa e sem burocracia. Você cancela pelo painel ou nos chama no WhatsApp. Os 30 dias grátis não pedem cartão de crédito — você só paga se decidir continuar.</div>
+        <div class="faq-a">Você não precisa confiar cegamente. Na demo ao vivo aqui na página você testa com um lead seu agora e vê o resultado. Se fizer sentido, você assina. Se não fizer, não assina.</div>
       </div>
     </div>
   </div>
@@ -715,58 +715,36 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
     <div class="price-grid">
 
       <div class="plan anim">
-        <div class="plan-tier">Starter</div>
+        <div class="plan-tier">Começo</div>
         <div class="plan-price" id="price-starter"><sup>R$</sup>297<sub>/mês</sub></div>
         <div class="plan-annual-note" id="note-starter">R$ 2.856 cobrado anualmente — economia de R$ 708</div>
-        <div class="plan-pitch">Para instaladoras que qualificam até 500 leads/mês</div>
+        <div class="plan-pitch">Para instaladoras que querem parar de perder tempo com lead frio</div>
         <ul class="plan-list">
-          <li>Até 500 leads/mês</li>
-          <li>Score e priorização automática</li>
-          <li>WhatsApp personalizado por lead</li>
-          <li>Dashboard com fila do dia</li>
-          <li>1 integração (Google Forms)</li>
-          <li>Export CSV</li>
-          <li class="no">Simulação ROI por estado</li>
-          <li class="no">Suporte prioritário</li>
+          <li>Até 500 leads por mês</li>
+          <li>Nota de 0 a 10 pra cada lead</li>
+          <li>Mensagem de WhatsApp pronta por lead</li>
+          <li>Fila do dia: quem ligar primeiro</li>
+          <li>Conecta com Google Forms</li>
+          <li>Suporte por email</li>
         </ul>
         <button onclick="startCheckout('starter')" class="plan-btn plan-btn-out">Começar grátis por 30 dias</button>
       </div>
 
       <div class="plan pop anim">
         <div class="pop-badge">⭐ Mais popular</div>
-        <div class="plan-tier">Pro</div>
+        <div class="plan-tier">Crescimento</div>
         <div class="plan-price" id="price-pro"><sup>R$</sup>497<sub>/mês</sub></div>
         <div class="plan-annual-note" id="note-pro">R$ 4.776 cobrado anualmente — economia de R$ 1.188</div>
-        <div class="plan-pitch">Para times que querem escalar sem contratar mais vendedores</div>
+        <div class="plan-pitch">Para times que recebem mais lead e não podem deixar nenhum escapar</div>
         <ul class="plan-list">
-          <li>Até 2.000 leads/mês</li>
-          <li>Tudo do Starter</li>
-          <li>Simulação ROI por estado</li>
-          <li>Upload em lote (CSV)</li>
-          <li>Integrações ilimitadas</li>
-          <li>Deduplicação automática</li>
-          <li>Funil de conversão completo</li>
-          <li>Suporte por WhatsApp</li>
+          <li>Até 2.000 leads por mês</li>
+          <li>Tudo do plano Começo</li>
+          <li>Simulação de economia por cidade</li>
+          <li>Conecta com qualquer formulário</li>
+          <li>Não cadastra o mesmo lead duas vezes</li>
+          <li>Suporte direto no WhatsApp</li>
         </ul>
         <button onclick="startCheckout('pro')" class="plan-btn plan-btn-sun">Começar grátis por 30 dias</button>
-      </div>
-
-      <div class="plan anim">
-        <div class="plan-tier">Empresarial</div>
-        <div class="plan-price" id="price-enterprise"><sup>R$</sup>997<sub>/mês</sub></div>
-        <div class="plan-annual-note" id="note-enterprise">R$ 9.576 cobrado anualmente — economia de R$ 2.388</div>
-        <div class="plan-pitch">Para redes e franquias com múltiplas operações</div>
-        <ul class="plan-list">
-          <li>Leads ilimitados</li>
-          <li>Tudo do Pro</li>
-          <li>Setup e integração incluso</li>
-          <li>Treinamento do time</li>
-          <li>Integração com qualquer sistema</li>
-          <li>Disponibilidade garantida 24/7</li>
-          <li>Gerente de conta dedicado</li>
-          <li>NF e contrato formal</li>
-        </ul>
-        <a href="#contato" class="plan-btn plan-btn-out">Falar com o time →</a>
       </div>
 
     </div>
@@ -777,7 +755,7 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
       <div class="guarantee-icon">🛡️</div>
       <div>
         <div class="guarantee-title">Garantia de 30 dias — ou devolvemos tudo</div>
-        <div class="guarantee-text">Teste sem risco. Se em 30 dias você não ver resultado, devolvemos 100% do valor pago. Sem perguntas, sem burocracia. Você não perde nada — só ganha tempo.</div>
+        <div class="guarantee-text">Se em 30 dias seu vendedor não estiver ligando pra leads melhores, devolvemos tudo. Sem formulário, sem burocracia. Fala direto no WhatsApp.</div>
       </div>
     </div>
   </div>
@@ -787,16 +765,16 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
 <section class="section cta-wrap" id="contato">
   <div class="container">
     <div class="section-tag center">Comece hoje</div>
-    <h2 class="section-title center">Seu próximo fechamento começa com o lead certo</h2>
-    <p>30 dias grátis. Sem cartão. Se não funcionar, você não paga nada.</p>
+    <h2 class="section-title center">Testa com um lead seu hoje. Grátis.</h2>
+    <p>30 dias sem pagar nada, sem cartão. Se não funcionar, você não perde nada.</p>
     <form class="cta-form" onsubmit="submitForm(event)">
       <input type="text" id="contact-input" placeholder="Seu WhatsApp com DDD" required/>
       <button type="submit" class="btn-sun" style="border:none;cursor:pointer">Quero testar grátis →</button>
     </form>
     <div class="cta-trust">
-      <span>✓ Sem cartão de crédito</span>
+      <span>✓ Sem cartão</span>
       <span>✓ 30 dias grátis</span>
-      <span>✓ Setup em 1 hora</span>
+      <span>✓ Configuramos com você</span>
       <span>✓ Cancele quando quiser</span>
     </div>
     <div id="form-feedback" style="display:none;margin-top:1.25rem;text-align:center;font-size:.875rem;font-weight:700"></div>
@@ -809,7 +787,7 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
 </section>
 
 <footer>
-  <p>© 2026 LeadSolar · Qualificação de leads para instaladoras de energia solar</p>
+  <p>© 2026 LeadSolar · Feito para instaladoras de energia solar no Brasil</p>
   <div class="footer-links">
     <a href="/dashboard">Dashboard</a>
     <a href="/docs">API</a>
