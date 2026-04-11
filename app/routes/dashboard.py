@@ -19,11 +19,24 @@ async def me(authorization: str | None = Header(default=None)):
     client = _verify_firebase_token(token)
     if not client:
         raise HTTPException(status_code=401, detail="Token inválido")
+    # Fetch api_key from Firestore for self-service recovery
+    api_key = None
+    try:
+        from app.auth import _get_firestore
+        db = _get_firestore()
+        if db:
+            docs = db.collection("customers").where("org_id", "==", client.client_id).limit(1).get()
+            for doc in docs:
+                api_key = doc.to_dict().get("api_key")
+    except Exception:
+        pass
+
     return {
         "email": client.email,
         "name": client.client_name,
         "tier": client.tier,
         "org_id": client.client_id,
+        "api_key": api_key,
     }
 
 
