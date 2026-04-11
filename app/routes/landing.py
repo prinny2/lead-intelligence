@@ -358,8 +358,8 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
   .hero{padding:4.5rem 1.25rem 2.5rem;min-height:auto}
   .hero h1{font-size:clamp(1.75rem,7vw,2.2rem);letter-spacing:-.02em}
   .hero-sub{font-size:.9rem;line-height:1.7}
-  .hero-proof{gap:1.25rem;margin-top:1.5rem;padding-top:1.25rem;flex-wrap:nowrap}
-  .proof-item strong{font-size:1.4rem}
+  .hero-proof{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-top:1.5rem;padding-top:1.25rem}
+  .proof-item strong{font-size:1.3rem}
 
   /* ── Botões mobile ── */
   .hero-btns{flex-direction:column;align-items:stretch;gap:.7rem}
