@@ -44,14 +44,27 @@ async def save_contact(body: ContactRequest) -> ContactResponse:
         "source": body.source,
     }
 
+    # Save to Firestore (persistent) — fallback to JSONL if unavailable
+    _saved_firestore = False
     try:
-        path = _contacts_file()
-        path.parent.mkdir(parents=True, exist_ok=True)
-        with open(path, "a", encoding="utf-8") as f:
-            f.write(json.dumps(record, ensure_ascii=False) + "\n")
-        logger.info("new_contact source=%s contact=%s", body.source, value[:6] + "***")
+        from app.auth import _get_firestore
+        db = _get_firestore()
+        if db:
+            db.collection("contacts").add(record)
+            _saved_firestore = True
+            logger.info("new_contact_firestore source=%s contact=%s", body.source, value[:6] + "***")
     except Exception as e:
-        logger.warning("contact_save_failed error=%s", str(e))
+        logger.warning("contact_firestore_failed error=%s", str(e))
+
+    if not _saved_firestore:
+        try:
+            path = _contacts_file()
+            path.parent.mkdir(parents=True, exist_ok=True)
+            with open(path, "a", encoding="utf-8") as f:
+                f.write(json.dumps(record, ensure_ascii=False) + "\n")
+            logger.info("new_contact_jsonl source=%s contact=%s", body.source, value[:6] + "***")
+        except Exception as e:
+            logger.warning("contact_save_failed error=%s", str(e))
 
     # Notify admin — never blocks the response
     try:

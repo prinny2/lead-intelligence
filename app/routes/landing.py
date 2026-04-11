@@ -699,7 +699,8 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
   <div class="container">
     <div class="section-tag center anim">Planos</div>
     <h2 class="section-title center anim">Menos que um vendedor, resultado de 10</h2>
-    <p class="section-sub center anim" style="margin-bottom:2rem">30 dias grátis em todos os planos. Cancele quando quiser, sem burocracia.</p>
+    <p class="section-sub center anim" style="margin-bottom:1rem">30 dias grátis em todos os planos. Cancele quando quiser, sem burocracia.</p>
+    <p class="center anim" style="font-size:.82rem;color:var(--sun);margin-bottom:1.5rem;font-weight:700">🎉 Use o código <strong>SOLAR40</strong> no checkout e ganhe 40% de desconto — válido até 30/04</p>
 
     <!-- BILLING TOGGLE -->
     <div class="billing-toggle anim">
