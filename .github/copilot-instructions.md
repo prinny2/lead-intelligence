@@ -11,12 +11,12 @@ Lead Intelligence is a Python-based lead qualification system focused on the **B
 
 - **Language**: Python 3.10+
 - **Web Framework**: FastAPI with Uvicorn
-- **AI Provider**: Anthropic Claude (NOT OpenAI) - use `ANTHROPIC_API_KEY` environment variable
+- **AI Provider**: Google Gemini (primary, `GEMINI_API_KEY`) → Anthropic Claude (fallback, `ANTHROPIC_API_KEY`). Never OpenAI.
 - **Testing**: pytest with httpx for API tests
-- **Deployment**: Docker, Render, Railway, Google Cloud Run
-- **Payment Processing**: Stripe
-- **Database**: File-based JSONL storage (leads.jsonl)
-- **Authentication**: Firebase Admin SDK
+- **Deployment**: Railway (production). Domain: `leadsolarintelligence.com.br` — use this domain, NOT the raw Railway URL.
+- **Payment Processing**: Stripe (live mode)
+- **Database**: Firestore (primary when `GOOGLE_CLOUD_PROJECT` is set) → JSONL fallback
+- **Authentication**: Firebase Admin SDK + Firebase Auth (Google login)
 
 ## Code Style & Conventions
 
@@ -71,12 +71,18 @@ Lead Intelligence is a Python-based lead qualification system focused on the **B
 
 ### AI Service Integration
 
-- **Provider**: Use Anthropic Claude via the `anthropic` package
-- **Model**: Default model is `claude-haiku-4-5-20251001` (constant: `DEFAULT_MODEL`)
-- **Environment Variable**: `ANTHROPIC_API_KEY` (NOT `OPENAI_API_KEY`)
-- **Return Pattern**: AI services return tuples: `(ai_output: dict, context: dict)`
+- **Primary**: Google Gemini via `app/services/gemini_service.py` (`GEMINI_API_KEY`)
+- **Fallback**: Anthropic Claude via `app/services/ai_service.py` (`ANTHROPIC_API_KEY`)
+- **Entry point**: `get_ai_qualification_with_solar(lead)` in `scoring_service.py` — tries Gemini first, falls back to Claude
+- **Return Pattern**: AI services return tuples: `(ai_output: dict, solar_context: dict)`
 - **Fallback**: Always handle cases where AI service is unavailable or returns invalid data
 - **Testing**: Mock AI services to return the expected tuple format `(dict, dict)`
+
+### Notification System (DO NOT REMOVE)
+
+- `notify_admin_lead()` in `notification_service.py` sends an email to `NOTIFY_ADMIN_EMAIL` for **every** new lead, regardless of score. This powers admin push notifications on mobile. It is called in `leads.py`, `webhook.py` (form and rdstation endpoints).
+- `notify_hot_lead()` sends email to the customer's account email only when `score >= HOT_SCORE_THRESHOLD` (default 7).
+- Both functions are fire-and-forget (wrapped in try/except) and must remain in place.
 
 ## Testing Guidelines
 
@@ -126,11 +132,18 @@ pytest -k "test_validator"                  # Run tests matching pattern
 
 ### Environment Variables
 
-- `ANTHROPIC_API_KEY`: Required for AI-powered qualification
-- `CORS_ORIGINS`: Comma-separated allowed origins for CORS
-- `LEADS_FILE`: Path to leads JSONL storage (use persistent disk in production)
-- `STRIPE_SECRET_KEY`: For payment processing
-- `FIREBASE_CREDENTIALS_BASE64`: Base64-encoded Firebase service account JSON
+- `GEMINI_API_KEY`: Primary AI provider (Google Gemini)
+- `ANTHROPIC_API_KEY`: Fallback AI provider (Claude)
+- `GOOGLE_CLOUD_PROJECT`: Activates Firestore storage (set to `lead-solar-12345` in production)
+- `GOOGLE_APPLICATION_CREDENTIALS_JSON`: Firestore service account JSON string
+- `GOOGLE_MAPS_API_KEY`: Geocoding + Solar API enrichment
+- `STRIPE_SECRET_KEY` + `STRIPE_WEBHOOK_SECRET`: Payment processing
+- `RESEND_API_KEY`: Email notifications via Resend
+- `NOTIFY_ADMIN_EMAIL`: Admin email for lead push alerts (e.g. `vpaes.freire02@gmail.com`)
+- `NOTIFY_FROM_EMAIL`: Sender address (must be verified in Resend)
+- `FIREBASE_AUTH_DOMAIN` + `FIREBASE_WEB_API_KEY`: Frontend Firebase Auth
+- `REDIS_URL`: Rate limiting
+- `BASE_URL`: Production domain — always `https://leadsolarintelligence.com.br`
 
 ### Security Practices
 
@@ -178,8 +191,11 @@ pytest -k "test_validator"                  # Run tests matching pattern
 ## Common Pitfalls
 
 - **AI Service**: Remember to return tuples `(dict, dict)`, not just `dict`
-- **Environment Variables**: Use `ANTHROPIC_API_KEY`, not `OPENAI_API_KEY`
+- **AI Provider order**: Gemini is primary, Claude is fallback. Never swap them or remove either.
+- **Domain**: Always use `leadsolarintelligence.com.br` in docs/guides/emails, never the raw Railway URL
+- **notify_admin_lead**: Must remain called in `leads.py` and both webhook endpoints — removing it silently breaks admin mobile push notifications
+- **Storage**: Uses Firestore in production (via `GOOGLE_CLOUD_PROJECT` env var), not JSONL
 - **Type Hints**: Use modern Python 3.10+ syntax (`dict[str, Any]` not `Dict[str, Any]`)
 - **Logging**: Use `logger.info("event key=%s", value)` format with structured keys
 - **Multi-tenancy**: Always filter by `org_id` in API routes that access shared data
-- **Testing**: Mock AI services must return the expected tuple format
+- **Testing**: Mock AI services must return the expected tuple format `(dict, dict)`
