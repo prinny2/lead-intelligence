@@ -11,6 +11,7 @@ from pydantic import BaseModel, ConfigDict, field_validator
 from app.models import LeadRequest, LeadResponse, StoredLead
 from app.services import hybrid_score, save_lead
 from app.services.scoring_service import get_ai_qualification_with_solar
+from app.services.audit_service import log_event
 
 logger = logging.getLogger("lead_intelligence")
 
@@ -163,6 +164,20 @@ async def form_webhook(payload: FormPayload, request: Request) -> LeadResponse:
         save_lead(stored)
     except Exception as e:
         logger.warning("webhook_storage_skipped error=%s", str(e))
+
+    log_event(
+        "webhook_form_qualified",
+        endpoint="/webhook/form",
+        method="POST",
+        status_code=200,
+        score=result.response.score,
+        extra={
+            "source": "form",
+            "org_id": org_id or "anon",
+            "decision": result.response.decision,
+            "urgency": result.response.urgency,
+        },
+    )
 
     try:
         from app.services.notification_service import notify_admin_lead, notify_hot_lead
@@ -335,6 +350,20 @@ async def rdstation_webhook(request: Request) -> dict[str, Any]:
         save_lead(stored)
     except Exception as e:
         logger.warning("rdstation_storage_skipped error=%s", e)
+
+    log_event(
+        "webhook_rdstation_qualified",
+        endpoint="/webhook/rdstation",
+        method="POST",
+        status_code=200,
+        score=result.response.score,
+        extra={
+            "source": "rdstation",
+            "org_id": org_id or "anon",
+            "decision": result.response.decision,
+            "event_type": event_type or "unknown",
+        },
+    )
 
     try:
         from app.services.notification_service import notify_admin_lead, notify_hot_lead
