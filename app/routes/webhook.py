@@ -164,9 +164,20 @@ async def form_webhook(payload: FormPayload, request: Request) -> LeadResponse:
     except Exception as e:
         logger.warning("webhook_storage_skipped error=%s", str(e))
 
-    if org_id:
-        try:
-            from app.services.notification_service import notify_hot_lead
+    try:
+        from app.services.notification_service import notify_admin_lead, notify_hot_lead
+        notify_admin_lead(
+            lead_name=lead.name,
+            lead_city=lead.city,
+            monthly_bill=lead.monthly_bill,
+            score=result.response.score,
+            urgency=result.response.urgency,
+            decision=result.response.decision,
+            whatsapp_message=result.response.whatsapp_message,
+            recommendation=result.response.recommendation,
+            source="form",
+        )
+        if org_id:
             notify_hot_lead(
                 org_id=org_id,
                 lead_name=lead.name,
@@ -177,8 +188,8 @@ async def form_webhook(payload: FormPayload, request: Request) -> LeadResponse:
                 whatsapp_message=result.response.whatsapp_message,
                 recommendation=result.response.recommendation,
             )
-        except Exception as e:
-            logger.debug("notification_skipped error=%s", e)
+    except Exception as e:
+        logger.debug("notification_skipped error=%s", e)
 
     return result.response
 
@@ -325,9 +336,20 @@ async def rdstation_webhook(request: Request) -> dict[str, Any]:
     except Exception as e:
         logger.warning("rdstation_storage_skipped error=%s", e)
 
-    if org_id:
-        try:
-            from app.services.notification_service import notify_hot_lead
+    try:
+        from app.services.notification_service import notify_admin_lead, notify_hot_lead
+        notify_admin_lead(
+            lead_name=lead.name,
+            lead_city=lead.city,
+            monthly_bill=lead.monthly_bill,
+            score=result.response.score,
+            urgency=result.response.urgency,
+            decision=result.response.decision,
+            whatsapp_message=result.response.whatsapp_message,
+            recommendation=result.response.recommendation,
+            source="rdstation",
+        )
+        if org_id:
             notify_hot_lead(
                 org_id=org_id,
                 lead_name=lead.name,
@@ -338,8 +360,8 @@ async def rdstation_webhook(request: Request) -> dict[str, Any]:
                 whatsapp_message=result.response.whatsapp_message,
                 recommendation=result.response.recommendation,
             )
-        except Exception as e:
-            logger.debug("rdstation_notification_skipped error=%s", e)
+    except Exception as e:
+        logger.debug("rdstation_notification_skipped error=%s", e)
 
     return {
         "received": True,

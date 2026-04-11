@@ -58,10 +58,21 @@ def _score_and_store(data: LeadRequest, org_id: str | None = None) -> LeadRespon
     except Exception as e:
         logger.warning("storage_skipped error=%s", str(e))
 
-    # Notify customer of hot leads (fire-and-forget, never blocks response)
-    if org_id:
-        try:
-            from app.services.notification_service import notify_hot_lead
+    # Notify admin of every new lead + notify customer of hot leads (fire-and-forget)
+    try:
+        from app.services.notification_service import notify_admin_lead, notify_hot_lead
+        notify_admin_lead(
+            lead_name=data.name,
+            lead_city=data.city,
+            monthly_bill=data.monthly_bill,
+            score=result.response.score,
+            urgency=result.response.urgency,
+            decision=result.response.decision,
+            whatsapp_message=result.response.whatsapp_message,
+            recommendation=result.response.recommendation,
+            source="api",
+        )
+        if org_id:
             notify_hot_lead(
                 org_id=org_id,
                 lead_name=data.name,
@@ -72,8 +83,8 @@ def _score_and_store(data: LeadRequest, org_id: str | None = None) -> LeadRespon
                 whatsapp_message=result.response.whatsapp_message,
                 recommendation=result.response.recommendation,
             )
-        except Exception as e:
-            logger.debug("notification_skipped error=%s", e)
+    except Exception as e:
+        logger.debug("notification_skipped error=%s", e)
 
     push_lead_result_to_sheet(
         name=data.name,

@@ -131,6 +131,66 @@ def _hot_lead_html(
 </html>"""
 
 
+def notify_admin_lead(
+    *,
+    lead_name: str,
+    lead_city: str,
+    monthly_bill: float,
+    score: int,
+    urgency: str,
+    decision: str | None,
+    whatsapp_message: str | None,
+    recommendation: str,
+    source: str = "api",
+) -> None:
+    """Send every new lead to NOTIFY_ADMIN_EMAIL (push notification on phone via Gmail)."""
+    admin_email = os.getenv("NOTIFY_ADMIN_EMAIL", "").strip()
+    if not admin_email or not _resend_key():
+        return
+    dec_emoji = {"accept": "✅ LIGAR", "review": "🔍 QUALIFICAR", "reject": "❌ NÃO LIGAR"}.get(decision or "", "—")
+    urg_bar = {"alta": "🔴", "media": "🟡", "baixa": "⚪"}.get(urgency, "")
+    wa_block = ""
+    if whatsapp_message:
+        wa_block = f"""<div style="background:#0d2218;border:1px solid #16a34a33;border-radius:8px;padding:14px;margin-top:14px">
+          <div style="font-size:10px;font-weight:700;color:#22c55e;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">📱 MENSAGEM WHATSAPP</div>
+          <div style="font-size:13px;color:#bbf7d0;line-height:1.5">{whatsapp_message}</div>
+        </div>"""
+    subject = f"{urg_bar} Lead {dec_emoji} — {lead_name} ({score}/10) · R${monthly_bill:.0f}/mês"
+    html = f"""<!DOCTYPE html><html><body style="margin:0;padding:0;background:#060c18;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+  <div style="max-width:500px;margin:24px auto;background:#0d1825;border:1px solid #1a2e48;border-radius:14px;overflow:hidden">
+    <div style="background:{'#16a34a' if score>=7 else '#d97706' if score>=4 else '#dc2626'};padding:16px 20px">
+      <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.1em">LeadSolar · Novo Lead · {source.upper()}</div>
+      <div style="font-size:20px;font-weight:900;color:#fff;margin-top:2px">{lead_name} — {lead_city}</div>
+    </div>
+    <div style="padding:20px">
+      <div style="display:flex;gap:10px;margin-bottom:16px">
+        <div style="background:#132030;border:1px solid #1a2e48;border-radius:8px;padding:10px 14px;flex:1;text-align:center">
+          <div style="font-size:26px;font-weight:900;color:#f59e0b">{score}/10</div>
+          <div style="font-size:10px;color:#6b85a0;text-transform:uppercase">Score</div>
+        </div>
+        <div style="background:#132030;border:1px solid #1a2e48;border-radius:8px;padding:10px 14px;flex:1;text-align:center">
+          <div style="font-size:15px;font-weight:700;color:#f1f5f9">{dec_emoji}</div>
+          <div style="font-size:10px;color:#6b85a0;text-transform:uppercase">Decisão</div>
+        </div>
+        <div style="background:#132030;border:1px solid #1a2e48;border-radius:8px;padding:10px 14px;flex:1;text-align:center">
+          <div style="font-size:15px;font-weight:700;color:#f1f5f9">R${monthly_bill:.0f}</div>
+          <div style="font-size:10px;color:#6b85a0;text-transform:uppercase">Conta/mês</div>
+        </div>
+      </div>
+      <div style="background:#132030;border:1px solid #1a2e48;border-radius:8px;padding:12px;margin-bottom:12px">
+        <div style="font-size:10px;font-weight:700;color:#0ea5e9;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Recomendação</div>
+        <div style="font-size:13px;color:#e2e8f0;line-height:1.5">{recommendation}</div>
+      </div>
+      {wa_block}
+      <div style="margin-top:16px;text-align:center">
+        <a href="https://leadsolarintelligence.com.br/dashboard" style="display:inline-block;background:linear-gradient(135deg,#f59e0b,#d97706);color:#000;font-weight:700;padding:10px 24px;border-radius:8px;text-decoration:none;font-size:13px">Ver no Dashboard →</a>
+      </div>
+    </div>
+  </div>
+</body></html>"""
+    _send_email(admin_email, subject, html)
+
+
 def notify_hot_lead(
     *,
     org_id: str,
