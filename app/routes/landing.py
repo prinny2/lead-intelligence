@@ -289,11 +289,6 @@ footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--sun
 
 #toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--green);color:#000;font-weight:700;padding:.75rem 1.25rem;border-radius:.5rem;font-size:.85rem;display:none;z-index:999}
 
-/* ANNOUNCEMENT BAR */
-.ann-bar{background:linear-gradient(90deg,#92400e,#b45309,#d97706);color:#fff;text-align:center;padding:.55rem 1rem;font-size:.82rem;font-weight:600;position:relative;z-index:101}
-.ann-bar span{color:#fde68a}
-.ann-bar a{color:#fde68a;text-decoration:underline;margin-left:.5rem}
-
 /* INTEGRATION LOGOS */
 .logos-section{padding:2.5rem 2rem;border-bottom:1px solid var(--border)}
 .logos-inner{max-width:1100px;margin:0 auto;text-align:center}
@@ -360,11 +355,11 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
   /* ── Hero ── */
   .hero-inner{grid-template-columns:1fr}
   .hero-card{display:none}
-  .hero{padding:5.5rem 1.1rem 2.5rem;min-height:auto}
-  .hero h1{font-size:clamp(1.75rem,7vw,2.4rem)}
-  .hero-sub{font-size:.92rem}
-  .hero-proof{gap:.85rem;margin-top:1.75rem;padding-top:1.5rem}
-  .proof-item strong{font-size:1.5rem}
+  .hero{padding:4.5rem 1.25rem 2.5rem;min-height:auto}
+  .hero h1{font-size:clamp(1.75rem,7vw,2.2rem);letter-spacing:-.02em}
+  .hero-sub{font-size:.9rem;line-height:1.7}
+  .hero-proof{gap:1.25rem;margin-top:1.5rem;padding-top:1.25rem;flex-wrap:nowrap}
+  .proof-item strong{font-size:1.4rem}
 
   /* ── Botões mobile ── */
   .hero-btns{flex-direction:column;align-items:stretch;gap:.7rem}
@@ -379,7 +374,7 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
   /* ── Grids — força 1 coluna ── */
   .feat-grid{grid-template-columns:1fr}
   .testi-grid{grid-template-columns:1fr}
-  .market-grid{grid-template-columns:repeat(2,1fr)}
+  .market-grid{grid-template-columns:1fr}
   .steps{grid-template-columns:1fr;gap:1.5rem}
   .price-grid{grid-template-columns:1fr}
   .ba-table{grid-template-columns:1fr}
@@ -401,15 +396,8 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
   .trust-row{gap:.5rem}
   .trust-badge{font-size:.68rem;padding:.35rem .65rem}
 
-  /* ── Announcement bar ── */
-  .ann-bar{font-size:.7rem;padding:.4rem .75rem;line-height:1.5}
-
   /* ── WA float — oculto no mobile (sticky CTA já cobre conversão) ── */
   .wa-float{display:none!important}
-
-  /* ── Sticky CTA ── */
-  .sticky-cta{display:flex}
-  body{padding-bottom:70px}
 
   /* ── Guarantee ── */
   .guarantee-wrap{flex-direction:column;align-items:center;text-align:center;padding:1.5rem}
@@ -424,11 +412,6 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
 </style>
 </head>
 <body>
-
-<!-- ANNOUNCEMENT BAR -->
-<div class="ann-bar">
-  🎉 <span>Lançamento — 40% OFF com o código SOLAR40</span> · Válido até 30/04
-</div>
 
 <!-- MOBILE MENU -->
 <div class="mobile-menu" id="mobile-menu">
