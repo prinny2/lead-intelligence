@@ -34,7 +34,7 @@ PLANS = {
     },
 }
 
-BASE_URL = os.getenv("BASE_URL", "https://lead-intelligence-production.up.railway.app")
+BASE_URL = os.getenv("BASE_URL", "https://leadsolarintelligence.com.br")
 
 
 def _get_stripe():

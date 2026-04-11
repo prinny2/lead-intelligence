@@ -7,7 +7,7 @@ from fastapi.responses import HTMLResponse
 
 router = APIRouter()
 
-_BASE_URL = os.getenv("BASE_URL", "https://lead-intelligence-production.up.railway.app")
+_BASE_URL = os.getenv("BASE_URL", "https://leadsolarintelligence.com.br")
 
 _HTML = """<!DOCTYPE html>
 <html lang="pt-BR">
@@ -24,6 +24,7 @@ _HTML = """<!DOCTYPE html>
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:title" content="LeadSolar — Score automático de leads solares"/>
 <meta name="twitter:description" content="Seu vendedor já sabe quem ligar primeiro amanhã de manhã. 30 dias grátis, sem cartão."/>
+<link rel="canonical" href="https://leadsolarintelligence.com.br/"/>
 <link rel="icon" type="image/png" sizes="192x192" href="/static/favicon-192.png"/>
 <link rel="icon" type="image/png" sizes="512x512" href="/static/favicon-512.png"/>
 <link rel="icon" type="image/png" href="/static/favicon.png"/>
@@ -717,7 +718,7 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
           Meu vendedor vai precisar aprender algum sistema novo?
           <span class="faq-icon">+</span>
         </button>
-        <div class="faq-a">Não. Ele recebe uma mensagem no WhatsApp com a fila do dia e os textos prontos. É só ligar e mandar.</div>
+        <div class="faq-a">Não. Ele abre o painel do LeadSolar e vê a fila do dia: quem ligar primeiro e a mensagem de WhatsApp já escrita pra cada lead. É só copiar e enviar.</div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">
@@ -789,6 +790,22 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
           <li>Suporte direto no WhatsApp</li>
         </ul>
         <button onclick="startCheckout('pro')" class="plan-btn plan-btn-sun">Começar grátis por 30 dias</button>
+      </div>
+
+      <div class="plan anim">
+        <div class="plan-tier">Empresarial</div>
+        <div class="plan-price" id="price-enterprise"><sup>R$</sup>997<sub>/mês</sub></div>
+        <div class="plan-annual-note" id="note-enterprise">R$ 9.576 cobrado anualmente — economia de R$ 2.388</div>
+        <div class="plan-pitch">Para empresas com alto volume que não podem perder nenhum lead</div>
+        <ul class="plan-list">
+          <li>Leads ilimitados por mês</li>
+          <li>Tudo do plano Crescimento</li>
+          <li>Setup incluso com nossa equipe</li>
+          <li>Webhooks para RD Station e Meta Ads</li>
+          <li>Suporte prioritário com SLA garantido</li>
+          <li>Gerente de conta dedicado</li>
+        </ul>
+        <button onclick="startCheckout('enterprise')" class="plan-btn plan-btn-out">Começar grátis por 30 dias</button>
       </div>
 
     </div>
