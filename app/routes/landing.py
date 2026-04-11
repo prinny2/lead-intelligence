@@ -617,6 +617,64 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
   </div>
 </section>
 
+<!-- CALCULADORA SOLAR 2045 -->
+<section class="section" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="container center">
+    <div class="section-tag">☀️ Calculadora de economia</div>
+    <h2 class="section-title">Quanto seu cliente economiza?</h2>
+    <p class="section-sub">Digite a conta de luz do lead. A simulação aparece na mensagem de WhatsApp — pronta pra enviar.</p>
+    <div class="section-accent"></div>
+    <div style="max-width:520px;margin:2.5rem auto 0;background:var(--bg);border:1px solid var(--border);border-radius:1.25rem;padding:2rem">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.85rem;margin-bottom:1rem">
+        <div>
+          <label style="display:block;font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem">Conta de luz (R$/mês)</label>
+          <input id="roi-bill" type="number" placeholder="450" min="50" max="9999" style="width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:.65rem .9rem;border-radius:.55rem;font-size:.95rem;outline:none;font-family:inherit;transition:border-color .2s" onfocus="this.style.borderColor='var(--sun)'" onblur="this.style.borderColor='var(--border)'"/>
+        </div>
+        <div>
+          <label style="display:block;font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem">Estado</label>
+          <select id="roi-state" style="width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:.65rem .9rem;border-radius:.55rem;font-size:.95rem;outline:none;font-family:inherit">
+            <option value="">Qualquer</option>
+            <option value="PA">PA — Pará</option><option value="AM">AM — Amazonas</option>
+            <option value="CE">CE — Ceará</option><option value="BA">BA — Bahia</option>
+            <option value="PE">PE — Pernambuco</option><option value="MA">MA — Maranhão</option>
+            <option value="PI">PI — Piauí</option><option value="RN">RN — Rio Grande do Norte</option>
+            <option value="AL">AL — Alagoas</option><option value="SE">SE — Sergipe</option>
+            <option value="PB">PB — Paraíba</option><option value="GO">GO — Goiás</option>
+            <option value="MT">MT — Mato Grosso</option><option value="MS">MS — M. Grosso do Sul</option>
+            <option value="DF">DF — Brasília</option><option value="MG">MG — Minas Gerais</option>
+            <option value="SP">SP — São Paulo</option><option value="RJ">RJ — Rio de Janeiro</option>
+            <option value="ES">ES — Espírito Santo</option><option value="PR">PR — Paraná</option>
+            <option value="SC">SC — Santa Catarina</option><option value="RS">RS — Rio Grande do Sul</option>
+          </select>
+        </div>
+      </div>
+      <button onclick="runROI()" id="roi-btn" style="width:100%;background:linear-gradient(135deg,var(--sun),var(--sun-dark));color:#000;font-weight:700;padding:.85rem;border-radius:.6rem;border:none;font-size:.95rem;cursor:pointer;font-family:inherit;transition:opacity .15s">Calcular economia →</button>
+      <div id="roi-result" style="display:none;margin-top:1.5rem">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.85rem">
+          <div style="background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:.85rem;padding:1rem;text-align:center">
+            <div style="font-size:1.5rem;font-weight:900;color:var(--green)" id="roi-monthly">—</div>
+            <div style="font-size:.7rem;color:var(--muted);margin-top:.25rem">economia por mês</div>
+          </div>
+          <div style="background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:.85rem;padding:1rem;text-align:center">
+            <div style="font-size:1.5rem;font-weight:900;color:var(--sun)" id="roi-payback">—</div>
+            <div style="font-size:.7rem;color:var(--muted);margin-top:.25rem">anos pra pagar o sistema</div>
+          </div>
+        </div>
+        <div style="background:linear-gradient(135deg,rgba(245,158,11,.1),rgba(245,158,11,.03));border:1px solid rgba(245,158,11,.25);border-radius:.9rem;padding:1.35rem;text-align:center;margin-bottom:.85rem">
+          <div style="font-size:.65rem;font-weight:700;color:var(--sun);text-transform:uppercase;letter-spacing:.12em;margin-bottom:.4rem">☀️ Economia acumulada até 2045</div>
+          <div style="font-size:2.1rem;font-weight:900;color:var(--text)" id="roi-2045">—</div>
+          <div style="font-size:.72rem;color:var(--muted);margin-top:.3rem" id="roi-co2">—</div>
+        </div>
+        <div style="background:#0d2218;border:1px solid #16a34a33;border-radius:.75rem;padding:1rem">
+          <div style="font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--green);margin-bottom:.45rem">📱 Mensagem de WhatsApp pronta</div>
+          <div style="font-size:.8rem;color:#bbf7d0;line-height:1.65" id="roi-msg">—</div>
+        </div>
+      </div>
+      <div id="roi-error" style="display:none;color:var(--red);font-size:.82rem;margin-top:.75rem;text-align:center;padding:.6rem;background:rgba(239,68,68,.06);border-radius:.5rem"></div>
+    </div>
+  </div>
+</section>
+
 <!-- DEPOIMENTOS -->
 <section class="section">
   <div class="container">
@@ -1098,6 +1156,48 @@ function wzResult(ticketKey, ticketVal) {
 
   document.getElementById('wz-step-3').style.display = 'none';
   document.getElementById('wz-result').style.display = 'block';
+}
+
+// SOLAR ROI CALCULATOR 2045
+async function runROI() {
+  const bill = parseFloat(document.getElementById('roi-bill').value);
+  const state = document.getElementById('roi-state').value || null;
+  const errEl = document.getElementById('roi-error');
+  errEl.style.display = 'none';
+  if (!bill || bill < 50) {
+    errEl.textContent = 'Digite uma conta de luz válida (mínimo R$50)';
+    errEl.style.display = 'block';
+    return;
+  }
+  const btn = document.getElementById('roi-btn');
+  btn.disabled = true; btn.textContent = 'Calculando...'; btn.style.opacity = '.6';
+  try {
+    const r = await fetch('/roi', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({monthly_bill: bill, state})
+    });
+    if (!r.ok) throw new Error('Erro no servidor');
+    const d = await r.json();
+    const fmt = v => 'R$ ' + Math.round(v).toLocaleString('pt-BR');
+    const years2045 = 19; // 2026 → 2045
+    const raw2045 = d.annual_savings_brl * years2045 - d.estimated_system_cost_brl;
+    const savings2045 = Math.max(0, Math.round(raw2045));
+    document.getElementById('roi-monthly').textContent = fmt(d.monthly_savings_brl);
+    document.getElementById('roi-payback').textContent = d.estimated_payback_years + ' anos';
+    document.getElementById('roi-2045').textContent = fmt(savings2045);
+    document.getElementById('roi-co2').textContent = d.co2_avoided_kg_per_year.toLocaleString('pt-BR') + ' kg de CO₂ evitado por ano';
+    document.getElementById('roi-msg').textContent =
+      '"Oi! Com sua conta de ' + fmt(bill) + '/mês, um sistema solar se paga em ' +
+      d.estimated_payback_years + ' anos e economiza ' + fmt(savings2045) +
+      ' até 2045. Posso te mandar uma proposta hoje? ☀️"';
+    document.getElementById('roi-result').style.display = 'block';
+  } catch(e) {
+    errEl.textContent = 'Erro ao calcular. Tente novamente.';
+    errEl.style.display = 'block';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Calcular economia →'; btn.style.opacity = '1';
+  }
 }
 </script>
 </body>
