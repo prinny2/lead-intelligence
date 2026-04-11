@@ -211,8 +211,8 @@ h1{{font-size:1.6rem;font-weight:900;color:#22c55e;text-align:center;margin-bott
     <div class="step-item">
       <div class="step-num">3</div>
       <div class="step-text">
-        <strong>Fale com o time para onboarding</strong>
-        <span>Nosso time configura tudo com você em uma chamada de 30 min. É incluso em todos os planos.</span>
+        <strong>Fale com o suporte pelo WhatsApp</strong>
+        <span>Qualquer dúvida na configuração, manda mensagem. Respondemos em menos de 1 hora em dias úteis.</span>
       </div>
     </div>
   </div>

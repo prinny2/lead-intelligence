@@ -14,10 +14,10 @@ _HTML = """<!DOCTYPE html>
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>LeadSolar — Pare de ligar pra quem nunca vai fechar</title>
-<meta name="description" content="Cada lead do seu formulário recebe um score de 0 a 10 e uma mensagem de WhatsApp pronta em segundos. Seu vendedor liga só pra quem tem potencial real."/>
-<meta property="og:title" content="LeadSolar — Pare de ligar pra quem nunca vai fechar"/>
-<meta property="og:description" content="Score automático 0–10 por conta de luz, imóvel e urgência. WhatsApp personalizado pronto. Fila de prioridade diária. 30 dias grátis."/>
+<title>LeadSolar — Seu vendedor já sabe quem ligar primeiro</title>
+<meta name="description" content="Cada lead recebe uma nota de 0 a 10 e uma mensagem de WhatsApp pronta em 30 segundos. Seu vendedor liga só pra quem tem chance real de fechar. 30 dias grátis."/>
+<meta property="og:title" content="LeadSolar — Seu vendedor já sabe quem ligar primeiro"/>
+<meta property="og:description" content="Lead chega, sistema analisa, vendedor recebe a fila do dia com mensagem de WhatsApp pronta. 30 dias grátis, sem cartão."/>
 <meta property="og:type" content="website"/>
 <meta property="og:url" content="https://leadsolarintelligence.com.br/"/>
 <meta property="og:image" content="https://leadsolarintelligence.com.br/static/og-image.png"/>
