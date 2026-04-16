@@ -1,0 +1,44 @@
+steps:
+  # Build da imagem Docker
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'southamerica-east1-docker.pkg.dev/lead-solar-12345/leadsolar/api:$COMMIT_SHA'
+      - '-t'
+      - 'southamerica-east1-docker.pkg.dev/lead-solar-12345/leadsolar/api:latest'
+      - '.'
+
+  # Push para Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - '--all-tags'
+      - 'southamerica-east1-docker.pkg.dev/lead-solar-12345/leadsolar/api'
+
+  # Deploy para Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'leadsolar-api'
+      - '--image=southamerica-east1-docker.pkg.dev/lead-solar-12345/leadsolar/api:$COMMIT_SHA'
+      - '--region=southamerica-east1'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+      - '--port=8000'
+      - '--memory=512Mi'
+      - '--cpu=1'
+      - '--min-instances=0'
+      - '--max-instances=10'
+      - '--concurrency=80'
+      - '--timeout=60'
+      - '--set-secrets=ANTHROPIC_API_KEY=ANTHROPIC_API_KEY:latest,GEMINI_API_KEY=GEMINI_API_KEY:latest,GOOGLE_APPLICATION_CREDENTIALS_JSON=GOOGLE_APPLICATION_CREDENTIALS_JSON:latest,GOOGLE_CLOUD_PROJECT=GOOGLE_CLOUD_PROJECT:latest,FIREBASE_AUTH_DOMAIN=FIREBASE_AUTH_DOMAIN:latest,FIREBASE_WEB_API_KEY=FIREBASE_WEB_API_KEY:latest,STRIPE_SECRET_KEY=STRIPE_SECRET_KEY:latest,STRIPE_WEBHOOK_SECRET=STRIPE_WEBHOOK_SECRET:latest,RESEND_API_KEY=RESEND_API_KEY:latest,NOTIFY_FROM_EMAIL=NOTIFY_FROM_EMAIL:latest,NOTIFY_ADMIN_EMAIL=NOTIFY_ADMIN_EMAIL:latest,GOOGLE_MAPS_API_KEY=GOOGLE_MAPS_API_KEY:latest,SENTRY_DSN=SENTRY_DSN:latest,REDIS_URL=REDIS_URL:latest,BASE_URL=BASE_URL:latest'
+
+images:
+  - 'southamerica-east1-docker.pkg.dev/lead-solar-12345/leadsolar/api:$COMMIT_SHA'
+  - 'southamerica-east1-docker.pkg.dev/lead-solar-12345/leadsolar/api:latest'
+
+options:
+  logging: CLOUD_LOGGING_ONLY

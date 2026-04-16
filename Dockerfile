@@ -13,7 +13,6 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app ./app
-COPY lead_intelligence ./lead_intelligence
 COPY static ./static
 COPY main.py pyproject.toml ./
 
