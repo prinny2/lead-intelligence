@@ -411,6 +411,19 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
   /* ── Plan card ── */
   .plan{padding:1.5rem}
   .plan-price{font-size:2.5rem}
+
+  /* ── Fix iOS Safari auto-zoom: todos inputs/selects ≥ 16px ── */
+  input,select,textarea{font-size:16px!important}
+
+  /* ── Mobile menu acima do sticky CTA ── */
+  .mobile-menu{z-index:600}
+
+  /* ── ROI calculator grid: 1 coluna no mobile ── */
+  #roi-wizard > div > div[style*="grid-template-columns:1fr 1fr"],
+  div[style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr!important}
+
+  /* ── nav-cta oculto no mobile (hamburger substitui) ── */
+  nav .nav-cta{display:none}
 }
 </style>
 </head>
@@ -628,7 +641,7 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
     <p class="section-sub">Digite a conta de luz do lead. A simulação aparece na mensagem de WhatsApp — pronta pra enviar.</p>
     <div class="section-accent"></div>
     <div style="max-width:520px;margin:2.5rem auto 0;background:var(--bg);border:1px solid var(--border);border-radius:1.25rem;padding:2rem">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.85rem;margin-bottom:1rem">
+      <div class="demo-row" style="margin-bottom:1rem">
         <div>
           <label style="display:block;font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem">Conta de luz (R$/mês)</label>
           <input id="roi-bill" type="number" placeholder="450" min="50" max="9999" style="width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:.65rem .9rem;border-radius:.55rem;font-size:.95rem;outline:none;font-family:inherit;transition:border-color .2s" onfocus="this.style.borderColor='var(--sun)'" onblur="this.style.borderColor='var(--border)'"/>
@@ -859,7 +872,7 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
 
 <!-- STICKY MOBILE CTA -->
 <div class="sticky-cta" id="sticky-cta">
-  <p><strong>30 dias grátis</strong>Fale pelo WhatsApp agora</p>
+  <p><strong>30 dias grátis</strong> — Fale pelo WhatsApp agora</p>
   <a href="https://wa.me/5591985156690?text=Ol%C3%A1%2C%20quero%20testar%20o%20LeadSolar" target="_blank" rel="noopener">Falar no WhatsApp →</a>
 </div>
 
@@ -871,7 +884,7 @@ body.js-ready .anim-left.visible{opacity:1;transform:none}
 
 <!-- ROI WIZARD MODAL -->
 <div id="roi-wizard" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(6,12,24,.88);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:1.5rem">
-  <div style="background:#0d1825;border:1px solid #1a2e48;border-radius:1.5rem;max-width:520px;width:100%;padding:2rem;position:relative;box-shadow:0 24px 64px rgba(0,0,0,.5)">
+  <div style="background:#0d1825;border:1px solid #1a2e48;border-radius:1.5rem;max-width:520px;width:100%;padding:2rem;position:relative;box-shadow:0 24px 64px rgba(0,0,0,.5);max-height:90vh;overflow-y:auto">
     <button onclick="closeWizard()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:#6b85a0;font-size:1.2rem;cursor:pointer;line-height:1;padding:.25rem">✕</button>
     <!-- STEP 1 -->
     <div id="wz-step-1">
@@ -975,6 +988,8 @@ async function runDemo(e) {
     document.getElementById('demo-rec-text').textContent = d.recommendation;
     document.getElementById('demo-wa-text').textContent = d.whatsapp_message;
     document.getElementById('demo-result').style.display = 'flex';
+    // Auto-scroll para o resultado no mobile
+    document.getElementById('demo-result-box').scrollIntoView({behavior:'smooth',block:'start'});
   } catch(err) {
     const errEl = document.getElementById('demo-error');
     errEl.textContent = err.message || 'Erro ao conectar. Tente novamente.';
@@ -1064,8 +1079,13 @@ async function startCheckout(plan) {
     if (typeof fbq !== 'undefined') fbq('track', 'InitiateCheckout');
     window.location.href = data.checkout_url;
   } catch(err) {
-    alert('Erro ao iniciar checkout. Tente novamente ou entre em contato pelo WhatsApp.');
     btns.forEach(b => { b.disabled = false; });
+    // Inline error — não usa alert() bloqueante
+    const errDiv = document.createElement('div');
+    errDiv.style.cssText = 'position:fixed;bottom:5rem;left:50%;transform:translateX(-50%);background:#ef4444;color:#fff;font-weight:700;padding:.75rem 1.5rem;border-radius:.75rem;font-size:.85rem;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.3)';
+    errDiv.textContent = 'Erro ao iniciar checkout. Tente novamente.';
+    document.body.appendChild(errDiv);
+    setTimeout(() => errDiv.remove(), 4000);
   }
 }
 
@@ -1079,6 +1099,10 @@ function toggleFaq(btn) {
 function closeMobileMenu() {
   document.getElementById('mobile-menu').classList.remove('open');
 }
+// Tap fora do menu fecha
+document.getElementById('mobile-menu').addEventListener('click', function(e) {
+  if (e.target === this) closeMobileMenu();
+});
 
 // Scroll reveal — safe: only animate elements NOT already visible
 (function() {
