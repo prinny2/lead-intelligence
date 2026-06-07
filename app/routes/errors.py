@@ -51,4 +51,8 @@ p{color:#6b85a0;font-size:.95rem;max-width:380px;line-height:1.7;margin-bottom:2
 
 
 async def not_found_handler(request: Request, exc: Exception) -> HTMLResponse:
+    if request.url.path.startswith("/api/"):
+        from fastapi.responses import JSONResponse
+        detail = getattr(exc, "detail", "Not Found")
+        return JSONResponse({"detail": detail}, status_code=404)
     return HTMLResponse(content=_404_HTML, status_code=404)
