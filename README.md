@@ -1,8 +1,19 @@
 # Lead Intelligence
 
+**Lead qualification for Brazilian solar installers.** Scores inbound leads and returns an explicit `accept` / `review` / `reject` decision with traceable reasons, so a sales team knows who to call first and why.
+
+- **Core** (`lead_intelligence/`): dependency-free Python package — validation, 0–100 scoring, solar heuristics, message-intent signals. No LLM, no network.
+- **API** (`app/`): FastAPI service with hybrid scoring — deterministic rules always applied, LLM optional (Gemini → Claude Haiku fallback) — plus Stripe subscriptions (30-day trial), Firestore with JSONL fallback, form/RD Station webhooks, CSV export, Sentry.
+- **Deploy:** Docker · GitHub Actions → Cloud Build → Cloud Run.
+- **Run it:** `pip install -r requirements-dev.txt && pytest` (no API keys needed) · `uvicorn app.main:app --reload` → http://localhost:8000/docs
+
+> Docs below are in Portuguese (target market: Brazil).
+
+---
+
 Biblioteca Python para **filtragem e qualificação de leads** com decisão comercial explícita (**accept** / **review** / **reject**) e **motivos** rastreáveis.
 
-O foco inicial do produto é o nicho de **energia solar no Brasil**, com heurísticas opcionais em `solar.py` e análise de mensagem em `message_analysis.py`. O núcleo (`validator`, `analyzer`, `scorer`, `qualifier`) permanece **genérico e extensível**, sem LLM e sem APIs externas nesta versão.
+O foco inicial do produto é o nicho de **energia solar no Brasil**, com heurísticas opcionais em `solar.py` e análise de mensagem em `message_analysis.py`. O núcleo (`validator`, `analyzer`, `scorer`, `qualifier`) permanece **genérico e extensível**, sem LLM e sem APIs externas; a camada de IA fica na API FastAPI (`app/`).
 
 ## Decisão comercial
 
@@ -17,6 +28,7 @@ Cada execução de `qualify_lead` devolve uma lista `reasons` em português para
 ## Estrutura do projeto
 
 ```
+app/                   # API FastAPI: rotas, scoring híbrido (regras + Gemini/Claude), Stripe, Firestore
 lead_intelligence/
   __init__.py
   validator.py         # E-mail, telefone, domínio genérico, contato, criticidade
@@ -42,21 +54,15 @@ LICENSE                 # MIT
 ## Clonar o repositório e instalar
 
 ```bash
-git clone https://github.com/SEU_USUARIO/lead-intelligence.git
+git clone https://github.com/prinny2/lead-intelligence.git
 cd lead-intelligence
 python -m venv .venv
-.venv\Scripts\activate
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
 ```
 
 **Só o toolkit (sem dependências externas):** o pacote `lead_intelligence` não exige pip extra para rodar `qualify_lead`.
 
 **API + testes (recomendado para desenvolvimento):**
-
-```bash
-pip install -e ".[dev]"
-```
-
-Ou, equivalente:
 
 ```bash
 pip install -r requirements-dev.txt
@@ -124,7 +130,7 @@ pytest tests/test_integration_lead_pipeline.py -v
 ## API FastAPI na web
 
 - Variáveis: veja **`env.example`** e o guia **`DEPLOY.md`** (Render, Railway, Docker).
-- **`OPENAI_API_KEY`**: chave da **OpenAI** ([API keys](https://platform.openai.com/api-keys)), prefixo típico `sk-proj-` ou `sk-`. **Não** use chaves da Stripe (`sk_live_` / `sk_test_`) nesta variável — são serviços diferentes.
+- **`GEMINI_API_KEY`** / **`ANTHROPIC_API_KEY`**: IA opcional do `/lead` (Gemini primeiro, Claude como fallback). Sem nenhuma das duas, o score usa só as regras. **Não** use chaves da Stripe (`sk_live_` / `sk_test_`) nessas variáveis.
 - **`CORS_ORIGINS`**: defina no host (ex.: `https://meuapp.com` ou `*` só para testes).
 - **`LEADS_FILE`**: em produção, use disco persistente ou path absoluto para não perder `leads.jsonl` a cada deploy.
 
