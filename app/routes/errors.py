@@ -1,7 +1,7 @@
 """Custom error pages."""
 
 from fastapi import Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse, Response
 
 _404_HTML = """<!DOCTYPE html>
 <html lang="pt-BR">
@@ -50,5 +50,8 @@ p{color:#6b85a0;font-size:.95rem;max-width:380px;line-height:1.7;margin-bottom:2
 </html>"""
 
 
-async def not_found_handler(request: Request, exc: Exception) -> HTMLResponse:
+async def not_found_handler(request: Request, exc: Exception) -> Response:
+    # Browsers get the branded page; API clients keep FastAPI's JSON {"detail": ...}.
+    if "text/html" not in request.headers.get("accept", ""):
+        return JSONResponse({"detail": getattr(exc, "detail", "Not Found")}, status_code=404)
     return HTMLResponse(content=_404_HTML, status_code=404)
